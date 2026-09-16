@@ -54,6 +54,9 @@ android {
     buildFeatures {
         compose = true
         buildConfig = true
+        // No AIDL on purpose: the Shizuku user service speaks a hand-written
+        // Binder protocol (core/shell/ShellProtocol.kt), which avoids the native
+        // aidl binary and its non-ASCII-path failures on Windows.
     }
 
     packaging {

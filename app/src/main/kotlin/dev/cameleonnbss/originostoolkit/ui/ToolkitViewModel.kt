@@ -4,6 +4,7 @@ import androidx.lifecycle.ViewModel
 import androidx.lifecycle.ViewModelProvider
 import androidx.lifecycle.viewModelScope
 import dev.cameleonnbss.originostoolkit.core.AppContainer
+import dev.cameleonnbss.originostoolkit.core.AppEntry
 import dev.cameleonnbss.originostoolkit.core.DeviceInfo
 import dev.cameleonnbss.originostoolkit.core.DeviceSnapshot
 import dev.cameleonnbss.originostoolkit.core.EngineException
@@ -26,9 +27,6 @@ import kotlinx.coroutines.withContext
 
 /** The command preview shown before anything runs. */
 data class PreviewState(val title: String, val commands: List<String>)
-
-/** An installed app, for the per-app refresh list. */
-data class AppEntry(val packageName: String, val label: String)
 
 data class ToolkitUiState(
     val catalog: Catalog,
@@ -90,6 +88,9 @@ class ToolkitViewModel(private val container: AppContainer) : ViewModel() {
         viewModelScope.launch {
             ShizukuBridge.state.collect { shizuku ->
                 _state.update { it.copy(shizuku = shizuku) }
+                // Binding is idempotent, and doing it here means the helper is
+                // already up by the time the user taps Apply.
+                if (shizuku.ready) container.shellProvider.connect()
             }
         }
         refresh()
@@ -98,6 +99,7 @@ class ToolkitViewModel(private val container: AppContainer) : ViewModel() {
     // -- reading -----------------------------------------------------------
 
     fun refresh() = background {
+        if (ShizukuBridge.state.value.ready) container.shellProvider.connect()
         val snapshot = DeviceInfo.read(container.shell)
         _state.update {
             it.copy(

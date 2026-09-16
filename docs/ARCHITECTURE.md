@@ -104,7 +104,7 @@ unable to revert is bad, being unable to launch is worse.
 | --- | --- | --- |
 | Model | `core/model/Models.kt`, `CatalogParser.kt` | Parsed with `org.json`, no Kotlin serialisation plugin: fewer moving parts, and the same parser runs in JVM unit tests |
 | Ops | `core/ops/Ops.kt` | The Kotlin twin of `ops.py`, including quote-when-needed rendering |
-| Shell | `core/shell/` | `ShizukuShell` (uid 2000) and a read-only `LocalShell` fallback so the dashboard works before Shizuku is up |
+| Shell | `core/shell/` | `ShizukuShell` + its `UserService` helper (uid 2000) and a read-only `LocalShell` fallback, so the dashboard works before Shizuku is up |
 | Engine | `core/TweakEngine.kt` | Probe → journal → write, same rules as the CLI |
 | Services | `service/` | `PerAppRefreshService` (foreground, polls `UsageStatsManager`), `FpsOverlayService` (overlay + `Choreographer`) |
 | UI | `ui/` | Compose, one `ToolkitViewModel` holding a single immutable `ToolkitUiState` |
@@ -114,6 +114,17 @@ Design choices worth knowing about:
 - **`org.json` instead of kotlinx.serialization.** The parser has to be runnable in JVM unit
   tests against the real catalog files; `org.json` needs no compiler plugin and no generated
   code, which keeps the build reproducible.
+- **A hand-written Binder protocol instead of AIDL.** Shizuku does not let an app call
+  `newProcess` directly — the supported way to get the shell identity is a *user service*:
+  Shizuku launches a component of yours in a process running as uid 2000, and you talk to it.
+  That interface could be AIDL, but AIDL is compiled by a native `aidl.exe` that fails on
+  Windows accounts or project paths containing non-ASCII characters (`C:\Users\José\...`).
+  [`ShellProtocol`](../app/src/main/kotlin/dev/cameleonnbss/originostoolkit/core/shell/ShellProtocol.kt)
+  does the same job — descriptor, transaction codes, exception slot — in about eighty lines of
+  `Parcel` reads and writes, with no build-tool dependency.
+- **The privilege boundary is one file.** Everything the toolkit is allowed to do happens in
+  `UserService`, running as the shell user. If you want to audit the app's power, that is the
+  file to read, and `adb shell` is the reference for what it can reach.
 - **No DI framework.** `AppContainer` is a hand-written object graph. At this size, Hilt
   would be more indirection than the app has classes.
 - **The per-app watcher does not journal its writes.** It changes `peak_refresh_rate` dozens
@@ -137,6 +148,7 @@ The invariants are the product, so they are tested from both sides:
 | Op translation, probes, inverses | `cli/tests/test_ops.py` | `OpsTest.kt` |
 | Apply/revert/status, journal-before-write, dry-run, experimental gate | `cli/tests/test_engine.py` | `TweakEngineTest.kt` |
 | Journal persistence and corruption recovery | `cli/tests/test_journal.py` | — |
+| Binder payload encoding/decoding | — | `OpsTest.kt` (round trip) |
 | Profile expansion | `cli/tests/test_profiles.py` | — |
 | CLI surface | `cli/tests/test_cli.py` | — |
 

@@ -304,6 +304,11 @@ jar — CI provisions Gradle itself, and if you want a wrapper locally:
 $ gradle wrapper --gradle-version 8.9
 ```
 
+> **Windows:** build from a path that is pure ASCII and free of spaces. Gradle passes its test
+> worker classpath through an `@argfile`, and a non-ASCII character anywhere in that path (an
+> accented user name, for instance) makes every test worker die with
+> `ClassNotFoundException: GradleWorkerMain`. See [CONTRIBUTING.md](CONTRIBUTING.md#troubleshooting-the-local-build).
+
 Run everything CI runs:
 
 ```console

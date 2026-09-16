@@ -1,6 +1,11 @@
 package dev.cameleonnbss.originostoolkit.core.shell
 
+import android.content.ComponentName
+import android.content.Context
+import android.content.ServiceConnection
 import android.content.pm.PackageManager
+import android.os.IBinder
+import dev.cameleonnbss.originostoolkit.BuildConfig
 import dev.cameleonnbss.originostoolkit.core.ops.ShellCall
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
@@ -24,6 +29,9 @@ object ShizukuBridge {
 
     private val _state = MutableStateFlow(ShizukuState())
     val state: StateFlow<ShizukuState> = _state.asStateFlow()
+
+    /** Called when the binder comes up, so the shell can bind its helper. */
+    var onReady: (() -> Unit)? = null
 
     private var registered = false
 
@@ -57,43 +65,131 @@ object ShizukuBridge {
                 PackageManager.PERMISSION_GRANTED
         }
         _state.value = ShizukuState(binderAlive = alive, permissionGranted = granted)
+        if (alive && granted) onReady?.invoke()
     }
 }
 
 /**
- * Runs commands as the `shell` user through Shizuku — the same identity `adb
- * shell` gives you. No root, no su, and it dies the moment Shizuku stops.
+ * Runs commands as the `shell` user through a Shizuku *user service*.
+ *
+ * Shizuku does not let an app call `newProcess` directly; the supported way to
+ * get shell privileges is to have Shizuku launch a component of yours in a
+ * process it controls. [UserService] is that component, and this class is the
+ * client side of it.
+ *
+ * No root anywhere: the helper process runs as uid 2000, it dies with Shizuku,
+ * and it can only do what `adb shell` could have done.
  */
-class ShizukuShell : ShellRunner {
+class ShizukuShell(private val context: Context) : ShellRunner {
 
     override val label: String = "Shizuku (shell uid 2000)"
     override val canWrite: Boolean = true
+
+    private var helper: IBinder? = null
+    private var bindRequested = false
+
+    private val args: Shizuku.UserServiceArgs
+        get() = Shizuku.UserServiceArgs(
+            ComponentName(context.packageName, UserService::class.java.name),
+        )
+            .daemon(false)
+            .processNameSuffix("service")
+            .debuggable(BuildConfig.DEBUG)
+            .version(BuildConfig.VERSION_CODE)
+
+    private val connection = object : ServiceConnection {
+        override fun onServiceConnected(name: ComponentName?, service: IBinder?) {
+            helper = service
+        }
+
+        override fun onServiceDisconnected(name: ComponentName?) {
+            helper = null
+        }
+    }
+
+    /** Binds the helper process. Safe to call repeatedly; a no-op once bound. */
+    fun connect() {
+        if (bindRequested || !ShizukuBridge.state.value.ready) return
+        bindRequested = true
+        runCatching { Shizuku.bindUserService(args, connection) }.onFailure {
+            bindRequested = false
+            helper = null
+        }
+    }
+
+    fun disconnect() {
+        if (!bindRequested) return
+        runCatching { Shizuku.unbindUserService(args, connection, true) }
+        helper = null
+        bindRequested = false
+    }
 
     override fun isAvailable(): Boolean = ShizukuBridge.state.value.ready
 
     override fun exec(call: ShellCall): ShellResult {
         val command = call.render()
+
         if (!isAvailable()) {
             return ShellResult(
                 command = command,
-                stderr = "Shizuku is not running or this app is not authorised.",
+                stderr = "Shizuku is not running, or this app is not authorised yet.",
                 code = 126,
             )
         }
-        return try {
-            // The type is inferred on purpose: Shizuku's remote process class has
-            // moved between API versions, while the Process-style surface has not.
-            val process = Shizuku.newProcess(arrayOf("sh", "-c", command), null, null)
-            // Output from our commands is small (a settings value, a package
-            // name), so reading the streams sequentially before waitFor() is
-            // safe here and avoids a second thread per command.
-            val stdout = process.inputStream.bufferedReader().readText()
-            val stderr = process.errorStream.bufferedReader().readText()
-            val code = process.waitFor()
-            ShellResult(command = command, stdout = stdout, stderr = stderr, code = code)
-        } catch (error: Exception) {
-            ShellResult(command = command, stderr = error.message ?: "Shizuku call failed", code = 1)
+
+        val service = helper ?: run {
+            connect()
+            null
         }
+        if (service == null) {
+            return ShellResult(
+                command = command,
+                stderr = "Shizuku's helper process is still starting. Try again in a second.",
+                code = 126,
+            )
+        }
+
+        return try {
+            val payload = transact(service, ShellProtocol.TRANSACTION_EXEC, command)
+            decode(command, payload)
+        } catch (error: Exception) {
+            // A dead binder is normal: Shizuku stops whenever it wants.
+            helper = null
+            bindRequested = false
+            ShellResult(command, stderr = error.message ?: "Shizuku call failed", code = 126)
+        }
+    }
+
+    /** Verifies the identity the helper actually runs as, for the UI to display. */
+    fun whoami(): String = runCatching {
+        val service = helper ?: return "unknown"
+        transact(service, ShellProtocol.TRANSACTION_WHOAMI, null)
+    }.getOrDefault("unknown")
+
+    /**
+     * One synchronous Binder round trip: write the token, write the argument,
+     * read the exception slot, read the result. Passing a non-null reply parcel
+     * is what makes `transact` block until the helper answers, so the engine can
+     * stay synchronous like the CLI is.
+     */
+    private fun transact(service: IBinder, code: Int, command: String?): String =
+        ShellProtocol.withParcels { data, reply ->
+            ShellProtocol.writeToken(data)
+            if (command != null) data.writeString(command)
+            service.transact(code, data, reply, 0)
+            reply.readException()
+            reply.readString().orEmpty()
+        }
+
+    private fun decode(command: String, payload: String): ShellResult {
+        val (code, output) = ShellProtocol.decode(payload)
+        return ShellResult(
+            command = command,
+            stdout = output,
+            // Keep failures visible in the result dialogs: `output` prefers stdout.
+            stderr = if (code == 0) "" else output,
+            code = code,
+        )
     }
 }
 
@@ -112,12 +208,22 @@ interface RunnerProvider {
  * [LocalShell] so the dashboard is never empty, and the UI warns that nothing
  * can be applied yet.
  */
-class ShellProvider(private val local: LocalShell = LocalShell()) : RunnerProvider {
+class ShellProvider(
+    private val context: Context,
+    private val local: LocalShell = LocalShell(),
+) : RunnerProvider {
 
-    private val shizuku = ShizukuShell()
+    private val shizuku = ShizukuShell(context)
 
     override val active: ShellRunner
         get() = if (shizuku.isAvailable()) shizuku else local
 
     override val state: ShizukuState get() = ShizukuBridge.state.value
+
+    fun connect() = shizuku.connect()
+
+    fun disconnect() = shizuku.disconnect()
+
+    /** "uid=2000(shell)" when the helper is up, so the UI can prove it. */
+    fun shellIdentity(): String = shizuku.whoami()
 }

@@ -30,6 +30,19 @@ provisions Gradle itself. If you want one locally: `make wrapper`.
 
 ---
 
+## Troubleshooting the local build
+
+Two Windows-specific traps, both about paths rather than code:
+
+| Symptom | Cause | Fix |
+| --- | --- | --- |
+| `ClassNotFoundException: worker.org.gradle.process.internal.worker.GradleWorkerMain`, and every test worker dies | Gradle passes its worker classpath through an `@argfile`, and a non-ASCII character in the Gradle home, the Gradle distribution or the project path gets mangled by the console code page | Put `GRADLE_USER_HOME`, the Gradle distribution and the project on a path that is pure ASCII with no spaces (e.g. `C:\build\originos-toolkit`) |
+| `Your project path contains non-ASCII characters` from the Android plugin | Same root cause, caught by AGP instead | Move the project, or silence it with `-Pandroid.overridePathCheck=true` (the build then works, but keep the ASCII path for CI parity) |
+
+Neither is about this project's code, and CI is unaffected (Ubuntu, ASCII paths). If your
+build is green locally and red in CI, it is almost always the catalog or the generated docs:
+run `make verify`.
+
 ## Adding a tweak
 
 Edit `catalog/tweaks.json`. A minimal entry:

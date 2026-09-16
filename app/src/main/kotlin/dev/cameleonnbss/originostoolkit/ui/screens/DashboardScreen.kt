@@ -19,8 +19,8 @@ import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.unit.dp
+import dev.cameleonnbss.originostoolkit.core.AppEntry
 import dev.cameleonnbss.originostoolkit.core.model.Profile
-import dev.cameleonnbss.originostoolkit.ui.AppEntry
 import dev.cameleonnbss.originostoolkit.ui.ToolkitUiState
 import dev.cameleonnbss.originostoolkit.ui.ToolkitViewModel
 import dev.cameleonnbss.originostoolkit.ui.components.EmptyHint

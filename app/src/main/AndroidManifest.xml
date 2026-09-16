@@ -76,6 +76,17 @@
                 android:value="Renders a user-requested frame-rate overlay above other apps." />
         </service>
 
+        <!--
+          The Shizuku user service. Shizuku starts this component in its own
+          process, running as the shell user (uid 2000): everything the toolkit
+          changes happens in here. `processNameSuffix("service")` on the client
+          side is what makes the process name match `:service`.
+        -->
+        <service
+            android:name=".core.shell.UserService"
+            android:exported="false"
+            android:process=":service" />
+
         <!-- Shizuku's binder bridge. Required by dev.rikka.shizuku:provider. -->
         <provider
             android:name="rikka.shizuku.ShizukuProvider"

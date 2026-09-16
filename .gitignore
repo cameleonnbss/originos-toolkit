@@ -48,3 +48,7 @@ journal.json
 
 # --- Freebuff / agent workspace state ---
 .freebuff/
+
+# --- Local build toolchain (created by the verification build) ---
+.android-sdk/
+.gradle-home/

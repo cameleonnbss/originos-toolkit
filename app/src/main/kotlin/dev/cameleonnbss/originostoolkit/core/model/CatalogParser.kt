@@ -5,8 +5,10 @@ import org.json.JSONArray
 import org.json.JSONObject
 
 /**
- * Parses the catalog that ships in `assets/` — which is the same
- * `catalog/*.json` the CLI reads, wired in through Gradle's `assets.srcDirs`.
+ * Parses the catalog that ships in `assets/` — which is exactly the JSON in the
+ * repository's `catalog` directory, wired in through Gradle's `assets.srcDirs`.
+ * (No glob is written here on purpose: a literal slash-star inside a Kotlin block
+ * comment opens a nested comment, which Kotlin happily reports as "unclosed".)
  *
  * The parser is deliberately forgiving: a catalog entry with an unexpected
  * shape is skipped rather than taking the whole app down, because a malformed

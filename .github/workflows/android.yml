@@ -58,6 +58,9 @@ jobs:
       - name: Unit tests
         run: gradle --no-daemon testDebugUnitTest
 
+      - name: Android lint
+        run: gradle --no-daemon lint
+
       - name: Assemble
         run: gradle --no-daemon assembleDebug assembleRelease
 
