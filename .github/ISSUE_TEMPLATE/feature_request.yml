@@ -1,0 +1,75 @@
+name: Feature or tweak request
+description: Suggest a new tweak, a new curated entry, or a feature.
+title: "[idea] "
+labels: ["enhancement"]
+body:
+  - type: dropdown
+    id: kind
+    attributes:
+      label: What are you proposing?
+      options:
+        - A new tweak for the catalog
+        - A new profile (bundle of tweaks)
+        - A new curated entry for the Discover list
+        - An app feature
+        - A CLI feature
+        - Documentation
+    validations:
+      required: true
+
+  - type: textarea
+    id: problem
+    attributes:
+      label: What problem does it solve?
+      description: Start with the annoyance, not the solution. "OriginOS clamps X to 60 Hz in Y" beats "add a setting for Y".
+    validations:
+      required: true
+
+  - type: textarea
+    id: commands
+    attributes:
+      label: The commands you have in mind
+      description: |
+        If you already know the shell commands, paste them. Commands that are read-only, that
+        come from the platform's own documented surface (`settings`, `device_config`,
+        `cmd overlay`, `pm disable-user`), or from AOSP source are far more likely to be accepted.
+      render: sh
+    validations:
+      required: false
+
+  - type: textarea
+    id: inverse
+    attributes:
+      label: How would it be undone?
+      description: |
+        **This field is the important one.** Every tweak must be reversible: either the engine can
+        derive the inverse by reading the previous value, or you specify the exact commands that
+        put things back. If it genuinely cannot be undone, say so — it becomes a declared one-shot
+        action with a warning in the app.
+    validations:
+      required: true
+
+  - type: textarea
+    id: risk
+    attributes:
+      label: Risk and side effects
+      description: What breaks, what drains battery, what stops updating, what a user might regret?
+    validations:
+      required: true
+
+  - type: input
+    id: device
+    attributes:
+      label: What did you test it on?
+      description: If you tested it. Leave empty if this is a proposal.
+      placeholder: "iQOO 12, OriginOS 5, Android 15"
+
+  - type: checkboxes
+    id: checks
+    attributes:
+      label: Please confirm
+      options:
+        - label: This does not require root, Magisk, LSPosed or a kernel patch.
+          required: true
+        - label: This does not uninstall anything or write to a read-only partition.
+          required: true

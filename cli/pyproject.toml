@@ -1,0 +1,45 @@
+[build-system]
+requires = ["setuptools>=68"]
+build-backend = "setuptools.build_meta"
+
+[project]
+name = "originos-toolkit"
+version = "1.0.0"
+description = "No-root tweak engine for Vivo / iQOO OriginOS devices, driven over ADB."
+readme = "README.md"
+requires-python = ">=3.9"
+license = { text = "MIT" }
+authors = [{ name = "cameleonnbss" }]
+keywords = ["originos", "vivo", "iqoo", "android", "adb", "shizuku", "tweaks", "no-root"]
+classifiers = [
+  "Development Status :: 4 - Beta",
+  "Environment :: Console",
+  "Intended Audience :: End Users/Desktop",
+  "License :: OSI Approved :: MIT License",
+  "Operating System :: OS Independent",
+  "Programming Language :: Python :: 3",
+  "Programming Language :: Python :: 3.9",
+  "Programming Language :: Python :: 3.11",
+  "Programming Language :: Python :: 3.13",
+  "Topic :: System :: Systems Administration",
+]
+dependencies = []
+
+[project.urls]
+Homepage = "https://github.com/cameleonnbss/originos-toolkit"
+Issues = "https://github.com/cameleonnbss/originos-toolkit/issues"
+Changelog = "https://github.com/cameleonnbss/originos-toolkit/blob/main/CHANGELOG.md"
+
+[project.scripts]
+originos-toolkit = "originos_toolkit.cli:main"
+
+[tool.setuptools]
+packages = ["originos_toolkit"]
+package-dir = { "" = "." }
+
+[tool.setuptools.package-data]
+originos_toolkit = ["data/catalog/*.json"]
+
+[tool.ruff]
+line-length = 110
+target-version = "py39"

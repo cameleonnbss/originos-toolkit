@@ -1,0 +1,44 @@
+version: 2
+updates:
+  # The Android app's dependency surface: AGP, Kotlin, Compose, Shizuku.
+  - package-ecosystem: gradle
+    directory: "/"
+    schedule:
+      interval: monthly
+    open-pull-requests-limit: 5
+    commit-message:
+      prefix: "build"
+    labels:
+      - dependencies
+      - android
+    groups:
+      compose:
+        patterns:
+          - "androidx.compose*"
+      kotlin:
+        patterns:
+          - "org.jetbrains.kotlin*"
+      androidx:
+        patterns:
+          - "androidx.*"
+
+  # The CLI has no runtime dependencies on purpose; this only covers dev tooling.
+  - package-ecosystem: pip
+    directory: "/cli"
+    schedule:
+      interval: monthly
+    commit-message:
+      prefix: "build"
+    labels:
+      - dependencies
+      - cli
+
+  - package-ecosystem: github-actions
+    directory: "/"
+    schedule:
+      interval: monthly
+    commit-message:
+      prefix: "ci"
+    labels:
+      - dependencies
+      - ci

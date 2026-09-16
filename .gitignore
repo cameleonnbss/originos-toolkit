@@ -1,0 +1,50 @@
+# --- Android / Gradle ---
+*.apk
+*.aab
+*.ap_
+*.dex
+*.class
+.gradle/
+build/
+captures/
+local.properties
+release/
+.externalNativeBuild/
+.cxx/
+*.keystore
+!debug.keystore
+keystore.properties
+
+# --- IntelliJ / Android Studio ---
+.idea/
+*.iml
+*.ipr
+*.iws
+out/
+
+# --- Python ---
+__pycache__/
+*.py[cod]
+*.egg-info/
+build/lib/
+dist/
+.venv/
+venv/
+.pytest_cache/
+.mypy_cache/
+.ruff_cache/
+
+# --- OS / editors ---
+.DS_Store
+Thumbs.db
+desktop.ini
+*.swp
+*~
+.vscode/
+
+# --- Local toolkit state ---
+.originos-toolkit/
+journal.json
+
+# --- Freebuff / agent workspace state ---
+.freebuff/

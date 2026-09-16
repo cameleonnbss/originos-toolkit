@@ -1,0 +1,16 @@
+* text=auto eol=lf
+
+*.png binary
+*.jpg binary
+*.webp binary
+*.jar binary
+*.keystore binary
+*.ttf binary
+*.apk binary
+
+*.bat text eol=crlf
+gradlew.bat text eol=crlf
+gradlew text eol=lf
+*.sh text eol=lf
+
+catalog/*.json linguist-language=JSON

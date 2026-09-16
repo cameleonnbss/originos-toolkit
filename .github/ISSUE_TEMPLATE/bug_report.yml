@@ -1,0 +1,118 @@
+name: Bug report
+description: Something applied wrong, reverted wrong, or did not do anything.
+title: "[bug] "
+labels: ["bug", "needs triage"]
+body:
+  - type: markdown
+    attributes:
+      value: |
+        Thanks for taking the time. Two kinds of report are especially valuable: a tweak that
+        does not do what its `details` promises, and a **revert that does not restore the
+        previous state**. Both are correctness bugs and get priority.
+
+  - type: input
+    id: device
+    attributes:
+      label: Device model
+      description: Exactly as the Home tab shows it.
+      placeholder: "iQOO 12 / V2312A"
+    validations:
+      required: true
+
+  - type: input
+    id: originos
+    attributes:
+      label: OriginOS version
+      description: The `OriginOS` row on the Home tab, or `getprop ro.vivo.os.version`.
+      placeholder: "OriginOS 5 / PD2300F_EX_A_15.1.9"
+    validations:
+      required: true
+
+  - type: input
+    id: version
+    attributes:
+      label: Toolkit version
+      description: Settings → About, or the release tag you installed.
+      placeholder: "1.0.0"
+    validations:
+      required: true
+
+  - type: dropdown
+    id: area
+    attributes:
+      label: Where does it happen?
+      options:
+        - A tweak from the Tweaks tab
+        - A profile
+        - Debloat
+        - Per-app refresh rate watcher
+        - Frame-rate overlay
+        - Revert / panic reset
+        - CLI
+        - Something else
+    validations:
+      required: true
+
+  - type: input
+    id: tweak
+    attributes:
+      label: Tweak id (if any)
+      placeholder: "force-max-refresh-rate"
+
+  - type: textarea
+    id: expected
+    attributes:
+      label: What did you expect?
+      description: If a tweak's `details` promise something specific, quote it.
+    validations:
+      required: true
+
+  - type: textarea
+    id: happened
+    attributes:
+      label: What happened instead?
+    validations:
+      required: true
+
+  - type: textarea
+    id: output
+    attributes:
+      label: Command output
+      description: |
+        In the app: tap **Commands** on the tweak, then paste the preview, and paste the result
+        dialog output (it lists every command and its return value).
+        In the CLI: the full `originos-toolkit ...` output.
+      render: text
+    validations:
+      required: false
+
+  - type: dropdown
+    id: shizuku
+    attributes:
+      label: Shizuku state
+      options:
+        - Running, and the app is authorised
+        - Running, but the app is not authorised
+        - Not running
+        - Not installed
+    validations:
+      required: true
+
+  - type: textarea
+    id: logcat
+    attributes:
+      label: Logcat (optional but helpful)
+      description: "`adb logcat -d | grep -i originostoolkit`"
+      render: text
+    validations:
+      required: false
+
+  - type: checkboxes
+    id: checks
+    attributes:
+      label: Before submitting
+      options:
+        - label: I checked that this is not an OriginOS limitation explained in the tweak's details.
+          required: false
+        - label: I understand that tweaks change device behaviour and that I am testing on my own hardware.
+          required: true

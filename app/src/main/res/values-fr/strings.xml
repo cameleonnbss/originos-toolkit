@@ -1,0 +1,47 @@
+<resources>
+    <string name="app_name">OriginOS Toolkit</string>
+    <string name="app_tagline">Réglages sans root pour Vivo / iQOO</string>
+
+    <string name="nav_dashboard">Tableau de bord</string>
+    <string name="nav_tweaks">Réglages</string>
+    <string name="nav_refresh">Rafraîchissement</string>
+    <string name="nav_debloat">Débloat</string>
+    <string name="nav_awesome">Découvrir</string>
+    <string name="nav_settings">Paramètres</string>
+
+    <string name="shizuku_title">Shizuku</string>
+    <string name="shizuku_running">Actif — les commandes s\'exécutent en tant que shell.</string>
+    <string name="shizuku_stopped">Inactif. Lancez Shizuku, puis autorisez cette app.</string>
+    <string name="shizuku_granted">Permission accordée</string>
+    <string name="shizuku_denied">Permission refusée</string>
+    <string name="shizuku_request">Autoriser</string>
+    <string name="shizuku_install">Installer Shizuku</string>
+    <string name="shizuku_help">Configuration sans root</string>
+
+    <string name="action_apply">Appliquer</string>
+    <string name="action_revert">Annuler</string>
+    <string name="action_preview">Voir les commandes</string>
+    <string name="action_revert_all">Tout annuler</string>
+    <string name="action_copy">Copier</string>
+    <string name="action_close">Fermer</string>
+    <string name="action_apply_profile">Appliquer le profil</string>
+    <string name="action_enable">Activer</string>
+    <string name="action_disable">Désactiver</string>
+
+    <string name="experimental_warning">Les réglages expérimentaux exécutent de vraies commandes dont le résultat dépend de votre version d\'OriginOS. Lisez les notes avant d\'activer ceci.</string>
+    <string name="high_risk_warning">Réglage à risque élevé. Les commandes exactes sont affichées avant toute exécution.</string>
+
+    <string name="journal_title">Journal d\'annulation</string>
+    <string name="journal_empty">Rien appliqué pour l\'instant. Tout est enregistré ici pour être annulé à l\'identique.</string>
+    <string name="panic_reset">Réinitialisation d\'urgence</string>
+    <string name="panic_reset_summary">Restaure la densité et la taille d\'écran d\'usine, puis annule tous les réglages journalisés.</string>
+
+    <string name="overlay_off">Overlay désactivé</string>
+    <string name="overlay_on">Overlay activé</string>
+    <string name="refresh_watcher_off">Surveillance désactivée</string>
+    <string name="refresh_watcher_on">Surveillance activée</string>
+
+    <string name="channel_overlay_name">Overlay de fréquence d\'images</string>
+    <string name="channel_refresh_name">Rafraîchissement par app</string>
+    <string name="channel_generic_name">Toolkit</string>
+</resources>

@@ -1,0 +1,9 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!--
+  The revert journal is device-specific state: restoring it on another phone
+  would make "revert" write values that never applied there. Keep it local.
+-->
+<full-backup-content>
+    <include domain="sharedpref" path="." />
+    <exclude domain="sharedpref" path="journal.xml" />
+</full-backup-content>

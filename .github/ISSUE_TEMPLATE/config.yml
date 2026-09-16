@@ -1,0 +1,14 @@
+blank_issues_enabled: false
+contact_links:
+  - name: Setup help — installing Shizuku without root
+    url: https://github.com/cameleonnbss/originos-toolkit/blob/main/docs/NO-ROOT-SETUP.md
+    about: Wireless debugging, ADB, keeping Shizuku alive on OriginOS, and troubleshooting.
+  - name: Tweak reference — every command, before you run it
+    url: https://github.com/cameleonnbss/originos-toolkit/blob/main/docs/TWEAKS.md
+    about: What each tweak does, what it needs, and how it is undone.
+  - name: Security issue
+    url: https://github.com/cameleonnbss/originos-toolkit/security/advisories/new
+    about: Please report vulnerabilities privately, not as a public issue.
+  - name: Shizuku itself
+    url: https://github.com/RikkaApps/Shizuku/issues
+    about: Problems starting Shizuku, or with its own permission dialog, belong upstream.

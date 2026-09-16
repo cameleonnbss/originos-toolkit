@@ -1,0 +1,47 @@
+<resources>
+    <string name="app_name">OriginOS Toolkit</string>
+    <string name="app_tagline">No-root tweaks for Vivo / iQOO</string>
+
+    <string name="nav_dashboard">Dashboard</string>
+    <string name="nav_tweaks">Tweaks</string>
+    <string name="nav_refresh">Refresh</string>
+    <string name="nav_debloat">Debloat</string>
+    <string name="nav_awesome">Discover</string>
+    <string name="nav_settings">Settings</string>
+
+    <string name="shizuku_title">Shizuku</string>
+    <string name="shizuku_running">Running — commands will execute as the shell user.</string>
+    <string name="shizuku_stopped">Not running. Start Shizuku, then grant this app access.</string>
+    <string name="shizuku_granted">Permission granted</string>
+    <string name="shizuku_denied">Permission denied</string>
+    <string name="shizuku_request">Grant access</string>
+    <string name="shizuku_install">Install Shizuku</string>
+    <string name="shizuku_help">Set up without root</string>
+
+    <string name="action_apply">Apply</string>
+    <string name="action_revert">Revert</string>
+    <string name="action_preview">Preview commands</string>
+    <string name="action_revert_all">Revert everything</string>
+    <string name="action_copy">Copy</string>
+    <string name="action_close">Close</string>
+    <string name="action_apply_profile">Apply profile</string>
+    <string name="action_enable">Enable</string>
+    <string name="action_disable">Disable</string>
+
+    <string name="experimental_warning">Experimental tweaks run real commands whose result depends on your OriginOS build. Read the notes before enabling this.</string>
+    <string name="high_risk_warning">This is a high-risk tweak. The exact commands are shown before anything runs.</string>
+
+    <string name="journal_title">Revert journal</string>
+    <string name="journal_empty">Nothing applied yet. Everything you apply is recorded here so it can be undone exactly.</string>
+    <string name="panic_reset">Panic reset</string>
+    <string name="panic_reset_summary">Restore factory density and window size, then revert every journaled tweak. Use this if the UI becomes unusable.</string>
+
+    <string name="overlay_off">Overlay off</string>
+    <string name="overlay_on">Overlay on</string>
+    <string name="refresh_watcher_off">Per-app watcher off</string>
+    <string name="refresh_watcher_on">Per-app watcher on</string>
+
+    <string name="channel_overlay_name">Frame-rate overlay</string>
+    <string name="channel_refresh_name">Per-app refresh rate</string>
+    <string name="channel_generic_name">Toolkit</string>
+</resources>

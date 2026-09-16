@@ -1,0 +1,639 @@
+{
+  "catalogVersion": 1,
+  "updatedAt": "2026-09-16",
+  "license": "MIT",
+  "categories": [
+    {
+      "id": "display",
+      "name": "Display & Refresh rate",
+      "icon": "monitor",
+      "blurb": "Refresh rate, animations, density, rotation, dark mode."
+    },
+    {
+      "id": "performance",
+      "name": "Performance & Gaming",
+      "icon": "zap",
+      "blurb": "Rendering, memory caching, transient system tuning."
+    },
+    {
+      "id": "battery",
+      "name": "Battery & Power",
+      "icon": "battery",
+      "blurb": "Scanning, doze, brightness, background radio."
+    },
+    {
+      "id": "privacy",
+      "name": "Privacy & Network",
+      "icon": "shield",
+      "blurb": "Ad tracking, DNS, lock screen, network hardening."
+    },
+    {
+      "id": "debloat",
+      "name": "Debloat (Vivo / Google)",
+      "icon": "trash",
+      "blurb": "Disable user-space packages. Always reversible."
+    },
+    {
+      "id": "input",
+      "name": "Navigation, Audio & Haptics",
+      "icon": "gesture",
+      "blurb": "Gesture navigation, key sounds, vibration."
+    },
+    {
+      "id": "system",
+      "name": "System & Developer",
+      "icon": "terminal",
+      "blurb": "Developer options, wireless ADB, maintenance."
+    },
+    {
+      "id": "experimental",
+      "name": "Experimental (community)",
+      "icon": "flask",
+      "blurb": "Real commands, OEM-dependent results. Read the notes first."
+    }
+  ],
+  "tweaks": [
+    {
+      "id": "force-max-refresh-rate",
+      "name": "Force maximum refresh rate (120 / 144 / 165 Hz)",
+      "category": "display",
+      "risk": "low",
+      "requires": "shizuku",
+      "verified": true,
+      "originOs": ["originos2", "originos3", "originos4", "originos5", "originos6", "funtouch13", "funtouch14", "funtouch15"],
+      "summary": "Pins Android's peak and minimum refresh rate to the panel maximum, so every app — not just the whitelisted ones — runs at 120/144/165 Hz.",
+      "details": "OriginOS ships a per-app high-refresh whitelist. Apps that are not on it are silently clamped to 60/90 Hz even when the panel supports more. Writing `peak_refresh_rate` and `min_refresh_rate` in the `system` namespace overrides the clamp process-wide.\n\nSide effects: 10–20 % extra battery drain, and a few video apps (Netflix, Prime Video) may lose frame-rate matching. Revert restores your previous values exactly, including the case where the key did not exist before.",
+      "actions": [
+        { "op": "settings_put", "ns": "system", "key": "peak_refresh_rate", "value": "144.0" },
+        { "op": "settings_put", "ns": "system", "key": "min_refresh_rate", "value": "144.0" }
+      ],
+      "verify": [
+        { "op": "settings_get", "ns": "system", "key": "peak_refresh_rate" }
+      ]
+    },
+    {
+      "id": "refresh-rate-overlay",
+      "name": "Show live refresh rate overlay",
+      "category": "display",
+      "risk": "low",
+      "requires": "shizuku",
+      "verified": true,
+      "originOs": ["originos3", "originos4", "originos5", "originos6"],
+      "summary": "Enables the developer overlay that displays the current refresh rate in the corner of the screen — the honest way to check whether a tweak actually worked.",
+      "details": "Toggles the same flag the hidden Developer options switch uses. Handy to prove that `force-max-refresh-rate` is really holding 144 Hz inside games.",
+      "actions": [
+        { "op": "settings_put", "ns": "system", "key": "show_refresh_rate", "value": "1" }
+      ]
+    },
+    {
+      "id": "dark-mode-always",
+      "name": "Force dark mode system-wide",
+      "category": "display",
+      "risk": "low",
+      "requires": "shizuku",
+      "verified": true,
+      "originOs": ["originos2", "originos3", "originos4", "originos5", "originos6"],
+      "summary": "Sets UI mode to night regardless of the toggle in Quick Settings (useful to keep dark mode from losing to a schedule).",
+      "details": "Uses `cmd uimode night yes`, the same command the Settings app uses internally. Revert runs `cmd uimode night no`; use the app's Auto option if you want the scheduler back.",
+      "actions": [
+        { "op": "cmd", "args": ["uimode", "night", "yes"] }
+      ],
+      "revert": [
+        { "op": "cmd", "args": ["uimode", "night", "no"] }
+      ]
+    },
+    {
+      "id": "animation-speed-fast",
+      "name": "Snappier UI (0.5× animations)",
+      "category": "display",
+      "risk": "low",
+      "requires": "shizuku",
+      "verified": true,
+      "originOs": ["originos2", "originos3", "originos4", "originos5", "originos6", "funtouch13", "funtouch14", "funtouch15"],
+      "summary": "Halves window, transition and animator durations. The cheapest perceived-performance win on any Android device.",
+      "details": "This does not make the device faster, it makes it *feel* faster. Some OEM animations look slightly cut off at 0.5×; try `animation-speed-off` if you like it extreme.",
+      "actions": [
+        { "op": "settings_put", "ns": "global", "key": "window_animation_scale", "value": "0.5" },
+        { "op": "settings_put", "ns": "global", "key": "transition_animation_scale", "value": "0.5" },
+        { "op": "settings_put", "ns": "global", "key": "animator_duration_scale", "value": "0.5" }
+      ]
+    },
+    {
+      "id": "animation-speed-off",
+      "name": "Kill all animations (0×)",
+      "category": "display",
+      "risk": "medium",
+      "requires": "shizuku",
+      "verified": true,
+      "originOs": ["originos2", "originos3", "originos4", "originos5", "originos6"],
+      "summary": "Removes every system animation. Maximum responsiveness, minimum polish.",
+      "details": "Some third-party apps assume the animator duration is non-zero and can behave oddly (progress dialogs that never dismiss). If a game misbehaves, set 0.5× instead.",
+      "actions": [
+        { "op": "settings_put", "ns": "global", "key": "window_animation_scale", "value": "0.0" },
+        { "op": "settings_put", "ns": "global", "key": "transition_animation_scale", "value": "0.0" },
+        { "op": "settings_put", "ns": "global", "key": "animator_duration_scale", "value": "0.0" }
+      ]
+    },
+    {
+      "id": "lock-rotation-portrait",
+      "name": "Lock rotation to portrait",
+      "category": "display",
+      "risk": "low",
+      "requires": "shizuku",
+      "verified": true,
+      "originOs": ["originos2", "originos3", "originos4", "originos5", "originos6"],
+      "summary": "Disables the accelerometer auto-rotate and pins the display portrait. Great for reading in bed.",
+      "details": "Reversible: revert restores both the rotation lock state and the auto-rotate flag. Video players that force landscape internally are unaffected.",
+      "actions": [
+        { "op": "settings_put", "ns": "system", "key": "accelerometer_rotation", "value": "0" },
+        { "op": "settings_put", "ns": "system", "key": "user_rotation", "value": "0" }
+      ]
+    },
+    {
+      "id": "font-scale-compact",
+      "name": "Compact font scale (0.85×)",
+      "category": "display",
+      "risk": "medium",
+      "requires": "shizuku",
+      "verified": true,
+      "originOs": ["originos2", "originos3", "originos4", "originos5", "originos6"],
+      "summary": "Shrinks text 15 % to fit more rows of content on screen.",
+      "details": "OriginOS's own Settings app uses non-standard text scaling and can clip labels around 0.85×. Revert restores the exact previous scale.",
+      "actions": [
+        { "op": "settings_put", "ns": "system", "key": "font_scale", "value": "0.85" }
+      ]
+    },
+    {
+      "id": "density-compact",
+      "name": "Increase screen real estate (density −10 %)",
+      "category": "display",
+      "risk": "high",
+      "requires": "shizuku",
+      "verified": true,
+      "originOs": ["originos2", "originos3", "originos4", "originos5", "originos6"],
+      "summary": "Lowers display density by 10 % so every app shows more content. Computed from your current density, never hard-coded.",
+      "details": "Uses a *relative* delta: the engine reads `wm density`, applies −10 %, and journals the original value, so it is safe on any panel.\n\nRisk: some apps with hard-coded layouts break at odd densities, and a wrong density used to be able to soft-lock the UI. That is why the revert journal is written **before** the change, and `Settings → Panic reset` always restores factory density with `wm density reset`.",
+      "actions": [
+        { "op": "wm_density_delta", "percent": -10 }
+      ]
+    },
+    {
+      "id": "screen-timeout-30s",
+      "name": "Screen timeout 30 s",
+      "category": "battery",
+      "risk": "low",
+      "requires": "shizuku",
+      "verified": true,
+      "originOs": ["originos2", "originos3", "originos4", "originos5", "originos6"],
+      "summary": "Shortens the display timeout to 30 seconds.",
+      "details": "Milliseconds. Harmless, instantly reversible, and a real standby-battery saver if you tend to leave the phone face up.",
+      "actions": [
+        { "op": "settings_put", "ns": "system", "key": "screen_off_timeout", "value": "30000" }
+      ]
+    },
+    {
+      "id": "force-gpu-rendering",
+      "name": "Force GPU rendering (2D)",
+      "category": "performance",
+      "risk": "medium",
+      "requires": "shizuku",
+      "verified": true,
+      "originOs": ["originos2", "originos3", "originos4", "originos5", "originos6"],
+      "summary": "Forces 2D drawing through the GPU instead of the CPU rasteriser.",
+      "details": "A classic Developer-options flag. Usually smoother on modern SoCs, occasionally worse in legacy apps, and it can add a little power draw. Test with your heaviest apps before keeping it.",
+      "actions": [
+        { "op": "settings_put", "ns": "global", "key": "force_gpu_rendering", "value": "1" }
+      ]
+    },
+    {
+      "id": "disable-window-blurs",
+      "name": "Disable window blurs (GPU win)",
+      "category": "performance",
+      "risk": "low",
+      "requires": "shizuku",
+      "verified": true,
+      "originOs": ["originos3", "originos4", "originos5", "originos6"],
+      "summary": "Turns off the system-wide background blur effect. Free frames on OriginOS, which uses heavy blur in the notification shade and Control Center.",
+      "details": "Set to `1` to disable. OriginOS's Control Center will look flat instead of frosted; that is the whole point. No effect on Android versions before blurs existed.",
+      "actions": [
+        { "op": "settings_put", "ns": "global", "key": "disable_window_blurs", "value": "1" }
+      ]
+    },
+    {
+      "id": "max-cached-processes",
+      "name": "Keep more apps warm (cached processes ×2)",
+      "category": "performance",
+      "risk": "medium",
+      "requires": "shizuku",
+      "verified": true,
+      "originOs": ["originos3", "originos4", "originos5", "originos6"],
+      "summary": "Raises the activity-manager cached-process allowance so apps relaunch instantly instead of cold-starting.",
+      "details": "Writes the `activity_manager` device_config key. OriginOS's aggressive memory killer normally wins anyway on 8 GB devices; on 12 GB+ this measurably reduces relaunch cost.\n\nCosts RAM headroom — if you see more background kills than before, revert. Needs a reboot to take full effect.",
+      "actions": [
+        { "op": "device_config_put", "ns": "activity_manager", "key": "max_cached_processes", "value": "64" }
+      ]
+    },
+    {
+      "id": "disable-wifi-scanning",
+      "name": "Stop always-on Wi-Fi scanning",
+      "category": "battery",
+      "risk": "low",
+      "requires": "shizuku",
+      "verified": true,
+      "originOs": ["originos2", "originos3", "originos4", "originos5", "originos6", "funtouch13", "funtouch14", "funtouch15"],
+      "summary": "Stops Wi-Fi from being scanned for location even when Wi-Fi is off. One of the biggest idle-battery offenders on OriginOS.",
+      "details": "Disables the `wifi_scan_always_enabled` global. Location accuracy inside buildings may drop slightly, and Google's high-accuracy mode loses a helper. Fully reversible.",
+      "actions": [
+        { "op": "settings_put", "ns": "global", "key": "wifi_scan_always_enabled", "value": "0" }
+      ]
+    },
+    {
+      "id": "disable-bluetooth-scanning",
+      "name": "Stop always-on Bluetooth scanning",
+      "category": "battery",
+      "risk": "low",
+      "requires": "shizuku",
+      "verified": true,
+      "originOs": ["originos2", "originos3", "originos4", "originos5", "originos6", "funtouch13", "funtouch14", "funtouch15"],
+      "summary": "Stops background BLE scans used for location and Fast Pair.",
+      "details": "Same family as the Wi-Fi scanning toggle. Turn it back on if you rely on Fast Pair for accessories.",
+      "actions": [
+        { "op": "settings_put", "ns": "global", "key": "ble_scan_always_enabled", "value": "0" }
+      ]
+    },
+    {
+      "id": "mobile-data-always-on-off",
+      "name": "Disable \"mobile data always active\"",
+      "category": "battery",
+      "risk": "low",
+      "requires": "shizuku",
+      "verified": true,
+      "originOs": ["originos2", "originos3", "originos4", "originos5", "originos6"],
+      "summary": "Keeps the cellular radio from staying attached while you are on Wi-Fi.",
+      "details": "Disabling it saves idle power at the cost of a ~1 s delay when Wi-Fi drops and cellular takes over. Reversible.",
+      "actions": [
+        { "op": "settings_put", "ns": "global", "key": "mobile_data_always_on", "value": "0" }
+      ]
+    },
+    {
+      "id": "app-standby-on",
+      "name": "Aggressive App Standby (doze for unused apps)",
+      "category": "battery",
+      "risk": "low",
+      "requires": "shizuku",
+      "verified": true,
+      "originOs": ["originos2", "originos3", "originos4", "originos5", "originos6"],
+      "summary": "Enables the adaptive App Standby buckets the power-management service uses to throttle apps you rarely open.",
+      "details": "This is the switch OriginOS hides behind battery settings. Notification delays for rarely used apps are expected and correct.",
+      "actions": [
+        { "op": "settings_put", "ns": "global", "key": "app_standby_enabled", "value": "1" }
+      ]
+    },
+    {
+      "id": "battery-saver-threshold-30",
+      "name": "Start battery saver at 30 %",
+      "category": "battery",
+      "risk": "low",
+      "requires": "shizuku",
+      "verified": true,
+      "originOs": ["originos2", "originos3", "originos4", "originos5", "originos6"],
+      "summary": "Raises the automatic battery-saver trigger from the default 15 % to 30 %.",
+      "details": "Pure settings write. Revert puts back whatever threshold you had.",
+      "actions": [
+        { "op": "settings_put", "ns": "global", "key": "low_power_trigger_level", "value": "30" }
+      ]
+    },
+    {
+      "id": "disable-adaptive-brightness",
+      "name": "Disable adaptive brightness",
+      "category": "battery",
+      "risk": "low",
+      "requires": "shizuku",
+      "verified": true,
+      "originOs": ["originos2", "originos3", "originos4", "originos5", "originos6"],
+      "summary": "Stops the ambient-light-driven brightness hunting that keeps waking the sensor hub.",
+      "details": "You will have to adjust brightness yourself. Some users find OriginOS's auto-brightness too dim, so this doubles as a usability tweak.",
+      "actions": [
+        { "op": "settings_put", "ns": "system", "key": "screen_brightness_mode", "value": "0" }
+      ]
+    },
+    {
+      "id": "disable-ad-tracking",
+      "name": "Opt out of ad tracking",
+      "category": "privacy",
+      "risk": "low",
+      "requires": "shizuku",
+      "verified": true,
+      "originOs": ["originos2", "originos3", "originos4", "originos5", "originos6"],
+      "summary": "Sets the platform limit-ad-tracking flag, which every well-behaved ad SDK is supposed to honour.",
+      "details": "Writes `limit_ad_tracking` in the secure namespace. No app is broken by it; some just show less relevant ads. Also resets nothing — the advertising ID itself is untouched, use *Reset advertising ID* in Settings for that.",
+      "actions": [
+        { "op": "settings_put", "ns": "secure", "key": "limit_ad_tracking", "value": "1" }
+      ]
+    },
+    {
+      "id": "hide-lockscreen-content",
+      "name": "Hide notification content on lock screen",
+      "category": "privacy",
+      "risk": "low",
+      "requires": "shizuku",
+      "verified": true,
+      "originOs": ["originos2", "originos3", "originos4", "originos5", "originos6"],
+      "summary": "Makes private notifications show as \"1 new message\" while the phone is locked.",
+      "details": "Useful when your phone is on a desk all day. The setting lives in the secure namespace and is reverted exactly.",
+      "actions": [
+        { "op": "settings_put", "ns": "secure", "key": "lock_screen_allow_private_notifications", "value": "0" }
+      ]
+    },
+    {
+      "id": "private-dns-adguard",
+      "name": "Private DNS with ad-blocking (DoT)",
+      "category": "privacy",
+      "risk": "medium",
+      "requires": "shizuku",
+      "verified": true,
+      "originOs": ["originos2", "originos3", "originos4", "originos5", "originos6", "funtouch13", "funtouch14", "funtouch15"],
+      "summary": "Routes all DNS through AdGuard's encrypted DNS-over-TLS resolver, killing most in-app ads network-wide — no VPN slot used, no root.",
+      "details": "Writes the global `private_dns_mode=hostname` + `private_dns_specifier`. Because it runs in the network stack, it blocks ads inside every app including games, with zero battery cost from a local VPN.\n\nCaveats: some captive portals and a few Chinese CDNs misbehave. If your network breaks, revert or switch the specifier to `one.one.one.one`. Requires a Wi-Fi/cellular reconnect to take effect.",
+      "actions": [
+        { "op": "settings_put", "ns": "global", "key": "private_dns_mode", "value": "hostname" },
+        { "op": "settings_put", "ns": "global", "key": "private_dns_specifier", "value": "dns.adguard-dns.com" }
+      ]
+    },
+    {
+      "id": "debloat-vivo-store-browser",
+      "name": "Debloat: Vivo Store + Browser",
+      "category": "debloat",
+      "risk": "medium",
+      "requires": "shizuku",
+      "verified": true,
+      "originOs": ["originos2", "originos3", "originos4", "originos5", "originos6", "funtouch13", "funtouch14", "funtouch15"],
+      "summary": "Disables the Vivo App Store and the Vivo browser for the current user. Both are push-notification and background-network offenders.",
+      "details": "Uses `pm disable-user --user 0`, which is fully reversible without reflashing and keeps the APKs on the read-only partition untouched.\n\nYou lose: App Store updates for Vivo system apps, and the default browser (install Chrome/Firefox first). OTA system updates use a separate updater package and keep working.",
+      "actions": [
+        { "op": "pm_disable", "pkg": "com.vivo.appstore" },
+        { "op": "pm_disable", "pkg": "com.vivo.browser" }
+      ]
+    },
+    {
+      "id": "debloat-vivo-analytics",
+      "name": "Debloat: Vivo analytics & telemetry",
+      "category": "debloat",
+      "risk": "medium",
+      "requires": "shizuku",
+      "verified": true,
+      "originOs": ["originos2", "originos3", "originos4", "originos5", "originos6"],
+      "summary": "Disables Vivo's A/B analytics collector. Commonly reported to cut idle wakeups and background traffic.",
+      "details": "Targets `com.vivo.abe`. Nothing user-facing depends on it; on a minority of builds the *iManager* battery screen loses some statistics. Revert any time.",
+      "actions": [
+        { "op": "pm_disable", "pkg": "com.vivo.abe" }
+      ]
+    },
+    {
+      "id": "debloat-vivo-gamestore",
+      "name": "Debloat: Vivo Game Center & game store",
+      "category": "debloat",
+      "risk": "medium",
+      "requires": "shizuku",
+      "verified": true,
+      "originOs": ["originos2", "originos3", "originos4", "originos5", "originos6"],
+      "summary": "Disables the Vivo game store and the Game Cube overlay.",
+      "details": "The Game Cube overlay (per-game sidebar, anti-cheat prompts) disappears with it. If you use game-specific refresh-rate profiles, keep Game Cube enabled — it is one of the few places OriginOS exposes them.",
+      "actions": [
+        { "op": "pm_disable", "pkg": "com.vivo.gamecube" },
+        { "op": "pm_disable", "pkg": "com.vivo.gamestore" }
+      ]
+    },
+    {
+      "id": "debloat-google-extras",
+      "name": "Debloat: Google extras",
+      "category": "debloat",
+      "risk": "low",
+      "requires": "shizuku",
+      "verified": true,
+      "originOs": ["originos2", "originos3", "originos4", "originos5", "originos6"],
+      "summary": "Disables the Google apps almost nobody uses on a gaming phone: Duo/Meet preload, Google TV, Google One-time-init.",
+      "details": "Only present if your device ships GMS. Missing packages are skipped silently rather than failing the whole tweak.",
+      "actions": [
+        { "op": "pm_disable", "pkg": "com.google.android.apps.tachyon" },
+        { "op": "pm_disable", "pkg": "com.google.android.videos" },
+        { "op": "pm_disable", "pkg": "com.google.android.apps.docs" },
+        { "op": "pm_disable", "pkg": "com.google.android.apps.magazines" }
+      ]
+    },
+    {
+      "id": "gesture-navigation",
+      "name": "Gesture navigation (no buttons)",
+      "category": "input",
+      "risk": "medium",
+      "requires": "shizuku",
+      "verified": true,
+      "originOs": ["originos2", "originos3", "originos4", "originos5", "originos6", "funtouch13", "funtouch14", "funtouch15"],
+      "summary": "Switches the navigation bar to gesture mode via the system overlay, restoring the 3-button bar on revert.",
+      "details": "Uses the RRO overlays `navbar.gestural` / `navbar.threebutton`, which is exactly what the Settings toggle does. The explicit revert re-enables the three-button overlay, so you never end up with an invisible navbar.",
+      "actions": [
+        { "op": "overlay_enable", "pkg": "com.android.internal.systemui.navbar.gestural" },
+        { "op": "overlay_disable", "pkg": "com.android.internal.systemui.navbar.threebutton" }
+      ],
+      "revert": [
+        { "op": "overlay_enable", "pkg": "com.android.internal.systemui.navbar.threebutton" },
+        { "op": "overlay_disable", "pkg": "com.android.internal.systemui.navbar.gestural" }
+      ]
+    },
+    {
+      "id": "wide-back-gesture",
+      "name": "Extra-wide back gesture area",
+      "category": "input",
+      "risk": "low",
+      "requires": "shizuku",
+      "verified": true,
+      "originOs": ["originos3", "originos4", "originos5", "originos6"],
+      "summary": "Widens the left/right edge back-gesture strip so you stop missing swipes.",
+      "details": "Swaps the `gestural` overlay for `gestural_extra_wide_back`. Requires gesture navigation to already be active. Revert restores the standard strip.",
+      "actions": [
+        { "op": "overlay_enable", "pkg": "com.android.internal.systemui.navbar.gestural_extra_wide_back" },
+        { "op": "overlay_disable", "pkg": "com.android.internal.systemui.navbar.gestural" }
+      ],
+      "revert": [
+        { "op": "overlay_enable", "pkg": "com.android.internal.systemui.navbar.gestural" },
+        { "op": "overlay_disable", "pkg": "com.android.internal.systemui.navbar.gestural_extra_wide_back" }
+      ]
+    },
+    {
+      "id": "confirm-immersive-mode",
+      "name": "Skip immersive-mode confirmation dialogs",
+      "category": "input",
+      "risk": "low",
+      "requires": "shizuku",
+      "verified": true,
+      "originOs": ["originos2", "originos3", "originos4", "originos5", "originos6"],
+      "summary": "Pre-confirms full-screen immersive mode so games do not pop \"swipe up to exit full screen\" the first time.",
+      "details": "Writes `immersive_mode_confirmations=confirmed` in the secure namespace — the documented way for kiosk and gaming setups to suppress the prompt.",
+      "actions": [
+        { "op": "settings_put", "ns": "secure", "key": "immersive_mode_confirmations", "value": "confirmed" }
+      ]
+    },
+    {
+      "id": "disable-touch-sounds",
+      "name": "Disable touch and lock sounds",
+      "category": "input",
+      "risk": "low",
+      "requires": "shizuku",
+      "verified": true,
+      "originOs": ["originos2", "originos3", "originos4", "originos5", "originos6"],
+      "summary": "Kills key-click, touch and screen-lock audio feedback.",
+      "details": "System-namespace flag. Safe, and one less audio stream the SoC has to wake for.",
+      "actions": [
+        { "op": "settings_put", "ns": "system", "key": "sound_effects_enabled", "value": "0" }
+      ]
+    },
+    {
+      "id": "disable-haptics",
+      "name": "Disable system haptic feedback",
+      "category": "input",
+      "risk": "low",
+      "requires": "shizuku",
+      "verified": true,
+      "originOs": ["originos2", "originos3", "originos4", "originos5", "originos6"],
+      "summary": "Turns off UI vibration feedback. On iQOO's oversized linear motors this is a noticeable battery and comfort change.",
+      "details": "Only affects system UI feedback and Android's own haptics API; in-game vibration that games trigger directly still works.",
+      "actions": [
+        { "op": "settings_put", "ns": "system", "key": "haptic_feedback_enabled", "value": "0" }
+      ]
+    },
+    {
+      "id": "enable-developer-options",
+      "name": "Enable Developer options",
+      "category": "system",
+      "risk": "low",
+      "requires": "shizuku",
+      "verified": true,
+      "originOs": ["originos2", "originos3", "originos4", "originos5", "originos6", "funtouch13", "funtouch14", "funtouch15"],
+      "summary": "Unlocks Developer options without the seven-taps-on-build-number ritual.",
+      "details": "Sets `development_settings_enabled=1`. Revert removes the menu again. Nothing else is enabled by this — USB debugging stays off until you turn it on.",
+      "actions": [
+        { "op": "settings_put", "ns": "global", "key": "development_settings_enabled", "value": "1" }
+      ]
+    },
+    {
+      "id": "enable-wireless-debugging",
+      "name": "Enable wireless debugging (self re-arm)",
+      "category": "system",
+      "risk": "medium",
+      "requires": "shizuku",
+      "verified": true,
+      "originOs": ["originos2", "originos3", "originos4", "originos5", "originos6", "funtouch13", "funtouch14", "funtouch15"],
+      "summary": "Flips the wireless-debugging flag so a restarting Shizuku or a fresh ADB session can reconnect without a computer.",
+      "details": "Writes `adb_wifi_enabled=1`. This is a convenience flag: Android still asks for a pairing code the first time, and the port changes on every reboot. Read `docs/NO-ROOT-SETUP.md` for the full wireless-debugging recipe.",
+      "actions": [
+        { "op": "settings_put", "ns": "global", "key": "adb_wifi_enabled", "value": "1" }
+      ]
+    },
+    {
+      "id": "stay-awake-charging",
+      "name": "Keep screen on while charging",
+      "category": "system",
+      "risk": "low",
+      "requires": "shizuku",
+      "verified": true,
+      "originOs": ["originos2", "originos3", "originos4", "originos5", "originos6"],
+      "summary": "Prevents the screen from sleeping while plugged in — handy for dashboards and long downloads.",
+      "details": "`stay_on_while_plugged_in = 7` means AC + USB + wireless. OLED burn-in is a real risk if you leave it on for hours; revert when done.",
+      "actions": [
+        { "op": "settings_put", "ns": "global", "key": "stay_on_while_plugged_in", "value": "7" }
+      ]
+    },
+    {
+      "id": "disable-nfc",
+      "name": "Disable NFC radio",
+      "category": "battery",
+      "risk": "low",
+      "requires": "shizuku",
+      "verified": true,
+      "originOs": ["originos2", "originos3", "originos4", "originos5", "originos6"],
+      "summary": "Powers down the NFC controller if you never use contactless payment.",
+      "details": "Runs `svc nfc disable`; revert re-enables it. Contactless payment will stop working while disabled.",
+      "actions": [
+        { "op": "svc", "service": "nfc", "enable": false }
+      ]
+    },
+    {
+      "id": "trim-caches",
+      "name": "Trim caches now (free storage)",
+      "category": "system",
+      "risk": "low",
+      "requires": "shizuku",
+      "verified": true,
+      "reversible": false,
+      "originOs": ["originos2", "originos3", "originos4", "originos5", "originos6"],
+      "summary": "Asks PackageManager to drop app caches. Frees space instantly; apps simply rebuild their caches.",
+      "details": "One-shot maintenance action, not a state change, so it has no revert. `pm trim-caches` takes a free-space target; we pass 999G to mean \"trim everything you safely can\".",
+      "actions": [
+        { "op": "shell", "command": "pm trim-caches 999G" }
+      ]
+    },
+    {
+      "id": "kill-background-apps",
+      "name": "Kill all background apps",
+      "category": "experimental",
+      "risk": "medium",
+      "requires": "shizuku",
+      "verified": true,
+      "reversible": false,
+      "originOs": ["originos2", "originos3", "originos4", "originos5", "originos6"],
+      "summary": "Frees RAM right before you launch a heavy game.",
+      "details": "Runs `am kill-all` — it only kills processes Android considers killable, so no foreground app is harmed. One-shot, no revert needed. OriginOS's own game launcher does the same thing.",
+      "actions": [
+        { "op": "shell", "command": "am kill-all" }
+      ]
+    },
+    {
+      "id": "fixed-performance-mode",
+      "name": "Fixed performance mode (experimental)",
+      "category": "experimental",
+      "risk": "high",
+      "requires": "shizuku",
+      "verified": false,
+      "reversible": false,
+      "originOs": ["originos4", "originos5", "originos6"],
+      "summary": "Pins the SoC to its maximum frequency instead of scaling. Benchmarks scream; the phone gets hot and the battery melts.",
+      "details": "Runs `cmd power set-fixed-performance-mode-enabled true`. **Not verified on every OriginOS build** — it is a no-op on most OEM kernels and the command may return \"Unknown command\". True reverting requires `cmd power set-fixed-performance-mode-enabled false`; a reboot always clears it.\n\nDo not leave it on for normal use. Thermal throttling still applies, so a long gaming session may end up *slower* than adaptive scaling.",
+      "actions": [
+        { "op": "shell", "command": "cmd power set-fixed-performance-mode-enabled true" }
+      ],
+      "revert": [
+        { "op": "shell", "command": "cmd power set-fixed-performance-mode-enabled false" }
+      ]
+    },
+    {
+      "id": "doze-force-idle",
+      "name": "Force Doze now (experimental)",
+      "category": "experimental",
+      "risk": "medium",
+      "requires": "shizuku",
+      "verified": false,
+      "reversible": false,
+      "originOs": ["originos3", "originos4", "originos5", "originos6"],
+      "summary": "Puts the device into deep idle immediately instead of waiting for the motion sensors to agree.",
+      "details": "Runs `dumpsys deviceidle force-idle`. All background network activity stops within seconds, including notifications, until the screen is touched. Great for measuring true idle drain overnight. Not a persistent change.",
+      "actions": [
+        { "op": "shell", "command": "dumpsys deviceidle force-idle" }
+      ]
+    },
+    {
+      "id": "record-fps-sample",
+      "name": "Sample the real frame rate (experimental)",
+      "category": "experimental",
+      "risk": "low",
+      "requires": "shizuku",
+      "verified": false,
+      "reversible": false,
+      "originOs": ["originos2", "originos3", "originos4", "originos5", "originos6"],
+      "summary": "Dumps the SurfaceFlinger frame timeline so you can verify whether a game is really running at 144 Hz.",
+      "details": "Runs `dumpsys SurfaceFlinger --latency` — the raw latency buffer for the system compositor layer. Output format differs between OriginOS builds and some builds restrict it without root, which is why this is flagged experimental. The app's own FPS overlay uses a Choreographer-based fallback when this returns nothing.",
+      "actions": [
+        { "op": "shell", "command": "dumpsys SurfaceFlinger --latency" }
+      ]
+    }
+  ]
+}

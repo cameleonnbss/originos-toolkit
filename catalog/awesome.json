@@ -1,0 +1,321 @@
+{
+  "awesomeVersion": 1,
+  "updatedAt": "2026-09-16",
+  "note": "Community-curated, no-root-first. Every entry lists an explicit access requirement. Descriptions are paraphrased; links point at the upstream project.",
+  "sections": [
+    {
+      "id": "foundation",
+      "name": "Start here — the no-root foundation",
+      "blurb": "Without one of these two, nothing else in the list can touch system settings.",
+      "entries": [
+        {
+          "name": "Shizuku",
+          "repo": "RikkaApps/Shizuku",
+          "url": "https://github.com/RikkaApps/Shizuku",
+          "access": "no-root",
+          "description": "The keystone of the whole no-root ecosystem: starts a privileged shell over wireless debugging or ADB, then lends that access to apps you approve. Every Shizuku-based tool below depends on it.",
+          "tags": ["shizuku", "foundation", "must-have"]
+        },
+        {
+          "name": "Android Platform Tools (adb)",
+          "repo": "google/adb",
+          "url": "https://developer.android.com/tools/releases/platform-tools",
+          "access": "no-root",
+          "description": "Official Google ADB binaries. Needed exactly once to bootstrap Shizuku or to run this toolkit's generated command sets from a computer.",
+          "tags": ["adb", "foundation", "official"]
+        },
+        {
+          "name": "LADB",
+          "repo": "tytydraco/LADB",
+          "url": "https://github.com/tytydraco/LADB",
+          "access": "no-root",
+          "description": "A local ADB shell that talks to itself over wireless debugging. Handy escape hatch when a Shizuku session dies and you have no computer nearby.",
+          "tags": ["adb", "shell", "no-pc"]
+        },
+        {
+          "name": "Termux",
+          "repo": "termux/termux-app",
+          "url": "https://github.com/termux/termux-app",
+          "access": "no-root",
+          "description": "Full Linux userland on the phone. Pair it with the ADB connection trick and you can script your own tweaks from the device itself.",
+          "tags": ["shell", "automation", "linux"]
+        }
+      ]
+    },
+    {
+      "id": "fps-gaming",
+      "name": "FPS, refresh rate & gaming",
+      "blurb": "The category this toolkit was born in. OriginOS's high-refresh whitelist is the thing everyone fights.",
+      "entries": [
+        {
+          "name": "VivoIQOO144FPSUnlocker",
+          "repo": "ewfawfasdf/VivoIQOO144FPSUnlocker",
+          "url": "https://github.com/ewfawfasdf/VivoIQOO144FPSUnlocker",
+          "access": "no-root",
+          "description": "Purpose-built for Vivo/iQOO on OriginOS: forces 144 Hz in apps that are not on the high-refresh whitelist, with a built-in FPS counter. It has an APK mirror listing, which is why it went viral on TikTok in the iQOO community.",
+          "tags": ["originos", "vivo", "iqoo", "144hz", "fps"]
+        },
+        {
+          "name": "otweak",
+          "repo": "Astreas-Core/otweak",
+          "url": "https://github.com/Astreas-Core/otweak",
+          "access": "no-root",
+          "description": "Indie Kotlin/ADB project for Android customisation with a system-level tweaking bent. Small, active, worth reading for how it layers ADB commands into a UI.",
+          "tags": ["originos", "kotlin", "adb", "tweaks"]
+        },
+        {
+          "name": "FrameX",
+          "repo": "MaheshSharan/FrameX-Android",
+          "url": "https://github.com/MaheshSharan/FrameX-Android",
+          "access": "no-root",
+          "description": "Overlay with a live FPS meter and thermal diagnostics, driving optimisation through Shizuku. Explicitly targets Vivo OriginOS/FuntouchOS builds.",
+          "tags": ["fps-meter", "overlay", "thermal", "vivo"]
+        },
+        {
+          "name": "Game Booster / FPS Unlocker",
+          "repo": "catsmoker/com.catsmoker.app",
+          "url": "https://github.com/catsmoker/com.catsmoker.app",
+          "access": "no-root",
+          "description": "Game FPS unlocking and device profiling: resolution scaling, an FPS/CPU/RAM/temperature overlay, crosshair overlay and a DNS optimiser. Shizuku for no-root use, LSPosed if you are rooted.",
+          "tags": ["fps", "overlay", "resolution", "spoofing"]
+        },
+        {
+          "name": "Android Game Booster",
+          "repo": "Mathias-Boulay/Android-Game-Booster",
+          "url": "https://github.com/Mathias-Boulay/Android-Game-Booster",
+          "access": "adb",
+          "description": "Universal resolution scaler with a one-time ADB setup for non-rooted devices. Claims large frame-rate gains on GPU-bound titles.",
+          "tags": ["resolution", "gaming", "adb"]
+        },
+        {
+          "name": "SystemUI Tuner",
+          "repo": "zacharee/SystemUITuner",
+          "url": "https://github.com/zacharee/SystemUITuner",
+          "access": "no-root",
+          "description": "Long-standing tool for hiding status-bar icons, tuning immersive mode and unlocking flags the OEM hides. Overlaps with this toolkit's display section and does it with more polish.",
+          "tags": ["ui", "status-bar", "immersive"]
+        }
+      ]
+    },
+    {
+      "id": "optimization",
+      "name": "Optimisation & tuning",
+      "blurb": "Profiles, schedulers and kernel-ish tuning with varying degrees of honesty about what a no-root device can do.",
+      "entries": [
+        {
+          "name": "NRAO — Non-Root Android Optimizer",
+          "repo": "iamlooper/NRAO",
+          "url": "https://github.com/iamlooper/NRAO",
+          "access": "no-root",
+          "description": "Optimiser that works purely with shell-accessible knobs, no root required. Exactly what the name says.",
+          "tags": ["optimizer", "no-root"]
+        },
+        {
+          "name": "ADB Android Optimizer",
+          "repo": "SchneeSchmitt/ADB-Android-Optimizer",
+          "url": "https://github.com/SchneeSchmitt/ADB-Android-Optimizer",
+          "access": "adb",
+          "description": "Ships power-saving, balanced and max-hardware profiles as ADB command sets, with Shizuku/Shizushell support so you only need a PC for the first setup.",
+          "tags": ["profiles", "adb", "shizuku"]
+        },
+        {
+          "name": "Android battery optimization",
+          "repo": "Aatricks/Android-battery-optimization",
+          "url": "https://github.com/Aatricks/Android-battery-optimization",
+          "access": "adb",
+          "description": "Focused ADB recipes that maximise battery life and screen-on time on a stock, non-rooted device without deep system modification.",
+          "tags": ["battery", "sot", "adb"]
+        },
+        {
+          "name": "AndroidTweaker",
+          "repo": "c0d3h01/AndroidTweaker",
+          "url": "https://github.com/c0d3h01/AndroidTweaker",
+          "access": "root",
+          "description": "Universal Magisk module that balances kernel and RAM behaviour with configurable profiles and no terminal work. Listed for reference — it is the rooted counterpart to what this toolkit does.",
+          "tags": ["magisk", "kernel", "root-only"]
+        },
+        {
+          "name": "CoreTaskOptimizer",
+          "repo": "c0d3h01/CoreTaskOptimizer",
+          "url": "https://github.com/c0d3h01/CoreTaskOptimizer",
+          "access": "root",
+          "description": "CPU affinity, scheduler priority and I/O policy management that detects performance versus efficiency cores at runtime. Root-only, but the detection logic is worth studying.",
+          "tags": ["magisk", "scheduler", "root-only"]
+        },
+        {
+          "name": "KTweak",
+          "repo": "tytydraco/KTweak",
+          "url": "https://github.com/tytydraco/KTweak",
+          "access": "root",
+          "description": "The most-referenced kernel tuning script in the Android community. Included as the canonical reference for what root buys you — and what this toolkit deliberately cannot do.",
+          "tags": ["kernel", "script", "root-only"]
+        }
+      ]
+    },
+    {
+      "id": "debloat",
+      "name": "Debloat & app management",
+      "blurb": "Disable what you do not want without touching a system partition.",
+      "entries": [
+        {
+          "name": "Universal Android Debloater",
+          "repo": "0x192/universal-android-debloater",
+          "url": "https://github.com/0x192/universal-android-debloater",
+          "access": "adb",
+          "description": "Cross-platform Rust GUI that debloats over ADB. Improves privacy, security and battery, and is designed so that you cannot brick the device.",
+          "tags": ["debloat", "rust", "gui", "adb"]
+        },
+        {
+          "name": "Universal Android Debloater NG",
+          "repo": "0x192/universal-android-debloater-next-generation",
+          "url": "https://github.com/0x192/universal-android-debloater-next-generation",
+          "access": "adb",
+          "description": "The maintained next-generation rewrite of the debloater. Better multi-user support and a cleaner package database.",
+          "tags": ["debloat", "adb", "multi-user"]
+        },
+        {
+          "name": "App Manager",
+          "repo": "MuntashirAkon/AppManager",
+          "url": "https://github.com/MuntashirAkon/AppManager",
+          "access": "no-root",
+          "description": "The Swiss-army knife for package introspection: permissions, trackers, activities, app ops, and ADB-mode freeze/uninstall. Does more than this toolkit ever will, with a steeper learning curve.",
+          "tags": ["app-ops", "freeze", "trackers", "adb-mode"]
+        },
+        {
+          "name": "Hail",
+          "repo": "aistra0528/Hail",
+          "url": "https://github.com/aistra0528/Hail",
+          "access": "no-root",
+          "description": "Freeze, unfreeze and hibernate apps through Shizuku or root. The cleanest way to make bloatware inert without uninstalling anything.",
+          "tags": ["freeze", "shizuku", "hibernate"]
+        },
+        {
+          "name": "Canta",
+          "repo": "samolego/Canta",
+          "url": "https://github.com/samolego/Canta",
+          "access": "no-root",
+          "description": "Single-purpose Shizuku debloater with a curated list of packages that are safe to remove per vendor — including Vivo entries.",
+          "tags": ["debloat", "shizuku", "vivo"]
+        },
+        {
+          "name": "Obtainium",
+          "repo": "ImranR98/Obtainium",
+          "url": "https://github.com/ImranR98/Obtainium",
+          "access": "no-root",
+          "description": "Installs and updates apps straight from GitHub, F-Droid and other sources. The practical way to keep all the sideloaded tools in this list current.",
+          "tags": ["updates", "f-droid", "github-releases"]
+        },
+        {
+          "name": "SAI — Split APKs Installer",
+          "repo": "Aefyr/SAI",
+          "url": "https://github.com/Aefyr/SAI",
+          "access": "no-root",
+          "description": "Installs split APK bundles (XAPK/APKS) without root or a PC. Most modern phone APKs you find online are split, and the system installer will refuse them.",
+          "tags": ["installer", "xapk", "sideload"]
+        }
+      ]
+    },
+    {
+      "id": "privacy",
+      "name": "Privacy, firewall & tracking",
+      "blurb": "Who is talking to your phone, and how to stop the boring half of it.",
+      "entries": [
+        {
+          "name": "NetGuard",
+          "repo": "M66B/NetGuard",
+          "url": "https://github.com/M66B/NetGuard",
+          "access": "no-root",
+          "description": "No-root firewall that blocks network access per app through the local VPN slot. The single most effective privacy tool you can install without root.",
+          "tags": ["firewall", "vpn-slot", "no-root"]
+        },
+        {
+          "name": "TrackerControl",
+          "repo": "TrackerControl/tracker-control-android",
+          "url": "https://github.com/TrackerControl/tracker-control-android",
+          "access": "no-root",
+          "description": "Shows which trackers each app contacts and lets you block them individually. Excellent companion to a debloat session for understanding what you just disabled.",
+          "tags": ["trackers", "firewall", "transparency"]
+        },
+        {
+          "name": "εxodus",
+          "repo": "Exodus-Privacy/exodus-android-app",
+          "url": "https://github.com/Exodus-Privacy/exodus-android-app",
+          "access": "no-root",
+          "description": "Reports the trackers embedded in any installed app, using the Exodus Privacy static-analysis database.",
+          "tags": ["trackers", "audit"]
+        },
+        {
+          "name": "Intra",
+          "repo": "Jigsaw-Code/Intra",
+          "url": "https://github.com/Jigsaw-Code/Intra",
+          "access": "no-root",
+          "description": "Encrypted-DNS client from Jigsaw. A UI-first alternative to this toolkit's Private DNS tweak if you prefer a per-app, switchable setup.",
+          "tags": ["dns", "dot", "encryption"]
+        },
+        {
+          "name": "awesome-shizuku",
+          "repo": "timschneeb/awesome-shizuku",
+          "url": "https://github.com/timschneeb/awesome-shizuku",
+          "access": "no-root",
+          "description": "The canonical curated index of Shizuku-powered apps: debloat, audio, display, automation and more. If an app in our list has a better alternative, it is probably on that page.",
+          "tags": ["awesome-list", "shizuku", "index"]
+        },
+        {
+          "name": "best Shizuku apps for no-root",
+          "repo": "krishna3163/best_shizuku_apps_for_android_no_root",
+          "url": "https://github.com/krishna3163/best_shizuku_apps_for_android_no_root",
+          "access": "no-root",
+          "description": "Another community index of Shizuku and wireless-ADB tools, with a heavier emphasis on automation and customisation.",
+          "tags": ["awesome-list", "shizuku", "wireless-adb"]
+        }
+      ]
+    },
+    {
+      "id": "display-audio",
+      "name": "Display, launcher & audio",
+      "blurb": "The parts of customisation that never needed root in the first place.",
+      "entries": [
+        {
+          "name": "Wavelet",
+          "repo": "Pittvandewitt/Wavelet",
+          "url": "https://github.com/Pittvandewitt/Wavelet",
+          "access": "no-root",
+          "description": "System-wide audio effects headphone profile, bass boost and auto-EQ, built on the official DynamicsProcessing API. No root, no audio HAL patching.",
+          "tags": ["audio", "eq", "headphones"]
+        },
+        {
+          "name": "RootlessJamesDSP",
+          "repo": "ThePBone/RootlessJamesDSP",
+          "url": "https://github.com/ThePBone/RootlessJamesDSP",
+          "access": "no-root",
+          "description": "JamesDSP's convolution and bass processing without root, using the audio playback capture API. The most capable no-root DSP available.",
+          "tags": ["audio", "dsp", "no-root"]
+        },
+        {
+          "name": "Lawnchair",
+          "repo": "LawnchairLauncher/lawnchair",
+          "url": "https://github.com/LawnchairLauncher/lawnchair",
+          "access": "no-root",
+          "description": "AOSP-based launcher that brings a Pixel-like (or entirely your own) home screen to OriginOS, which is often the single biggest visual upgrade available.",
+          "tags": ["launcher", "pixel", "theming"]
+        },
+        {
+          "name": "scrcpy",
+          "repo": "Genymobile/scrcpy",
+          "url": "https://github.com/Genymobile/scrcpy",
+          "access": "adb",
+          "description": "Low-latency screen mirroring and control over ADB, no root and no app installed on the phone. Essential for testing tweaks without picking the device up.",
+          "tags": ["mirroring", "adb", "debug"]
+        },
+        {
+          "name": "DSU Sideloader",
+          "repo": "VegaBobo/DSU-Sideloader",
+          "url": "https://github.com/VegaBobo/DSU-Sideloader",
+          "access": "no-root",
+          "description": "Boots a GSI or a second Android image through Dynamic System Updates without erasing your data. The safest way to try a different ROM before committing.",
+          "tags": ["dsu", "gsi", "rom"]
+        }
+      ]
+    }
+  ]
+}

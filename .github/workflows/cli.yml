@@ -1,0 +1,117 @@
+name: CLI & catalog
+
+on:
+  push:
+    branches: [main]
+    paths:
+      - "cli/**"
+      - "catalog/**"
+      - ".github/workflows/cli.yml"
+  pull_request:
+    paths:
+      - "cli/**"
+      - "catalog/**"
+      - ".github/workflows/cli.yml"
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+jobs:
+  catalog:
+    name: Catalog integrity
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.12"
+
+      - name: Validate the catalog JSON
+        run: |
+          python -m json.tool catalog/tweaks.json > /dev/null
+          python -m json.tool catalog/profiles.json > /dev/null
+          python -m json.tool catalog/awesome.json > /dev/null
+
+      - name: Lint every tweak, profile and curated entry
+        env:
+          PYTHONPATH: cli
+        run: python -m originos_toolkit.cli lint --catalog catalog
+
+      - name: Check that the generated documentation is not stale
+        run: python scripts/generate_docs.py --check
+
+      - name: Fail if a raw op has no explicit revert
+        run: |
+          # `lint` already enforces this; the explicit grep documents the rule
+          # for anyone reading the workflow.
+          python - <<'PY'
+          import json, pathlib, sys
+          doc = json.loads(pathlib.Path("catalog/tweaks.json").read_text(encoding="utf-8"))
+          bad = []
+          for tweak in doc["tweaks"]:
+              raw = [a for a in tweak["actions"] if a["op"] in ("shell", "cmd")]
+              if raw and not tweak.get("revert") and tweak.get("reversible") is not False:
+                  bad.append(tweak["id"])
+          if bad:
+              print("these tweaks run raw commands with no documented undo:", bad)
+              sys.exit(1)
+          print("every raw command declares its undo")
+          PY
+
+  tests:
+    name: CLI tests (Python ${{ matrix.python }})
+    runs-on: ubuntu-latest
+    strategy:
+      fail-fast: false
+      matrix:
+        python: ["3.9", "3.11", "3.13"]
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: actions/setup-python@v5
+        with:
+          python-version: ${{ matrix.python }}
+
+      - name: Run the unit tests
+        working-directory: cli
+        run: python -m unittest discover -s tests -t . -v
+
+      - name: Smoke-test the CLI against the real catalog
+        env:
+          PYTHONPATH: cli
+        run: |
+          python -m originos_toolkit.cli catalog --json | head -20
+          python -m originos_toolkit.cli show force-max-refresh-rate --commands
+          python -m originos_toolkit.cli apply gaming-max --dry-run --yes
+          python -m originos_toolkit.cli export gaming-max --format sh | head -20
+          python -m originos_toolkit.cli awesome --section fps-gaming
+
+  package:
+    name: Build the CLI package
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.12"
+
+      - name: Build a wheel and a source distribution
+        working-directory: cli
+        run: |
+          python -m pip install --quiet build
+          python -m build --outdir dist
+
+      - name: Install the wheel and run the entry point
+        run: |
+          python -m pip install --quiet cli/dist/*.whl
+          originos-toolkit --version
+          originos-toolkit --catalog catalog lint
+
+      - uses: actions/upload-artifact@v4
+        with:
+          name: originos-toolkit-cli
+          path: cli/dist/*
+          if-no-files-found: error

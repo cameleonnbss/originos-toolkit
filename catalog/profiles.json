@@ -1,0 +1,85 @@
+{
+  "profilesVersion": 1,
+  "profiles": [
+    {
+      "id": "daily-balanced",
+      "name": "Daily balanced",
+      "icon": "balance",
+      "blurb": "The safe default: faster UI, no battery regressions. Nothing here needs a reboot.",
+      "tweaks": [
+        "animation-speed-fast",
+        "disable-window-blurs",
+        "refresh-rate-overlay",
+        "disable-ad-tracking",
+        "confirm-immersive-mode"
+      ]
+    },
+    {
+      "id": "gaming-max",
+      "name": "Gaming max",
+      "icon": "gamepad",
+      "blurb": "Push the panel and the compositor as hard as a no-root device can.",
+      "tweaks": [
+        "force-max-refresh-rate",
+        "animation-speed-off",
+        "disable-window-blurs",
+        "force-gpu-rendering",
+        "max-cached-processes",
+        "refresh-rate-overlay"
+      ]
+    },
+    {
+      "id": "battery-max",
+      "name": "Max battery",
+      "icon": "battery",
+      "blurb": "Cut every background radio scan and background wake you are allowed to cut without root.",
+      "tweaks": [
+        "disable-wifi-scanning",
+        "disable-bluetooth-scanning",
+        "mobile-data-always-on-off",
+        "app-standby-on",
+        "battery-saver-threshold-30",
+        "disable-adaptive-brightness",
+        "screen-timeout-30s",
+        "disable-nfc"
+      ]
+    },
+    {
+      "id": "privacy-hardened",
+      "name": "Privacy hardened",
+      "icon": "shield",
+      "blurb": "Encrypted ad-blocking DNS, no ad tracking, quiet lock screen, and no OEM telemetry.",
+      "tweaks": [
+        "private-dns-adguard",
+        "disable-ad-tracking",
+        "hide-lockscreen-content",
+        "debloat-vivo-analytics"
+      ]
+    },
+    {
+      "id": "clean-slate",
+      "name": "Clean slate (debloat)",
+      "icon": "trash",
+      "blurb": "The full OEM-and-Google debloat set. Read the warnings on each entry first; all of it is reversible.",
+      "tweaks": [
+        "debloat-vivo-store-browser",
+        "debloat-vivo-analytics",
+        "debloat-vivo-gamestore",
+        "debloat-google-extras"
+      ]
+    },
+    {
+      "id": "smooth-navigation",
+      "name": "Smooth navigation",
+      "icon": "gesture",
+      "blurb": "Gestures, wider back area, no confirmation dialogs, no click noises.",
+      "tweaks": [
+        "gesture-navigation",
+        "wide-back-gesture",
+        "confirm-immersive-mode",
+        "disable-touch-sounds",
+        "animation-speed-fast"
+      ]
+    }
+  ]
+}
