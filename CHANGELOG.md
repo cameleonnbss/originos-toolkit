@@ -6,7 +6,30 @@ adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
 ## [Unreleased]
 
-### Added
+Nothing yet.
+
+## [1.1.0] — 2026-09-17
+
+A release about telling the truth in the curated index.
+
+### Fixed
+
+- **The CunnyPlayground entry claimed the app's island half does nothing on a Vivo phone.**
+  Reading the upstream source says otherwise: the `originos-experimental` branch implements a
+  vivo OriginIsland caster that drives OriginOS 6's island around the camera cutout through
+  the `notification.superx.*` notification extras — a fixed left template, one right template
+  among six, and a progress variant — alongside the AOSP Live Updates half and the
+  HyperIsland (`miui.focus.param`) half, which do target HyperOS builds. The entry now
+  describes all three casters, says which one targets which ROM, and links the branch in its
+  tags. The main-branch README itself only ever mentions HyperIsland, which is how the wrong
+  claim got in.
+
+### Changed
+
+- Test counts in the README and this changelog corrected: the CLI suite has grown to 154
+  tests since the "128" figures were written.
+
+## [1.0.1] — 2026-09-17
 
 - **Two home-screen components** — the OriginOS word for them is *atomic components*: a 2×2
   refresh-rate tile whose chip pins or releases `force-max-refresh-rate` in one tap, and a 4×2
@@ -98,6 +121,8 @@ and two things that claimed to work did not.
 - `WRITE_SETTINGS` is declared in the manifest and documented in `docs/PERMISSIONS.md`, with
   the narrowing spelled out: it reaches `system` and nothing else, and `WRITE_SECURE_SETTINGS`
   is still not requested.
+
+[1.1.0]: https://github.com/cameleonnbss/originos-toolkit/releases/tag/v1.1.0
 
 [1.0.1]: https://github.com/cameleonnbss/originos-toolkit/releases/tag/v1.0.1
 

@@ -320,8 +320,8 @@
           "repo": "theVakhovskeIsTaken/CunnyPlayground",
           "url": "https://github.com/theVakhovskeIsTaken/CunnyPlayground",
           "access": "no-root",
-          "description": "An interactive lab for Android 16's Live Updates API: promoted ongoing notifications with a progress bar, status chip and full-screen intent, plus a recaster that re-posts any notification you already receive as a Live Update or as a HyperIsland island. Live Updates are AOSP, so that half is a working reference for what OriginOS 6 can do with them; the island half targets HyperOS builds and does nothing on a Vivo phone. Needs Android 16 and a notification-listener grant, so treat it as instrumentation rather than a daily driver.",
-          "tags": ["live-updates", "notifications", "android16", "hyperisland", "playground"]
+          "description": "An interactive lab for Android 16's Live Updates API and for OEM dynamic-island clones, with a recaster that re-posts notifications you already receive as a Live Update, as a HyperIsland island, or — on the experimental branch — as a vivo OriginIsland. Live Updates are AOSP and work on any Android 16 build; HyperIsland speaks Xiaomi's miui.focus.param JSON and needs HyperOS. The vivo half lives on the originos-experimental branch: it drives OriginOS 6's island around the camera cutout through the notification.superx.* notification extras (fixed left template, a right template among six, a progress variant) and builds on the HyperIsland Toolkit. Every island payload is silently ignored on ROMs that do not implement it, so check which half you are testing. Needs Android 16 and a notification-listener grant; treat it as instrumentation rather than a daily driver.",
+          "tags": ["live-updates", "notifications", "android16", "hyperisland", "originisland", "recaster", "playground"]
         }
       ]
     }

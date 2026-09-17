@@ -222,7 +222,7 @@ than set to a made-up default.
 Both engines (Python and Kotlin) implement this identically, and both are tested for it:
 
 ```console
-$ cd cli && python -m unittest discover -s tests -t .    # 128 tests
+$ cd cli && python -m unittest discover -s tests -t .    # 154 tests
 $ gradle testDebugUnitTest                               # the same invariants in Kotlin
 ```
 
@@ -319,7 +319,7 @@ app/                Android app (Kotlin, Jetpack Compose, Shizuku)
   service/          per-app refresh watcher, FPS overlay
   ui/               Compose screens and view model
   src/test/         JVM tests mirroring the Python suite
-cli/                Python CLI (stdlib only) + 128 unit tests
+cli/                Python CLI (stdlib only) + 154 unit tests
 docs/               TWEAKS.md · AWESOME-ORIGINOS.md · NO-ROOT-SETUP.md · ARCHITECTURE.md ·
                     ORIGINOS-LOOK.md · …
 scripts/            generate_docs.py — keeps the docs honest; design-probe.html — the
