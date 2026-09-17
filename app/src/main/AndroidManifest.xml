@@ -93,6 +93,22 @@
         </service>
 
         <!--
+          The island re-caster: notifications from the apps the user picked on
+          the Island tab are re-posted as `notification.superx.*` casts. Only
+          the system may bind to it (the BIND permission is android's), and the
+          user still has to grant *notification access* in system settings —
+          an install-time permission this manifest deliberately does not claim.
+        -->
+        <service
+            android:name=".service.IslandCastListener"
+            android:exported="false"
+            android:permission="android.permission.BIND_NOTIFICATION_LISTENER_SERVICE">
+            <intent-filter>
+                <action android:name="android.service.notification.NotificationListenerService" />
+            </intent-filter>
+        </service>
+
+        <!--
           The Shizuku user service. Shizuku starts this component in its own
           process, running as the shell user (uid 2000): everything the toolkit
           changes happens in here. `processNameSuffix("service")` on the client

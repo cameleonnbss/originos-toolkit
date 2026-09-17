@@ -10,6 +10,10 @@ class OriginOsApp : Application() {
     lateinit var container: AppContainer
         private set
 
+    /** For services that can fire before [onCreate] has run: null rather than a crash. */
+    val containerOrNull: AppContainer?
+        get() = if (::container.isInitialized) container else null
+
     override fun onCreate() {
         super.onCreate()
 

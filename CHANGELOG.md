@@ -8,6 +8,30 @@ adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
 Nothing yet.
 
+## [1.3.0] — 2026-09-17
+
+The Island tab becomes a caster, not just a playground.
+
+### Added
+
+- **App casting.** Flip one switch on the Island tab, grant notification access,
+  and tap the apps whose notifications should ride the island — a music player,
+  a navigation app. Each picked app casts with its own template (tap `template ›`
+  on its chip), and a live progress bar in the source notification switches the
+  cast to the progress template automatically, so a track's position and a
+  route's leg render as the ring they are. A new cast replaces the previous one;
+  removing the source notification unmounts the island. The app's own
+  notifications are never re-cast into themselves.
+- `service/IslandCastListener`, a `NotificationListenerService` bound by the
+  system only (`BIND_NOTIFICATION_LISTENER_SERVICE` in the manifest, notification
+  access granted by the user in system settings — documented in
+  [docs/PERMISSIONS.md](docs/PERMISSIONS.md)). The cast decision itself is pure
+  Kotlin (`core/IslandRecast.kt`), covered by JVM tests.
+- The Island tab is redesigned around the picker: an OriginOS-style horizontal
+  chip row with real app icons, picked apps first, per-app templates in a
+  compact dialog, the manual playground reduced to title, content, template
+  chips and a progress slider — the verbose protocol prose moved to the docs.
+
 ## [1.2.0] — 2026-09-17
 
 The release that gives the app its own **OriginIsland playground** — an Island tab
@@ -159,6 +183,8 @@ and two things that claimed to work did not.
 - `WRITE_SETTINGS` is declared in the manifest and documented in `docs/PERMISSIONS.md`, with
   the narrowing spelled out: it reaches `system` and nothing else, and `WRITE_SECURE_SETTINGS`
   is still not requested.
+
+[1.3.0]: https://github.com/cameleonnbss/originos-toolkit/releases/tag/v1.3.0
 
 [1.2.0]: https://github.com/cameleonnbss/originos-toolkit/releases/tag/v1.2.0
 

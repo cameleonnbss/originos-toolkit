@@ -33,6 +33,9 @@ object OriginIslandSender {
      */
     const val ID_ISLAND = 3001
 
+    /** The recast caster posts at its own id, so it cannot evict the playground pill. */
+    const val ID_RECAST = 3002
+
     fun ensureChannel(context: Context) {
         val manager = context.getSystemService(NotificationManager::class.java) ?: return
         val channel = NotificationChannel(
@@ -51,7 +54,7 @@ object OriginIslandSender {
      * Posts (or updates) the island notification for [request]. Returns the
      * framework's answer, or an error string — never throws.
      */
-    fun post(context: Context, request: OriginIsland.Request): String {
+    fun post(context: Context, request: OriginIsland.Request, id: Int = ID_ISLAND): String {
         ensureChannel(context)
         val manager = context.getSystemService(NotificationManager::class.java)
             ?: return "no notification manager"
@@ -74,7 +77,7 @@ object OriginIslandSender {
         builder.extras.putAll(OriginIsland.buildExtras(request, smallIcon = icon))
 
         return try {
-            manager.notify(ID_ISLAND, builder.build())
+            manager.notify(id, builder.build())
             "posted"
         } catch (e: Exception) {
             "error: ${e.message ?: e.javaClass.simpleName}"
@@ -85,18 +88,25 @@ object OriginIslandSender {
      * Removes the island the way the framework expects: one last write with
      * `operation = 2` so the pill unmounts gracefully, then the cancel.
      */
-    fun cancel(context: Context) {
+    fun cancel(context: Context, id: Int = ID_ISLAND) {
         val manager = context.getSystemService(NotificationManager::class.java) ?: return
         try {
             val builder = NotificationCompat.Builder(context, CHANNEL_ISLAND)
                 .setSmallIcon(R.drawable.ic_notification)
                 .addExtras(OriginIsland.buildEndExtras())
-            manager.notify(ID_ISLAND, builder.build())
+            manager.notify(id, builder.build())
         } catch (_: Exception) {
             // The unmount hint is best-effort; the plain cancel below is the guarantee.
         }
-        manager.cancel(ID_ISLAND)
+        manager.cancel(id)
     }
+
+    /** The friendly label of an app, or its package name when it has none. */
+    fun appLabel(context: Context, packageName: String): String = runCatching {
+        context.packageManager.getApplicationLabel(
+            context.packageManager.getApplicationInfo(packageName, 0),
+        ).toString()
+    }.getOrElse { packageName }
 
     private fun registerScene(context: Context) {
         try {

@@ -103,4 +103,24 @@
     <string name="originisland_cancel">卸载</string>
     <string name="originisland_actions_note">发布一条携带 notification.superx.* 附加项的通知，OriginOS 6 框架会将其解析为灵岛。“卸载”会先发送优雅结束操作再取消。</string>
     <string name="originisland_credit">灵岛协议由 CunnyPlayground（theVakhovskeIsTaken）逆向工程，originos-experimental 分支。此处为忠实移植——见 docs/ORIGINISLAND.md。</string>
+
+    <!-- Island 标签页 v2：紧凑的重投式 UI -->
+    <string name="island_recast_title">将应用投射到灵岛</string>
+    <string name="island_recast_switch">投射所选应用的通知</string>
+    <string name="island_grant_listener">授予通知访问权限</string>
+    <string name="island_tap_template">模板 ›</string>
+    <string name="island_template_pick_title">模板</string>
+    <string name="island_close">关闭</string>
+    <string name="island_playground_title">手动投射</string>
+    <string name="island_field_title">标题</string>
+    <string name="island_field_content">内容</string>
+    <string name="island_tpl_rhythm">律动</string>
+    <string name="island_tpl_progress">进度</string>
+    <string name="island_tpl_loading">加载</string>
+    <string name="island_tpl_text_icon">文字 · 图标</string>
+    <string name="island_tpl_icon_text">图标 · 文字</string>
+    <string name="island_tpl_capsule">胶囊</string>
+    <string name="island_progress_value">%1$d%%</string>
+    <string name="island_send">显示</string>
+    <string name="island_unmount">卸载</string>
 </resources>

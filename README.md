@@ -100,9 +100,10 @@ spinner, text + icon, icon + text, capsule), plus the graceful unmount on the wa
 It is a faithful port of the sender CunnyPlayground reverse-engineered on its
 `originos-experimental` branch, wire format included, and it degrades honestly: on a
 Vivo / iQOO it renders; anywhere else the payload rides an ordinary notification and the
-system ignores it — the tab says which case you are in. Setup is one notification
-permission, no Shizuku: **[docs/ORIGINISLAND.md](docs/ORIGINISLAND.md)** documents the
-whole protocol and its limits.
+system ignores it. Pick your music and navigation apps and their notifications cast
+themselves — progress bars included — or type a payload by hand. Setup is one
+notification permission, no Shizuku: **[docs/ORIGINISLAND.md](docs/ORIGINISLAND.md)**
+documents the whole protocol and its limits.
 
 ### Home-screen components, cut like the system's own
 

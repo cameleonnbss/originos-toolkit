@@ -99,4 +99,24 @@
     <string name="originisland_cancel">Unmount</string>
     <string name="originisland_actions_note">Posts one notification carrying the notification.superx.* extras the OriginOS 6 framework resolves into an island. Unmount sends the graceful end operation before cancelling.</string>
     <string name="originisland_credit">Island protocol reverse-engineered by CunnyPlayground (theVakhovskeIsTaken), originos-experimental branch. Ported here faithfully — see docs/ORIGINISLAND.md.</string>
+
+    <!-- Island tab, v2: compact recast-first UI -->
+    <string name="island_recast_title">Cast apps to the island</string>
+    <string name="island_recast_switch">Cast picked apps\' notifications</string>
+    <string name="island_grant_listener">Grant notification access</string>
+    <string name="island_tap_template">template ›</string>
+    <string name="island_template_pick_title">Template</string>
+    <string name="island_close">Close</string>
+    <string name="island_playground_title">Manual cast</string>
+    <string name="island_field_title">Title</string>
+    <string name="island_field_content">Content</string>
+    <string name="island_tpl_rhythm">Rhythm</string>
+    <string name="island_tpl_progress">Progress</string>
+    <string name="island_tpl_loading">Loading</string>
+    <string name="island_tpl_text_icon">Text · icon</string>
+    <string name="island_tpl_icon_text">Icon · text</string>
+    <string name="island_tpl_capsule">Capsule</string>
+    <string name="island_progress_value">%1$d%%</string>
+    <string name="island_send">Show</string>
+    <string name="island_unmount">Unmount</string>
 </resources>

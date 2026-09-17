@@ -94,4 +94,24 @@
     <string name="originisland_cancel">Démonter</string>
     <string name="originisland_actions_note">Publie une notification portant les extras notification.superx.* que le framework d\'OriginOS 6 résout en île. Démonter envoie d\'abord l\'opération de fin propre avant d\'annuler.</string>
     <string name="originisland_credit">Protocole de l\'île rétro-conçu par CunnyPlayground (theVakhovskeIsTaken), branche originos-experimental. Porté ici fidèlement — voir docs/ORIGINISLAND.md.</string>
+
+    <!-- Onglet Island, v2 : UI compacte centrée recast -->
+    <string name="island_recast_title">Projeter des apps sur l\'île</string>
+    <string name="island_recast_switch">Projeter les notifications des apps choisies</string>
+    <string name="island_grant_listener">Accorder l\'accès aux notifications</string>
+    <string name="island_tap_template">template ›</string>
+    <string name="island_template_pick_title">Template</string>
+    <string name="island_close">Fermer</string>
+    <string name="island_playground_title">Envoi manuel</string>
+    <string name="island_field_title">Titre</string>
+    <string name="island_field_content">Texte</string>
+    <string name="island_tpl_rhythm">Rythme</string>
+    <string name="island_tpl_progress">Progression</string>
+    <string name="island_tpl_loading">Chargement</string>
+    <string name="island_tpl_text_icon">Texte · icône</string>
+    <string name="island_tpl_icon_text">Icône · texte</string>
+    <string name="island_tpl_capsule">Capsule</string>
+    <string name="island_progress_value">%1$d%%</string>
+    <string name="island_send">Afficher</string>
+    <string name="island_unmount">Démonter</string>
 </resources>

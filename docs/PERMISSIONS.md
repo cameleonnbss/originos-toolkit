@@ -15,6 +15,7 @@ This is the complete permission set of the Android app. It is **locked**: the CI
 | `android.permission.FOREGROUND_SERVICE_SPECIAL_USE` | Android 14+ requires a declared type for these two services. | both services | Structural |
 | `android.permission.POST_NOTIFICATIONS` | Show the foreground-service notification on Android 13+. | both services | Yes — the services run silently if denied |
 | `moe.shizuku.manager.permission.API_V23` | Speak to Shizuku's binder API. | `ShizukuShell` | Required for any tweak |
+| notification access (user grant, not a `uses-permission`) | Read the notifications of the apps the user picked on the Island tab, to re-post them as island casts. The listener service requires `android.permission.BIND_NOTIFICATION_LISTENER_SERVICE`, which only the system can hold. | `IslandCastListener` | Yes — everything else works without it; the grant is requested from the Island tab |
 
 ## Permissions that are deliberately **not** requested
 

@@ -1,10 +1,12 @@
 # OriginIsland — sending content to vivo's island, without root
 
-The **Island** tab in the app is a playground for vivo's OriginIsland: the pill
-that grows around the front camera cutout on OriginOS 6 to show a timer, a
-charge, a recording, a ride. Third-party apps can drive it. It is not
-documented by vivo, so this page documents what the app actually sends, where
-that knowledge comes from, and what to expect on your phone.
+The **Island** tab does two things: it **casts the notifications of apps you
+pick** onto the island (a music player's title and progress bar, a navigation
+app's next manoeuvre), and it doubles as a manual playground for vivo's
+OriginIsland — the pill that grows around the front camera cutout on OriginOS
+6. None of it is documented by vivo, so this page documents what the app
+actually sends, where that knowledge comes from, and what to expect on your
+phone.
 
 ![How the island shapes look on several UIs](images/originisland-islands.png)
 
@@ -15,14 +17,20 @@ Nothing to install beyond the app itself. OriginIsland is notification-borne:
 1. Open **Island** in the app.
 2. On Android 13+, accept the **notifications** permission when asked (the
    island *is* a notification under the hood).
-3. Type a payload, pick one of the six right-side templates, hit **Show on
-   island**.
-4. **Unmount** removes it the way the framework expects — a graceful
+3. **To cast other apps**: flip the switch, tap **Grant notification access**
+   (the system's notification-listener screen), then tap the apps you want —
+   a music player, a navigation app. Tap a picked app's `template ›` label to
+   choose which right-side template it casts with; a live progress bar in the
+   source notification (a track's position, a route leg) switches the cast to
+   the progress template on its own.
+4. **To cast manually**: type a payload, pick a template, hit **Show**.
+5. **Unmount** removes a cast the way the framework expects — a graceful
    `operation = 2` write, then the cancel.
 
-No Shizuku, no adb, no root. The payload travels inside an ordinary
-notification posted by the app itself, so the app's own notification
-permission is the only gate.
+No Shizuku, no adb, no root. Casting reads notifications through the system's
+notification-listener facility (a user grant in system settings, not an
+install-time permission), and the cast itself is an ordinary notification
+posted by the app.
 
 ## What gets sent
 
@@ -51,6 +59,22 @@ The six right-side templates — the values upstream recovered:
 | 4 | Text + icon | text then icon |
 | 5 | Icon + text | icon then text |
 | 6 | Capsule | symmetric capsule on a colored background |
+
+## What the re-caster does with a notification
+
+The listener (`IslandCastListener`) receives every notification Android
+delivers, and throws away everything except what the user picked:
+
+- not from a picked app → dropped;
+- the source notification has no text → dropped;
+- the source carries a live progress pair (0 < progress < max) → cast with the
+  **progress** template, percent and all, whatever template the app was given;
+- otherwise → cast with the app's configured template, its title on the
+  island's left side, its text on the right.
+
+A new cast from the same app replaces the previous one, and when the source
+notification is removed the cast is unmounted — the island shows what is
+playing *now*, not a history.
 
 ## Where the knowledge comes from, and its limits
 
