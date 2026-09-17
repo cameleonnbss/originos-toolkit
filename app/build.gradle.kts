@@ -14,8 +14,8 @@ android {
         applicationId = "dev.cameleonnbss.originostoolkit"
         minSdk = 29
         targetSdk = 35
-        versionCode = 3
-        versionName = "1.1.0"
+        versionCode = 4
+        versionName = "1.2.0"
         resourceConfigurations += listOf("en", "fr", "zh")
 
         testInstrumentationRunner = "androidx.test.runner.AndroidJUnitRunner"

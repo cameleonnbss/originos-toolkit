@@ -8,6 +8,44 @@ adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
 Nothing yet.
 
+## [1.2.0] — 2026-09-17
+
+The release that gives the app its own **OriginIsland playground** — an Island tab
+next to Tweaks and Refresh, driving vivo's island around the camera cutout the way
+CunnyPlayground drives the HyperIsland.
+
+### Added
+
+- **The Island tab.** Type a payload (title, content, optional subtext, per-side
+  island texts), pick one of the six right-side templates the OriginOS 6 framework
+  resolves — rhythm pulse, progress ring (0–100 slider), loading spinner, text +
+  icon, icon + text, capsule — and post it. A shape-level preview draws the chosen
+  template with your values, honestly labelled as a shape, not vivo's renderer. A
+  status card reads the device before you send: `VIVO` / `GENERIC ANDROID` from
+  `Build.BRAND`, with the OriginOS version when the property is readable (it is
+  usually not, from an ordinary app, and the app says so instead of guessing).
+- **`core/OriginIslandTemplates.kt`** — a faithful port of the sender in
+  CunnyPlayground's `originos-experimental` branch: every
+  `notification.superx.*` / `island.superx.*` key upstream writes, in the same
+  layout (operation / showNotify / template / scene / baseInfos / capsule / infos /
+  shortInfos / island), plus the graceful `operation = 2` unmount the framework
+  expects before a cancel. Writes go through a small sink interface so the wire
+  format is pinned by 13 JVM tests (`OriginIslandTest`) without an emulator.
+- **`service/OriginIslandSender.kt`** — channel management, the shared-icon
+  discipline upstream uses (one `Icon` instance into every bundle), the hidden
+  `setSuperXInfosSceneList` registration vivo's own apps perform, and a cancel
+  path that unmounts before cancelling. Nothing it does can throw into the UI.
+- **[docs/ORIGINISLAND.md](docs/ORIGINISLAND.md)** — the setup page: what to
+  grant (one notification permission — the island *is* a notification), the full
+  extra table, the six templates, the upstream credit with its images committed
+  under `docs/images/`, and the honest limits: the renderer is vivo's and
+  closed-source, unimplemented keys are ignored silently, non-vivo devices show
+  an ordinary notification. The link checker now covers the new page.
+
+### Changed
+
+- Navigation grew to six tabs. Discover stays a deliberate overflow.
+
 ## [1.1.0] — 2026-09-17
 
 A release about telling the truth in the curated index.
@@ -121,6 +159,8 @@ and two things that claimed to work did not.
 - `WRITE_SETTINGS` is declared in the manifest and documented in `docs/PERMISSIONS.md`, with
   the narrowing spelled out: it reaches `system` and nothing else, and `WRITE_SECURE_SETTINGS`
   is still not requested.
+
+[1.2.0]: https://github.com/cameleonnbss/originos-toolkit/releases/tag/v1.2.0
 
 [1.1.0]: https://github.com/cameleonnbss/originos-toolkit/releases/tag/v1.1.0
 

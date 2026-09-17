@@ -71,4 +71,32 @@
     <string name="widget_access_settings">No Shizuku</string>
     <string name="widget_access_none">No access</string>
     <string name="widget_value_unknown">—</string>
+
+    <!-- OriginIsland playground -->
+    <string name="channel_originisland_name">OriginIsland</string>
+    <string name="originisland_status_title">Device support</string>
+    <string name="originisland_status_subtitle">What this phone will do with the payload</string>
+    <string name="originisland_os_unknown">unknown</string>
+    <string name="originisland_status_supported">This is a vivo / iQOO device. The island around the camera cutout should render the payload — if it does not, your OriginOS build may not expose it.</string>
+    <string name="originisland_status_unsupported">Not a vivo / iQOO device. The payload is posted as an ordinary notification and silently ignored by the system — there is no island to draw it in.</string>
+    <string name="originisland_preview_title">Preview (shape only, not the real renderer)</string>
+    <string name="originisland_payload_title">Payload</string>
+    <string name="originisland_field_title">Title</string>
+    <string name="originisland_field_content">Content</string>
+    <string name="originisland_field_subtext">Subtext (optional)</string>
+    <string name="originisland_template_title">Right-side template</string>
+    <string name="originisland_tpl_rhythm">Rhythm</string>
+    <string name="originisland_tpl_progress">Progress</string>
+    <string name="originisland_tpl_loading">Loading</string>
+    <string name="originisland_tpl_text_icon">Text + icon</string>
+    <string name="originisland_tpl_icon_text">Icon + text</string>
+    <string name="originisland_tpl_capsule">Capsule</string>
+    <string name="originisland_progress_label">Progress: %1$d%%</string>
+    <string name="originisland_field_left">Left side text (falls back to the title)</string>
+    <string name="originisland_field_right">Right side text (falls back to the content)</string>
+    <string name="originisland_actions_title">Send</string>
+    <string name="originisland_send">Show on island</string>
+    <string name="originisland_cancel">Unmount</string>
+    <string name="originisland_actions_note">Posts one notification carrying the notification.superx.* extras the OriginOS 6 framework resolves into an island. Unmount sends the graceful end operation before cancelling.</string>
+    <string name="originisland_credit">Island protocol reverse-engineered by CunnyPlayground (theVakhovskeIsTaken), originos-experimental branch. Ported here faithfully — see docs/ORIGINISLAND.md.</string>
 </resources>

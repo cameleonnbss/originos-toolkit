@@ -66,4 +66,32 @@
     <string name="widget_access_settings">Sans Shizuku</string>
     <string name="widget_access_none">Aucun accès</string>
     <string name="widget_value_unknown">—</string>
+
+    <!-- Bac à sable OriginIsland -->
+    <string name="channel_originisland_name">OriginIsland</string>
+    <string name="originisland_status_title">Prise en charge</string>
+    <string name="originisland_status_subtitle">Ce que ce téléphone fera du payload</string>
+    <string name="originisland_os_unknown">inconnue</string>
+    <string name="originisland_status_supported">Appareil vivo / iQOO détecté. L\'île autour de la caméra frontale devrait afficher le payload — sinon, votre build d\'OriginOS ne l\'expose peut-être pas.</string>
+    <string name="originisland_status_unsupported">Ce n\'est pas un appareil vivo / iQOO. Le payload est publié comme une notification ordinaire et ignoré par le système — il n\'existe aucune île pour l\'afficher.</string>
+    <string name="originisland_preview_title">Aperçu (forme seule, pas le vrai moteur de rendu)</string>
+    <string name="originisland_payload_title">Contenu</string>
+    <string name="originisland_field_title">Titre</string>
+    <string name="originisland_field_content">Texte</string>
+    <string name="originisland_field_subtext">Sous-texte (optionnel)</string>
+    <string name="originisland_template_title">Template du côté droit</string>
+    <string name="originisland_tpl_rhythm">Rythme</string>
+    <string name="originisland_tpl_progress">Progression</string>
+    <string name="originisland_tpl_loading">Chargement</string>
+    <string name="originisland_tpl_text_icon">Texte + icône</string>
+    <string name="originisland_tpl_icon_text">Icône + texte</string>
+    <string name="originisland_tpl_capsule">Capsule</string>
+    <string name="originisland_progress_label">Progression : %1$d%%</string>
+    <string name="originisland_field_left">Texte de gauche (sinon le titre)</string>
+    <string name="originisland_field_right">Texte de droite (sinon le contenu)</string>
+    <string name="originisland_actions_title">Envoi</string>
+    <string name="originisland_send">Afficher sur l\'île</string>
+    <string name="originisland_cancel">Démonter</string>
+    <string name="originisland_actions_note">Publie une notification portant les extras notification.superx.* que le framework d\'OriginOS 6 résout en île. Démonter envoie d\'abord l\'opération de fin propre avant d\'annuler.</string>
+    <string name="originisland_credit">Protocole de l\'île rétro-conçu par CunnyPlayground (theVakhovskeIsTaken), branche originos-experimental. Porté ici fidèlement — voir docs/ORIGINISLAND.md.</string>
 </resources>

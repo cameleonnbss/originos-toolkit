@@ -75,4 +75,32 @@
     <string name="widget_access_settings">无 Shizuku</string>
     <string name="widget_access_none">无权限</string>
     <string name="widget_value_unknown">—</string>
+
+    <!-- OriginIsland 实验场 -->
+    <string name="channel_originisland_name">OriginIsland</string>
+    <string name="originisland_status_title">设备支持</string>
+    <string name="originisland_status_subtitle">这台手机会如何处理该载荷</string>
+    <string name="originisland_os_unknown">未知</string>
+    <string name="originisland_status_supported">已检测到 vivo / iQOO 设备。前置摄像头旁的灵岛应当能渲染该载荷——如果没有，你的 OriginOS 版本可能未开放该功能。</string>
+    <string name="originisland_status_unsupported">这不是 vivo / iQOO 设备。载荷会以普通通知发布并被系统静默忽略——没有灵岛来显示它。</string>
+    <string name="originisland_preview_title">预览（仅形状，非真实渲染器）</string>
+    <string name="originisland_payload_title">载荷</string>
+    <string name="originisland_field_title">标题</string>
+    <string name="originisland_field_content">内容</string>
+    <string name="originisland_field_subtext">副文本（可选）</string>
+    <string name="originisland_template_title">右侧模板</string>
+    <string name="originisland_tpl_rhythm">律动</string>
+    <string name="originisland_tpl_progress">进度</string>
+    <string name="originisland_tpl_loading">加载</string>
+    <string name="originisland_tpl_text_icon">文字 + 图标</string>
+    <string name="originisland_tpl_icon_text">图标 + 文字</string>
+    <string name="originisland_tpl_capsule">胶囊</string>
+    <string name="originisland_progress_label">进度：%1$d%%</string>
+    <string name="originisland_field_left">左侧文本（默认用标题）</string>
+    <string name="originisland_field_right">右侧文本（默认用内容）</string>
+    <string name="originisland_actions_title">发送</string>
+    <string name="originisland_send">在灵岛显示</string>
+    <string name="originisland_cancel">卸载</string>
+    <string name="originisland_actions_note">发布一条携带 notification.superx.* 附加项的通知，OriginOS 6 框架会将其解析为灵岛。“卸载”会先发送优雅结束操作再取消。</string>
+    <string name="originisland_credit">灵岛协议由 CunnyPlayground（theVakhovskeIsTaken）逆向工程，originos-experimental 分支。此处为忠实移植——见 docs/ORIGINISLAND.md。</string>
 </resources>

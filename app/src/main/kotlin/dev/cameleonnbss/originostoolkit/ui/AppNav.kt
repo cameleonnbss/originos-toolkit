@@ -12,6 +12,7 @@ import androidx.compose.material.icons.filled.Build
 import androidx.compose.material.icons.filled.DeleteSweep
 import androidx.compose.material.icons.filled.Explore
 import androidx.compose.material.icons.filled.Memory
+import androidx.compose.material.icons.filled.NotificationImportant
 import androidx.compose.material.icons.filled.Speed
 import androidx.compose.material.icons.filled.Tune
 import androidx.compose.material3.ExperimentalMaterial3Api
@@ -51,6 +52,7 @@ import dev.cameleonnbss.originostoolkit.ui.components.ResultDialog
 import dev.cameleonnbss.originostoolkit.ui.screens.AwesomeScreen
 import dev.cameleonnbss.originostoolkit.ui.screens.DashboardScreen
 import dev.cameleonnbss.originostoolkit.ui.screens.DebloatScreen
+import dev.cameleonnbss.originostoolkit.ui.screens.OriginIslandScreen
 import dev.cameleonnbss.originostoolkit.ui.screens.PermissionsState
 import dev.cameleonnbss.originostoolkit.ui.screens.RefreshScreen
 import dev.cameleonnbss.originostoolkit.ui.screens.SettingsScreen
@@ -63,6 +65,7 @@ private val DESTINATIONS = listOf(
     Destination("tweaks", "Tweaks", Icons.Filled.Tune),
     Destination("refresh", "Refresh", Icons.Filled.Speed),
     Destination("debloat", "Debloat", Icons.Filled.DeleteSweep),
+    Destination("originisland", "Island", Icons.Filled.NotificationImportant),
     Destination("settings", "Settings", Icons.Filled.Build),
 )
 
@@ -115,7 +118,7 @@ fun AppNav(viewModel: ToolkitViewModel, container: AppContainer, startRoute: Str
                     title = {
                         Text(
                             DESTINATIONS.firstOrNull { it.route == currentRoute }?.label
-                                ?: "Discover",
+                                ?: (if (currentRoute == "awesome") "Discover" else "Island"),
                             style = MaterialTheme.typography.titleLarge,
                             fontWeight = FontWeight.SemiBold,
                         )
@@ -185,6 +188,7 @@ fun AppNav(viewModel: ToolkitViewModel, container: AppContainer, startRoute: Str
             composable("tweaks") { TweaksScreen(state, viewModel) }
             composable("refresh") { RefreshScreen(state, viewModel, usageAccess) }
             composable("debloat") { DebloatScreen(state, viewModel) }
+            composable("originisland") { OriginIslandScreen() }
             composable("awesome") { AwesomeScreen(state, viewModel, openUrl) }
             composable("settings") {
                 // Re-read on every entry: the user has usually just come back

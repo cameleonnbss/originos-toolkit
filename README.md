@@ -88,6 +88,22 @@ The **Discover** screen ships the [Awesome OriginOS](docs/AWESOME-ORIGINOS.md) l
 tools, each labelled `NO-ROOT`, `ADB`, `SHIZUKU` or `ROOT`, so nobody installs a rooted
 Magisk module by accident.
 
+### An OriginIsland playground, for the Vivo phones that have one
+
+OriginOS 6 grows an island around the front camera cutout to show a timer, a charge, a
+recording — vivo's answer to the Dynamic Island, and something third-party apps can
+drive. The **Island** tab posts exactly the `notification.superx.*` extras the
+framework resolves into that island: a title, a content line, and one of the six
+right-side templates the protocol exposes (rhythm pulse, progress ring, loading
+spinner, text + icon, icon + text, capsule), plus the graceful unmount on the way out.
+
+It is a faithful port of the sender CunnyPlayground reverse-engineered on its
+`originos-experimental` branch, wire format included, and it degrades honestly: on a
+Vivo / iQOO it renders; anywhere else the payload rides an ordinary notification and the
+system ignores it — the tab says which case you are in. Setup is one notification
+permission, no Shizuku: **[docs/ORIGINISLAND.md](docs/ORIGINISLAND.md)** documents the
+whole protocol and its limits.
+
 ### Home-screen components, cut like the system's own
 
 Two *atomic components* — OriginOS's word for a home-screen widget — ship with the app:
