@@ -121,7 +121,7 @@ jobs:
           originos-toolkit --version
           originos-toolkit --catalog catalog lint
 
-      - uses: actions/upload-artifact@v4
+      - uses: actions/upload-artifact@v7
         with:
           name: originos-toolkit-cli
           path: cli/dist/*
