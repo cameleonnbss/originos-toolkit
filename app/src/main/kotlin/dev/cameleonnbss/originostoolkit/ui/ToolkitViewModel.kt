@@ -1,5 +1,6 @@
 package dev.cameleonnbss.originostoolkit.ui
 
+import android.content.Intent
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.ViewModelProvider
 import androidx.lifecycle.viewModelScope
@@ -7,12 +8,15 @@ import dev.cameleonnbss.originostoolkit.core.AppContainer
 import dev.cameleonnbss.originostoolkit.core.AppEntry
 import dev.cameleonnbss.originostoolkit.core.DeviceInfo
 import dev.cameleonnbss.originostoolkit.core.DeviceSnapshot
+import dev.cameleonnbss.originostoolkit.core.FpsSampler
 import dev.cameleonnbss.originostoolkit.core.EngineException
 import dev.cameleonnbss.originostoolkit.core.JournalEntry
 import dev.cameleonnbss.originostoolkit.core.SpecialAccess
 import dev.cameleonnbss.originostoolkit.core.TweakResult
 import dev.cameleonnbss.originostoolkit.core.model.Catalog
 import dev.cameleonnbss.originostoolkit.core.model.Tweak
+import dev.cameleonnbss.originostoolkit.core.ops.Access
+import dev.cameleonnbss.originostoolkit.core.ops.AccessLevel
 import dev.cameleonnbss.originostoolkit.core.shell.ShizukuBridge
 import dev.cameleonnbss.originostoolkit.core.shell.ShizukuState
 import dev.cameleonnbss.originostoolkit.service.FpsOverlayService
@@ -51,8 +55,40 @@ data class ToolkitUiState(
     val watcherEnabled: Boolean = false,
     val commandOutput: String? = null,
     val apps: List<AppEntry> = emptyList(),
+    val accessLevel: AccessLevel = AccessLevel.NONE,
+    val writeSettingsGranted: Boolean = false,
+    val runnerLabel: String = "",
 ) {
-    val canWrite: Boolean get() = shizuku.ready
+    /**
+     * True when *something* can be written: either Shizuku is up, or the user
+     * granted this app the right to write the system settings namespace.
+     */
+    val canWrite: Boolean get() = shizuku.ready || writeSettingsGranted
+
+    /** True when this app is running with no Shizuku at all. */
+    val noShizukuMode: Boolean get() = !shizuku.ready
+
+    /**
+     * Whether [tweak] can actually run right now.
+     *
+     * Deliberately not a global "is Shizuku running" question: a tweak that only
+     * touches the `system` namespace runs fine without Shizuku once the settings
+     * grant is in place, and the UI should say so instead of refusing it.
+     */
+    fun canRun(tweak: Tweak): Boolean = when (Access.of(tweak)) {
+        AccessLevel.NONE -> true
+        AccessLevel.SETTINGS -> writeSettingsGranted || shizuku.ready
+        AccessLevel.SHELL -> shizuku.ready
+    }
+
+    /** One sentence explaining what is missing, or `null` when nothing is. */
+    fun accessHint(tweak: Tweak): String? = when {
+        canRun(tweak) -> null
+        Access.of(tweak) == AccessLevel.SHELL ->
+            "Needs Shizuku (or the generated script over adb): this one uses the shell user."
+        else ->
+            "Grant \"modify system settings\" to this app, or start Shizuku."
+    }
 
     fun isApplied(tweakId: String): Boolean = journal.any { it.tweakId == tweakId }
 
@@ -100,10 +136,13 @@ class ToolkitViewModel(private val container: AppContainer) : ViewModel() {
 
     fun refresh() = background {
         if (ShizukuBridge.state.value.ready) container.shellProvider.connect()
-        val snapshot = DeviceInfo.read(container.shell)
+        val snapshot = container.snapshot()
         _state.update {
             it.copy(
                 snapshot = snapshot,
+                accessLevel = container.accessLevel,
+                writeSettingsGranted = container.writeSettingsGranted(),
+                runnerLabel = container.shell.label,
                 journal = container.engine.journal,
                 currentRefreshRate = container.currentRefreshRate(),
                 supportedRates = container.supportedRefreshRates(),
@@ -121,6 +160,21 @@ class ToolkitViewModel(private val container: AppContainer) : ViewModel() {
 
     /** Opens Shizuku's own permission dialog (or no-ops if it is not running). */
     fun requestShizukuPermission() = ShizukuBridge.requestPermission(REQUEST_CODE)
+
+    /**
+     * Opens the *modify system settings* screen for this app.
+     *
+     * This is the whole setup for the no-Shizuku path: one toggle, and every
+     * tweak in the `system` namespace becomes usable.
+     */
+    fun requestWriteSettings() {
+        val intent = container.writeSettingsIntent().addFlags(Intent.FLAG_ACTIVITY_NEW_TASK)
+        runCatching { container.appContext.startActivity(intent) }.onFailure {
+            _state.update {
+                it.copy(message = "Could not open the settings screen: grant it manually from Apps → Special access.")
+            }
+        }
+    }
 
     private fun refreshJournal() = _state.update { it.copy(journal = container.engine.journal) }
 
@@ -284,15 +338,70 @@ class ToolkitViewModel(private val container: AppContainer) : ViewModel() {
         }
     }
 
+    /**
+     * Samples the real compositor timings for whatever is in front.
+     *
+     * `dumpsys SurfaceFlinger --latency` without a layer name returns the
+     * statistics of some arbitrary layer — usually a system one — which is why
+     * the previous version of this function showed a plausible but meaningless
+     * number. It now resolves the foreground app to its own surface first.
+     */
     fun sampleSurfaceFlinger() = background {
-        // The only way to see real compositor timings. It needs the shell user,
-        // and some OriginOS builds restrict it, so failures are reported rather
-        // than swallowed.
-        val result = container.shell.exec("dumpsys SurfaceFlinger --latency")
+        val shell = container.shell
+        if (!shell.level.covers(AccessLevel.SHELL)) {
+            _state.update {
+                it.copy(
+                    commandOutput = "Reading real frame timings needs the shell user " +
+                        "(Shizuku or adb): only uid 2000 may ask SurfaceFlinger for its " +
+                        "present timestamps.\n\nEverything else in the toolkit still works " +
+                        "without Shizuku.",
+                )
+            }
+            return@background
+        }
+
+        val activity = shell.exec("dumpsys activity activities").stdout
+        val foreground = FpsSampler.foregroundPackage(activity)
+        if (foreground == null) {
+            _state.update { it.copy(commandOutput = "Could not tell which app is in front.") }
+            return@background
+        }
+
+        val layer = FpsSampler.chooseLayer(shell.exec("dumpsys SurfaceFlinger --list").stdout, foreground)
+        if (layer == null) {
+            _state.update {
+                it.copy(
+                    commandOutput = "$foreground has no SurfaceFlinger layer right now " +
+                        "(it may not be drawing, or this build hides its layers).",
+                )
+            }
+            return@background
+        }
+
+        val raw = shell.exec("dumpsys SurfaceFlinger --latency '$layer'").stdout
+        val timings = FpsSampler.parseLatency(raw)
         _state.update {
             it.copy(
-                commandOutput = result.output.ifEmpty {
-                    "No output. This build restricts SurfaceFlinger statistics without root."
+                commandOutput = if (timings.isEmpty) {
+                    "$layer reported no presented frames. Some OriginOS builds restrict " +
+                        "SurfaceFlinger statistics: the output was\n\n" + raw.take(600)
+                } else {
+                    buildString {
+                        appendLine("foreground app : $foreground")
+                        appendLine("layer          : $layer")
+                        appendLine()
+                        appendLine("frames sampled : ${timings.frames}")
+                        appendLine("window         : %.2f s".format(timings.spanSeconds ?: 0.0))
+                        appendLine("frame rate     : %.1f fps".format(timings.fps ?: 0.0))
+                        timings.onePercentLowFps?.let {
+                            appendLine("1%% low         : %.1f fps".format(it))
+                        }
+                        timings.refreshRateFromPeriod?.let {
+                            appendLine("panel period   : %.1f Hz".format(it))
+                        }
+                        append("\nThese are present timestamps from the display pipeline, not ")
+                        append("vsync callbacks, so they include frames the app dropped.")
+                    }
                 },
             )
         }
@@ -353,7 +462,12 @@ class ToolkitViewModel(private val container: AppContainer) : ViewModel() {
                 return false
             }
             if (!_state.value.canWrite) {
-                _state.update { it.copy(message = "Shizuku must be running before the watcher can work.") }
+                _state.update {
+                    it.copy(
+                        message = "The watcher writes system settings: grant \"modify system " +
+                            "settings\" to this app, or start Shizuku.",
+                    )
+                }
                 return false
             }
             PerAppRefreshService.start(container.appContext)

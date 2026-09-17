@@ -41,6 +41,19 @@ object SpecialAccess {
         Uri.parse("package:${context.packageName}"),
     )
 
+    /**
+     * The *modify system settings* grant.
+     *
+     * This is the one that lets the app write the `system` namespace itself,
+     * which is how the toolkit works without Shizuku, without root and without
+     * a computer. It is a normal per-app special access, granted from Settings.
+     */
+    fun canWriteSettings(context: Context): Boolean =
+        runCatching { Settings.System.canWrite(context) }.getOrDefault(false)
+
+    fun writeSettingsIntent(context: Context): Intent =
+        Intent(Settings.ACTION_MANAGE_WRITE_SETTINGS, Uri.parse("package:${context.packageName}"))
+
     /** Shizuku's own app, if it is installed, so we can deep-link the user to it. */
     fun shizukuPackage(): String = "moe.shizuku.privileged.api"
 }

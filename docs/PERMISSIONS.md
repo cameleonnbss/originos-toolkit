@@ -8,6 +8,7 @@ This is the complete permission set of the Android app. It is **locked**: the CI
 | Permission | Why it exists | Used by | Optional? |
 | --- | --- | --- | --- |
 | `android.permission.SYSTEM_ALERT_WINDOW` | Draw the floating frame-rate readout over other apps. | `FpsOverlayService` | Yes — the overlay switch prompts for it and does nothing until granted |
+| `android.permission.WRITE_SETTINGS` | Write the `system` settings namespace in-process, which is what makes the toolkit work **without Shizuku**: 8 tweaks (refresh rate, rotation lock, font scale, timeouts, sounds, haptics, adaptive brightness) live there. | `SettingsShell` | Yes — only the no-Shizuku path needs it, and it is off until you tap *Grant modify system settings* |
 | `android.permission.PACKAGE_USAGE_STATS` | Know which app is in the foreground, so per-app refresh profiles know what to apply. | `PerAppRefreshService` | Yes — only the per-app watcher needs it |
 | `android.permission.QUERY_ALL_PACKAGES` | Show the real package list in the debloat screen and the per-app picker. | `DebloatScreen`, `RefreshScreen` | No, but it grants no privilege: any app can list packages it can see, this just removes the API 30+ visibility filter |
 | `android.permission.FOREGROUND_SERVICE` | Keep the overlay and the refresh watcher alive while you use other apps. | both services | Structural |
@@ -21,9 +22,10 @@ This is the complete permission set of the Android app. It is **locked**: the CI
 | --- | --- |
 | `android.permission.INTERNET` | The app cannot reach the network. There is no analytics, no update check, no crash reporting. |
 | `android.permission.ACCESS_NETWORK_STATE` | Nothing to report. |
-| `android.permission.READ_/WRITE_EXTERNAL_STORAGE` | The app only writes to its own `SharedPreferences`. |
+| `android.permission.READ_EXTERNAL_STORAGE`, `WRITE_EXTERNAL_STORAGE` | The app only writes to its own `SharedPreferences`. |
 | `android.permission.REQUEST_INSTALL_PACKAGES` | It never installs anything. |
-| `android.permission.REBOOT`, `WRITE_SECURE_SETTINGS`, … | `WRITE_SECURE_SETTINGS` would let the app skip Shizuku entirely, and would also be a genuine privilege escalation vector. It is intentionally absent: every write goes through Shizuku's mediated binder instead. |
+| `android.permission.WRITE_SECURE_SETTINGS` | This is the one that would matter, and it is absent. `WRITE_SETTINGS` (which *is* requested) reaches the `system` namespace only; `Settings.Secure` and `Settings.Global` remain out of reach. So the app can change your refresh rate, but not your device's secure state — and everything that does need secure/global goes through Shizuku's mediated binder instead. |
+| `android.permission.REBOOT`, `android.permission.MOUNT_*`, … | Nothing here reboots or remounts anything. |
 | `android.permission.RECEIVE_BOOT_COMPLETED` | Nothing auto-starts. You decide when a service runs. |
 
 ## Adding a permission

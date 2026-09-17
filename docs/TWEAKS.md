@@ -7,21 +7,34 @@ Every tweak shipped in [`catalog/tweaks.json`](../catalog/tweaks.json) (catalog 
 Each entry lists the exact commands it runs, what it needs, and how it is undone.
 Nothing here requires root.
 
-**Legend** — 🟢 low risk · 🟡 medium · 🔴 high · `shizuku` = the app needs Shizuku · `adb` = run the commands from a computer.
+**Legend** — 🟢 low risk · 🟡 medium · 🔴 high · `settings` = works with the *modify system settings* access alone, no Shizuku · `shizuku` = the app needs Shizuku · `adb` = run the commands from a computer.
+
+## Works without Shizuku
+
+**8 of 39 tweaks never need the shell user.** They only touch the `system` namespace, which an ordinary app may write once you grant *Settings → Apps → Special access → Modify system settings*. That grant is a single toggle, so these work with no Shizuku, no root and no computer — this is the path to take if you would rather not install Shizuku at all.
+
+- `force-max-refresh-rate` — Pins Android's peak and minimum refresh rate to the panel maximum, so every app — not just the whitelisted ones — runs at 120/144/165 Hz.
+- `refresh-rate-overlay` — Enables the developer overlay that displays the current refresh rate in the corner of the screen — the honest way to check whether a tweak actually worked.
+- `lock-rotation-portrait` — Disables the accelerometer auto-rotate and pins the display portrait. Great for reading in bed.
+- `font-scale-compact` — Shrinks text 15 % to fit more rows of content on screen.
+- `screen-timeout-30s` — Shortens the display timeout to 30 seconds.
+- `disable-adaptive-brightness` — Stops the ambient-light-driven brightness hunting that keeps waking the sensor hub.
+- `disable-touch-sounds` — Kills key-click, touch and screen-lock audio feedback.
+- `disable-haptics` — Turns off UI vibration feedback. On iQOO's oversized linear motors this is a noticeable battery and comfort change.
 
 ## Index
 
 | Tweak | Category | Risk | Needs | Verified | Undo |
 | --- | --- | --- | --- | --- | --- |
-| [`force-max-refresh-rate`](#force-max-refresh-rate) | Display & Refresh rate | 🟢 low | shizuku | yes | automatic |
-| [`refresh-rate-overlay`](#refresh-rate-overlay) | Display & Refresh rate | 🟢 low | shizuku | yes | automatic |
+| [`force-max-refresh-rate`](#force-max-refresh-rate) | Display & Refresh rate | 🟢 low | settings | yes | automatic |
+| [`refresh-rate-overlay`](#refresh-rate-overlay) | Display & Refresh rate | 🟢 low | settings | yes | automatic |
 | [`dark-mode-always`](#dark-mode-always) | Display & Refresh rate | 🟢 low | shizuku | yes | explicit |
 | [`animation-speed-fast`](#animation-speed-fast) | Display & Refresh rate | 🟢 low | shizuku | yes | automatic |
 | [`animation-speed-off`](#animation-speed-off) | Display & Refresh rate | 🟡 medium | shizuku | yes | automatic |
-| [`lock-rotation-portrait`](#lock-rotation-portrait) | Display & Refresh rate | 🟢 low | shizuku | yes | automatic |
-| [`font-scale-compact`](#font-scale-compact) | Display & Refresh rate | 🟡 medium | shizuku | yes | automatic |
+| [`lock-rotation-portrait`](#lock-rotation-portrait) | Display & Refresh rate | 🟢 low | settings | yes | automatic |
+| [`font-scale-compact`](#font-scale-compact) | Display & Refresh rate | 🟡 medium | settings | yes | automatic |
 | [`density-compact`](#density-compact) | Display & Refresh rate | 🔴 high | shizuku | yes | automatic |
-| [`screen-timeout-30s`](#screen-timeout-30s) | Battery & Power | 🟢 low | shizuku | yes | automatic |
+| [`screen-timeout-30s`](#screen-timeout-30s) | Battery & Power | 🟢 low | settings | yes | automatic |
 | [`force-gpu-rendering`](#force-gpu-rendering) | Performance & Gaming | 🟡 medium | shizuku | yes | automatic |
 | [`disable-window-blurs`](#disable-window-blurs) | Performance & Gaming | 🟢 low | shizuku | yes | automatic |
 | [`max-cached-processes`](#max-cached-processes) | Performance & Gaming | 🟡 medium | shizuku | yes | automatic |
@@ -30,7 +43,7 @@ Nothing here requires root.
 | [`mobile-data-always-on-off`](#mobile-data-always-on-off) | Battery & Power | 🟢 low | shizuku | yes | automatic |
 | [`app-standby-on`](#app-standby-on) | Battery & Power | 🟢 low | shizuku | yes | automatic |
 | [`battery-saver-threshold-30`](#battery-saver-threshold-30) | Battery & Power | 🟢 low | shizuku | yes | automatic |
-| [`disable-adaptive-brightness`](#disable-adaptive-brightness) | Battery & Power | 🟢 low | shizuku | yes | automatic |
+| [`disable-adaptive-brightness`](#disable-adaptive-brightness) | Battery & Power | 🟢 low | settings | yes | automatic |
 | [`disable-ad-tracking`](#disable-ad-tracking) | Privacy & Network | 🟢 low | shizuku | yes | automatic |
 | [`hide-lockscreen-content`](#hide-lockscreen-content) | Privacy & Network | 🟢 low | shizuku | yes | automatic |
 | [`private-dns-adguard`](#private-dns-adguard) | Privacy & Network | 🟡 medium | shizuku | yes | automatic |
@@ -41,8 +54,8 @@ Nothing here requires root.
 | [`gesture-navigation`](#gesture-navigation) | Navigation, Audio & Haptics | 🟡 medium | shizuku | yes | explicit |
 | [`wide-back-gesture`](#wide-back-gesture) | Navigation, Audio & Haptics | 🟢 low | shizuku | yes | explicit |
 | [`confirm-immersive-mode`](#confirm-immersive-mode) | Navigation, Audio & Haptics | 🟢 low | shizuku | yes | automatic |
-| [`disable-touch-sounds`](#disable-touch-sounds) | Navigation, Audio & Haptics | 🟢 low | shizuku | yes | automatic |
-| [`disable-haptics`](#disable-haptics) | Navigation, Audio & Haptics | 🟢 low | shizuku | yes | automatic |
+| [`disable-touch-sounds`](#disable-touch-sounds) | Navigation, Audio & Haptics | 🟢 low | settings | yes | automatic |
+| [`disable-haptics`](#disable-haptics) | Navigation, Audio & Haptics | 🟢 low | settings | yes | automatic |
 | [`enable-developer-options`](#enable-developer-options) | System & Developer | 🟢 low | shizuku | yes | automatic |
 | [`enable-wireless-debugging`](#enable-wireless-debugging) | System & Developer | 🟡 medium | shizuku | yes | automatic |
 | [`stay-awake-charging`](#stay-awake-charging) | System & Developer | 🟢 low | shizuku | yes | automatic |
@@ -70,7 +83,7 @@ Nothing here requires root.
 
 ### force-max-refresh-rate
 
-**Force maximum refresh rate (120 / 144 / 165 Hz)** — 🟢 low risk · needs `shizuku` · verified on hardware
+**Force maximum refresh rate (120 / 144 / 165 Hz)** — 🟢 low risk · needs `settings` *(no Shizuku)* · verified on hardware
 
 Pins Android's peak and minimum refresh rate to the panel maximum, so every app — not just the whitelisted ones — runs at 120/144/165 Hz.
 
@@ -93,7 +106,7 @@ Side effects: 10–20 % extra battery drain, and a few video apps (Netflix, Prim
 
 ### refresh-rate-overlay
 
-**Show live refresh rate overlay** — 🟢 low risk · needs `shizuku` · verified on hardware
+**Show live refresh rate overlay** — 🟢 low risk · needs `settings` *(no Shizuku)* · verified on hardware
 
 Enables the developer overlay that displays the current refresh rate in the corner of the screen — the honest way to check whether a tweak actually worked.
 
@@ -175,7 +188,7 @@ Some third-party apps assume the animator duration is non-zero and can behave od
 
 ### lock-rotation-portrait
 
-**Lock rotation to portrait** — 🟢 low risk · needs `shizuku` · verified on hardware
+**Lock rotation to portrait** — 🟢 low risk · needs `settings` *(no Shizuku)* · verified on hardware
 
 Disables the accelerometer auto-rotate and pins the display portrait. Great for reading in bed.
 
@@ -196,7 +209,7 @@ Reversible: revert restores both the rotation lock state and the auto-rotate fla
 
 ### font-scale-compact
 
-**Compact font scale (0.85×)** — 🟡 medium risk · needs `shizuku` · verified on hardware
+**Compact font scale (0.85×)** — 🟡 medium risk · needs `settings` *(no Shizuku)* · verified on hardware
 
 Shrinks text 15 % to fit more rows of content on screen.
 
@@ -234,7 +247,7 @@ Risk: some apps with hard-coded layouts break at odd densities, and a wrong dens
 
 ### screen-timeout-30s
 
-**Screen timeout 30 s** — 🟢 low risk · needs `shizuku` · verified on hardware
+**Screen timeout 30 s** — 🟢 low risk · needs `settings` *(no Shizuku)* · verified on hardware
 
 Shortens the display timeout to 30 seconds.
 
@@ -407,7 +420,7 @@ Pure settings write. Revert puts back whatever threshold you had.
 
 ### disable-adaptive-brightness
 
-**Disable adaptive brightness** — 🟢 low risk · needs `shizuku` · verified on hardware
+**Disable adaptive brightness** — 🟢 low risk · needs `settings` *(no Shizuku)* · verified on hardware
 
 Stops the ambient-light-driven brightness hunting that keeps waking the sensor hub.
 
@@ -628,7 +641,7 @@ Writes `immersive_mode_confirmations=confirmed` in the secure namespace — the 
 
 ### disable-touch-sounds
 
-**Disable touch and lock sounds** — 🟢 low risk · needs `shizuku` · verified on hardware
+**Disable touch and lock sounds** — 🟢 low risk · needs `settings` *(no Shizuku)* · verified on hardware
 
 Kills key-click, touch and screen-lock audio feedback.
 
@@ -647,7 +660,7 @@ System-namespace flag. Safe, and one less audio stream the SoC has to wake for.
 
 ### disable-haptics
 
-**Disable system haptic feedback** — 🟢 low risk · needs `shizuku` · verified on hardware
+**Disable system haptic feedback** — 🟢 low risk · needs `settings` *(no Shizuku)* · verified on hardware
 
 Turns off UI vibration feedback. On iQOO's oversized linear motors this is a noticeable battery and comfort change.
 

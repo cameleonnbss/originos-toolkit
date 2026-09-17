@@ -5,6 +5,7 @@ import dev.cameleonnbss.originostoolkit.core.JournalEntry
 import dev.cameleonnbss.originostoolkit.core.JournalStore
 import dev.cameleonnbss.originostoolkit.core.TweakEngine
 import dev.cameleonnbss.originostoolkit.core.model.Tweak
+import dev.cameleonnbss.originostoolkit.core.ops.AccessLevel
 import dev.cameleonnbss.originostoolkit.core.ops.ShellCall
 import dev.cameleonnbss.originostoolkit.core.shell.RunnerProvider
 import dev.cameleonnbss.originostoolkit.core.shell.ShizukuState
@@ -23,11 +24,12 @@ private class FakeShell(
     private val answers: Map<String, String> = emptyMap(),
     val failures: MutableSet<String> = mutableSetOf(),
     private val onWrite: (String) -> Unit = {},
+    override val level: AccessLevel = AccessLevel.SHELL,
+    override val canWrite: Boolean = true,
 ) : ShellRunner {
     val calls = mutableListOf<String>()
 
     override val label = "fake"
-    override val canWrite = true
     override fun isAvailable() = true
 
     override fun exec(call: ShellCall): ShellResult {

@@ -54,7 +54,15 @@ AUTO_INVERTIBLE = frozenset(
 )
 
 RISK_LEVELS = ("low", "medium", "high")
-REQUIREMENTS = ("shizuku", "adb", "either")
+
+#: Access a tweak declares it needs, weakest first.
+#:
+#: * ``settings`` — runs in-process with the "modify system settings" special
+#:   access alone. No Shizuku, no root, no computer.
+#: * ``adb`` — needs the shell user, reachable from a computer.
+#: * ``shizuku`` — needs the shell user, obtained on the phone via Shizuku.
+#: * ``either`` — the shell user, by whichever route you happen to have.
+REQUIREMENTS = ("settings", "adb", "shizuku", "either")
 
 CATALOG_FILENAMES = ("tweaks.json", "profiles.json", "awesome.json")
 
@@ -388,6 +396,29 @@ def lint(catalog: Catalog) -> List[str]:
 
         if tweak.requires not in REQUIREMENTS:
             problems.append(f"{tweak.id}: requires must be one of {REQUIREMENTS}, got {tweak.requires!r}")
+
+        # The declared requirement is checked against what the actions can
+        # actually do, so the catalog cannot drift into claiming Shizuku is
+        # needed for something a plain app can do. Imported here rather than at
+        # module level because ops.py imports this module.
+        from .ops import action_requirement, requirement_of, settings_targets
+
+        implied = requirement_of([*tweak.actions, *(tweak.revert or [])])
+        if tweak.requires == "settings" and implied == "shell":
+            needs_shell = [
+                a.target
+                for a in [*tweak.actions, *(tweak.revert or [])]
+                if action_requirement(a) == "shell"
+            ]
+            problems.append(
+                f"{tweak.id}: declares requires 'settings' but {needs_shell} need the shell user"
+            )
+        elif tweak.requires != "settings" and implied == "settings":
+            targets = settings_targets([*tweak.actions, *(tweak.revert or [])])
+            problems.append(
+                f"{tweak.id}: declares requires {tweak.requires!r} but only touches {targets}, "
+                "which works without Shizuku — declare requires 'settings'"
+            )
 
         for action in [*tweak.actions, *(tweak.verify or [])]:
             if action.op not in KNOWN_OPS:

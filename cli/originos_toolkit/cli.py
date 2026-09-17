@@ -15,7 +15,7 @@ from .catalog import Catalog, CatalogError, Tweak, lint, load_catalog
 from .engine import Engine, EngineError, TweakResult
 from .export import render_script
 from .journal import Journal
-from .ops import probe_for, shell_calls
+from .ops import probe_for, runs_without_shizuku, shell_calls, tweak_requirement
 from .profiles import UnknownReference, resolve_ids, summarise
 from .render import bullet, heading, marker, paint, risk_badge, table, wrap
 
@@ -76,6 +76,11 @@ def build_parser() -> argparse.ArgumentParser:
     catalog_cmd = sub.add_parser("catalog", parents=[common], help="list every tweak")
     catalog_cmd.add_argument("--category", help="only this category id")
     catalog_cmd.add_argument("--risk", choices=["low", "medium", "high"], help="only this risk level")
+    catalog_cmd.add_argument(
+        "--no-shizuku",
+        action="store_true",
+        help="only tweaks that work without Shizuku or root",
+    )
     catalog_cmd.add_argument("--json", action="store_true", help="machine-readable output")
 
     show = sub.add_parser("show", parents=[common], help="explain one tweak in detail")
@@ -259,6 +264,20 @@ def cmd_doctor(args) -> int:
         shell_uid = runner.shell(["id"])
         checks.append(("shell access", shell_uid.ok, shell_uid.output or "no output"))
 
+    try:
+        catalog = _load_catalog(args)
+    except CatalogError:
+        catalog = None
+    if catalog is not None:
+        shell_free = [t for t in catalog.tweaks if runs_without_shizuku(t)]
+        checks.append(
+            (
+                "tweaks needing no Shizuku",
+                True,
+                f"{len(shell_free)} of {len(catalog.tweaks)} — grant 'modify system settings' in the app",
+            )
+        )
+
     print(table(["check", "state", "detail"], [(n, "ok" if ok else "FAIL", d) for n, ok, d in checks]))
 
     if not serials:
@@ -310,6 +329,8 @@ def cmd_catalog(args) -> int:
         tweaks = [t for t in tweaks if t.category == args.category]
     if args.risk:
         tweaks = [t for t in tweaks if t.risk == args.risk]
+    if getattr(args, "no_shizuku", False):
+        tweaks = [t for t in tweaks if runs_without_shizuku(t)]
 
     if args.json:
         print(
@@ -321,6 +342,7 @@ def cmd_catalog(args) -> int:
                         "category": t.category,
                         "risk": t.risk,
                         "requires": t.requires,
+                        "withoutShizuku": runs_without_shizuku(t),
                         "verified": t.verified,
                         "reversible": t.is_reversible,
                         "summary": t.summary,
@@ -333,14 +355,25 @@ def cmd_catalog(args) -> int:
         )
         return EXIT_OK
 
+    shell_free = [t for t in catalog.tweaks if runs_without_shizuku(t)]
     print(heading(f"Catalog — {len(tweaks)} tweaks (v{catalog.catalog_version})"))
     rows = [
-        (t.id, t.name[:46], risk_badge(t.risk), t.requires, "yes" if t.verified else "no")
+        (
+            t.id,
+            t.name[:44],
+            risk_badge(t.risk),
+            t.requires,
+            "no-shizuku" if runs_without_shizuku(t) else "shell uid 2000",
+            "yes" if t.verified else "no",
+        )
         for t in tweaks
     ]
-    print(table(["id", "name", "risk", "via", "verified"], rows))
+    print(table(["id", "name", "risk", "via", "needs", "verified"], rows))
     print(
         "\n"
+        + bullet(f"{len(shell_free)} of {len(catalog.tweaks)} tweaks need no Shizuku: "
+                 f"`originos-toolkit catalog --no-shizuku`")
+        + "\n"
         + bullet("`originos-toolkit show <id>` for the full story")
         + "\n"
         + bullet("`originos-toolkit apply <id> --dry-run` to see the commands")
@@ -360,6 +393,7 @@ def cmd_show(args) -> int:
     print(f"  category {catalog.category_name(tweak.category)}")
     print(f"  risk     {risk_badge(tweak.risk)}")
     print(f"  via      {tweak.requires}")
+    print(f"  access   {_describe_access(tweak)}")
     print(f"  verified {'yes' if tweak.verified else 'no — community-submitted'}")
     print(f"  revert   {'yes' if tweak.is_reversible else 'no (one-shot action)'}")
     print(f"  OriginOS {', '.join(tweak.origin_os) or '—'}")
@@ -382,6 +416,16 @@ def cmd_show(args) -> int:
             for call in shell_calls(action, previous="460"):
                 print(f"  $ adb shell {call.render()}")
     return EXIT_OK
+
+
+def _describe_access(tweak: Tweak) -> str:
+    """Plain-language answer to "do I need Shizuku for this?"""
+
+    if runs_without_shizuku(tweak):
+        return "no Shizuku needed — the app writes it with the modify-system-settings grant"
+    if tweak_requirement(tweak) == "shell":
+        return "needs the shell user (Shizuku on the phone, or adb from a computer)"
+    return "read-only"
 
 
 def _apply_ids(args, ids: Sequence[str], dry_run: bool) -> int:
@@ -743,6 +787,17 @@ def main(argv: Optional[Sequence[str]] = None) -> int:
     except KeyboardInterrupt:  # pragma: no cover - interactive
         print("\ninterrupted")
         return EXIT_ERROR
-# Invoke this package as a module: `python -m originos_toolkit [args]`.
-# (Executing this file by path would break its relative imports, so there is
-# deliberately no `if __name__ == "__main__"` block here.)
+# Two entry points, deliberately:
+#
+#   python -m originos_toolkit       [args]   <- __main__.py
+#   python -m originos_toolkit.cli   [args]   <- this block
+#
+# Running the file by path (`python cli/originos_toolkit/cli.py`) is what breaks
+# the relative imports, and only that is unsupported. The `-m` form imports this
+# module inside its package, so every import above resolves normally.
+#
+# This block is load-bearing: without it `python -m originos_toolkit.cli lint`
+# exits 0 and prints nothing, so every script that trusted it — the Makefile
+# targets, the CI smoke test — was silently checking nothing at all.
+if __name__ == "__main__":
+    sys.exit(main())

@@ -2,6 +2,8 @@ package dev.cameleonnbss.originostoolkit.core
 
 import dev.cameleonnbss.originostoolkit.core.model.Action
 import dev.cameleonnbss.originostoolkit.core.model.Tweak
+import dev.cameleonnbss.originostoolkit.core.ops.Access
+import dev.cameleonnbss.originostoolkit.core.ops.AccessLevel
 import dev.cameleonnbss.originostoolkit.core.ops.Ops
 import dev.cameleonnbss.originostoolkit.core.ops.ShellCall
 import dev.cameleonnbss.originostoolkit.core.shell.RunnerProvider
@@ -53,6 +55,43 @@ class TweakEngine(
     val journal: List<JournalEntry> get() = entries.toList()
 
     fun isApplied(tweakId: String): Boolean = entries.any { it.tweakId == tweakId }
+
+    // -- access ------------------------------------------------------------
+
+    /**
+     * Why the runner we have cannot safely run [actions], or `null` when it can.
+     *
+     * Checked *before* anything is executed and for the whole tweak at once: a
+     * tweak that writes to both `system` and `global` would otherwise half
+     * apply, with the journal holding an inverse it can never run.
+     */
+    fun refusalFor(actions: List<Action>): String? {
+        val required = Access.of(actions)
+        val runner = providers.active
+
+        if (!runner.level.covers(required)) {
+            return when (required) {
+                AccessLevel.SHELL ->
+                    "needs the shell user: start Shizuku (or run the generated script over adb)."
+                AccessLevel.SETTINGS ->
+                    "needs \"modify system settings\" on this app: Settings → Apps → " +
+                        "OriginOS Toolkit → Special access."
+                AccessLevel.NONE -> null
+            }
+        }
+
+        if (required != AccessLevel.NONE && !runner.canWrite) {
+            return "needs write access: grant \"modify system settings\" to this app " +
+                "(Settings → Apps → Special access), or start Shizuku."
+        }
+
+        return null
+    }
+
+    fun refusalFor(tweak: Tweak): String? = refusalFor(tweak.actions + tweak.revert)
+
+    /** True when the active runner can run the whole tweak. */
+    fun canRun(tweak: Tweak): Boolean = refusalFor(tweak) == null
 
     // -- probes ------------------------------------------------------------
 
@@ -113,6 +152,19 @@ class TweakEngine(
             return TweakResult(tweak.id, tweak.name, skipped = skipped, dryRun = dryRun)
         }
 
+        // A dry run always previews, so a user without Shizuku can still see
+        // exactly what the commands would be, and what they would need.
+        if (!dryRun) {
+            refusalFor(tweak)?.let { refusal ->
+                return TweakResult(
+                    tweakId = tweak.id,
+                    name = tweak.name,
+                    errors = listOf("${tweak.id} $refusal"),
+                    dryRun = false,
+                )
+            }
+        }
+
         val states = probe(tweak)
         val inverses = inverseFor(tweak, states)
 
@@ -156,6 +208,18 @@ class TweakEngine(
 
         val steps = mutableListOf<StepOutcome>()
         val errors = mutableListOf<String>()
+
+        if (!dryRun) {
+            refusalFor(inverses)?.let { refusal ->
+                return TweakResult(
+                    tweakId = tweakId,
+                    name = entry?.name ?: tweak?.name ?: tweakId,
+                    errors = listOf("cannot revert $tweakId: it $refusal"),
+                    reverted = true,
+                    dryRun = false,
+                )
+            }
+        }
 
         inverses.forEach { action ->
             Ops.shellCalls(action).forEach { call ->

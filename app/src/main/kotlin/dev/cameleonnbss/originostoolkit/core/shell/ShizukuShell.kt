@@ -6,6 +6,7 @@ import android.content.ServiceConnection
 import android.content.pm.PackageManager
 import android.os.IBinder
 import dev.cameleonnbss.originostoolkit.BuildConfig
+import dev.cameleonnbss.originostoolkit.core.ops.AccessLevel
 import dev.cameleonnbss.originostoolkit.core.ops.ShellCall
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
@@ -83,6 +84,7 @@ object ShizukuBridge {
 class ShizukuShell(private val context: Context) : ShellRunner {
 
     override val label: String = "Shizuku (shell uid 2000)"
+    override val level: AccessLevel = AccessLevel.SHELL
     override val canWrite: Boolean = true
 
     private var helper: IBinder? = null
@@ -204,9 +206,10 @@ interface RunnerProvider {
 /**
  * Chooses the best runner available right now and reports what it can do.
  *
- * When Shizuku is up we write through it; otherwise reads still work through
- * [LocalShell] so the dashboard is never empty, and the UI warns that nothing
- * can be applied yet.
+ * Shizuku first — it can do everything. Without it we fall back to
+ * [SettingsShell], which is not a degraded read-only mode: it really applies
+ * and reverts the tweaks that live in the `system` namespace. [LocalShell] only
+ * gets a turn when neither is usable.
  */
 class ShellProvider(
     private val context: Context,
@@ -214,9 +217,17 @@ class ShellProvider(
 ) : RunnerProvider {
 
     private val shizuku = ShizukuShell(context)
+    private val settings = SettingsShell(context)
+
+    /** True when we are running entirely without Shizuku. */
+    val shizukuFree: Boolean get() = !shizuku.isAvailable()
 
     override val active: ShellRunner
-        get() = if (shizuku.isAvailable()) shizuku else local
+        get() = when {
+            shizuku.isAvailable() -> shizuku
+            settings.canWrite || settings.isAvailable() -> settings
+            else -> local
+        }
 
     override val state: ShizukuState get() = ShizukuBridge.state.value
 

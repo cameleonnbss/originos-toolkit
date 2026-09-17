@@ -1,16 +1,66 @@
 # Setting up without root
 
-OriginOS Toolkit talks to Shizuku. Shizuku is an app that starts a privileged shell
-**once** — using Android's own debugging facilities — and then lends that identity to apps
-you approve. The identity it lends is the `shell` user (uid 2000), exactly what you get from
-`adb shell`. No root, no Magisk, no unlocked bootloader, no warranty concerns.
+There are three ways to run this toolkit, from the least to the most involved. Read
+[Option 0](#option-0--no-shizuku-no-computer-nothing-to-install) first: if the tweak you want
+is on that list, you are done in about fifteen seconds.
 
-You have to do this once per reboot of your phone, unless you use the [automation
-trick](#keeping-shizuku-alive) at the bottom.
+| Route | Setup | Covers |
+| --- | --- | --- |
+| **Option 0** — no Shizuku | One special-access switch | 8 of 39 tweaks, including forcing the max refresh rate |
+| **Option A** — Shizuku, on the phone | Wireless debugging, once per reboot | All 39 tweaks |
+| **Option B** — adb from a computer | USB cable, a few commands | All 39 tweaks, scriptable |
+
+---
+
+## Option 0 — no Shizuku, no computer, nothing to install
+
+Some settings live in the `system` namespace, and Android lets an ordinary app write that
+namespace itself. No shell, no Shizuku, no root, no background process: just one switch.
+
+### 1. Grant *modify system settings*
+
+Open OriginOS Toolkit → **Home → Access** → **Grant modify system settings**, and turn it on.
+The same screen is reachable by hand: `Settings → Apps → OriginOS Toolkit → Special access →
+Modify system settings`.
+
+### 2. Apply a tweak from that list
+
+In the app, open **Tweaks** and flip on **Works without Shizuku**. The CLI shows the same set:
+
+```console
+$ originos-toolkit catalog --no-shizuku
+```
+
+| Tweak | What it changes |
+| --- | --- |
+| `force-max-refresh-rate` | `peak_refresh_rate` / `min_refresh_rate` — the 144 Hz trick |
+| `refresh-rate-overlay` | Keeps the live refresh-rate readout in sync |
+| `lock-rotation-portrait` | Rotation lock |
+| `font-scale-compact` | Font scale |
+| `screen-timeout-30s` | Screen-off timeout |
+| `disable-adaptive-brightness` | Adaptive brightness |
+| `disable-touch-sounds` | Touch and lock sounds |
+| `disable-haptics` | System haptic feedback |
+
+### What it does *not* cover
+
+`WRITE_SETTINGS` reaches the `system` namespace and nothing else. `Settings.Secure` and
+`Settings.Global` — debloat, phone config, display density, most of the battery and privacy
+section — need the `shell` user, so for those continue with Option A or B below.
+
+Every one of these tweaks is journalled and reversible exactly like the rest.
 
 ---
 
 ## Option A — no computer at all (Android 11 and newer)
+
+The rest of the tweaks go through Shizuku. Shizuku starts a privileged shell **once** — using
+Android's own debugging facilities — and then lends that identity to apps you approve. The
+identity it lends is the `shell` user (uid 2000), exactly what you get from `adb shell`. No
+root, no Magisk, no unlocked bootloader, no warranty concerns.
+
+You have to do this once per reboot of your phone, unless you use the [automation
+trick](#keeping-shizuku-alive) at the bottom.
 
 Everything below happens on the phone.
 

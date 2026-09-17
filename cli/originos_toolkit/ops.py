@@ -288,3 +288,93 @@ def is_read_only(op: str) -> bool:
     """True for ops that never mutate device state."""
 
     return op in ("settings_get", "device_config_get", "pm_list", "overlay_list")
+
+
+# ---------------------------------------------------------------------------
+# access requirements
+# ---------------------------------------------------------------------------
+#
+# The catalog used to declare every tweak as "requires shizuku", which was
+# simply false: `settings put system <key>` needs no shell at all. An app can
+# write the System namespace in-process once the user grants the *modify system
+# settings* special access (WRITE_SETTINGS). Only the System namespace becomes
+# reachable that way — Settings.Secure and Settings.Global need the shell user
+# (uid 2000), which is what Shizuku or a USB cable provides.
+
+#: Ops that a plain app can perform against the System namespace.
+SETTINGS_OPS = frozenset({"settings_get", "settings_put", "settings_delete"})
+
+#: The `settings` verbs that change something.
+SETTINGS_WRITE_OPS = frozenset({"settings_put", "settings_delete"})
+
+#: The only namespace a non-privileged app may write with WRITE_SETTINGS.
+APP_WRITABLE_NAMESPACE = "system"
+
+#: Weakest access that can run an action. Ordered weakest to strongest.
+REQUIREMENT_ORDER = ("none", "settings", "shell")
+
+
+def action_requirement(action: Action) -> str:
+    """The weakest access level that can run ``action``.
+
+    The rule, in one place:
+
+    * a write to the ``system`` namespace needs the WRITE_SETTINGS special
+      access (``settings``) — nowhere else is app-writable, so that is ``shell``;
+    * a read never needs a grant of its own: the app reads ``system`` through its
+      own resolver (``none``), and ``secure``/``global`` are routed through the
+      shell (``shell``) because the app implements no in-process access to them.
+
+    Keep this in lockstep with ``core/ops/Access.kt``, which the Android app uses
+    and which the Kotlin test suite checks against this same catalog.
+    """
+
+    if action.op in SETTINGS_WRITE_OPS:
+        if action.get("ns") == APP_WRITABLE_NAMESPACE:
+            return "settings"
+        return "shell"
+
+    if action.op == "settings_get":
+        if action.get("ns") == APP_WRITABLE_NAMESPACE:
+            return "none"
+        return "shell"
+
+    if is_read_only(action.op):
+        return "none"
+
+    return "shell"
+
+
+def requirement_of(actions: Sequence[Action]) -> str:
+    """The strongest requirement among ``actions``."""
+
+    strongest = "none"
+    for action in actions:
+        need = action_requirement(action)
+        if REQUIREMENT_ORDER.index(need) > REQUIREMENT_ORDER.index(strongest):
+            strongest = need
+    return strongest
+
+
+def tweak_requirement(tweak) -> str:
+    """What applying *and* undoing ``tweak`` actually needs from the device.
+
+    The revert side counts: a tweak whose undo needs the shell user is not a
+    no-Shizuku tweak, even when its apply side would be.
+    """
+
+    if getattr(tweak, "revert", None):
+        return requirement_of([*tweak.actions, *tweak.revert])
+    return requirement_of(tweak.actions)
+
+
+def runs_without_shizuku(tweak) -> bool:
+    """True when the whole apply/revert cycle fits in the System namespace."""
+
+    return tweak_requirement(tweak) != "shell"
+
+
+def settings_targets(actions: Sequence[Action]) -> List[str]:
+    """The `settings/<ns>/<key>` targets a shell-free run would touch."""
+
+    return [a.target for a in actions if action_requirement(a) == "settings"]

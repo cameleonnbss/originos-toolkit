@@ -29,6 +29,7 @@ import androidx.compose.ui.unit.dp
 import dev.cameleonnbss.originostoolkit.core.TweakResult
 import dev.cameleonnbss.originostoolkit.core.model.Risk
 import dev.cameleonnbss.originostoolkit.core.model.Tweak
+import dev.cameleonnbss.originostoolkit.core.ops.Access
 import dev.cameleonnbss.originostoolkit.ui.PreviewState
 import dev.cameleonnbss.originostoolkit.ui.theme.riskColor
 
@@ -82,7 +83,13 @@ fun KeyValueRow(label: String, value: String, mono: Boolean = false) {
     }
 }
 
-/** Risk + verification + requirement badges for one tweak. */
+/**
+ * Risk + verification + access badges for one tweak.
+ *
+ * The access badge is computed from the actions rather than trusted from the
+ * catalog's `requires` field, so a wrong declaration can never make the app
+ * promise something the engine will then refuse.
+ */
 @Composable
 fun TweakBadges(tweak: Tweak) {
     Row(horizontalArrangement = Arrangement.spacedBy(6.dp), verticalAlignment = Alignment.CenterVertically) {
@@ -90,7 +97,11 @@ fun TweakBadges(tweak: Tweak) {
         if (!tweak.verified) Badge("UNVERIFIED", Color(0xFF8A8F98))
         if (tweak.isOneShot) Badge("ONE-SHOT", Color(0xFF8A8F98))
         if (!tweak.reversible) Badge("NO UNDO", Color(0xFF8A8F98))
-        Badge(tweak.requires.id.uppercase(), MaterialTheme.colorScheme.primary)
+        if (Access.runsWithoutShizuku(tweak)) {
+            Badge("NO SHIZUKU", Color(0xFF2E9E5B))
+        } else {
+            Badge("SHELL", MaterialTheme.colorScheme.primary)
+        }
     }
 }
 

@@ -27,9 +27,11 @@ import kotlinx.coroutines.launch
  * `min_refresh_rate` to the rate you chose for that app, restoring the original
  * values the moment you leave it.
  *
- * It writes through Shizuku (the `shell` user). Because it changes a value
- * repeatedly by design, it keeps its own two originals in [Prefs] instead of
- * writing to the revert journal — the journal is for deliberate, one-off
+ * It writes `peak_refresh_rate` / `min_refresh_rate`, which live in the `system`
+ * namespace — so with the *modify system settings* grant it works with no
+ * Shizuku at all, and with Shizuku it works with no grant. Because it changes a
+ * value repeatedly by design, it keeps its own two originals in [Prefs] instead
+ * of writing to the revert journal — the journal is for deliberate, one-off
  * changes you want to see listed and undo.
  */
 class PerAppRefreshService : Service() {
@@ -90,9 +92,13 @@ class PerAppRefreshService : Service() {
     }
 
     private fun tick() {
-        if (!container.shellProvider.state.ready) {
-            // Shizuku went away; nothing can be applied right now.
-            notify("Shizuku unavailable", "Start Shizuku to keep per-app rates in sync.")
+        // Either route will do: Shizuku, or the settings grant. This used to
+        // insist on Shizuku, which was simply wrong for a system-namespace key.
+        if (!container.shell.canWrite) {
+            notify(
+                "Write access needed",
+                "Grant \"modify system settings\" to this app, or start Shizuku.",
+            )
             return
         }
 

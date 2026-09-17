@@ -1,6 +1,6 @@
 {
   "awesomeVersion": 1,
-  "updatedAt": "2026-09-16",
+  "updatedAt": "2026-09-17",
   "note": "Community-curated, no-root-first. Every entry lists an explicit access requirement. Descriptions are paraphrased; links point at the upstream project.",
   "sections": [
     {
@@ -18,7 +18,7 @@
         },
         {
           "name": "Android Platform Tools (adb)",
-          "repo": "google/adb",
+          "repo": "developer.android.com/platform-tools",
           "url": "https://developer.android.com/tools/releases/platform-tools",
           "access": "no-root",
           "description": "Official Google ADB binaries. Needed exactly once to bootstrap Shizuku or to run this toolkit's generated command sets from a computer.",
@@ -73,8 +73,8 @@
         },
         {
           "name": "Game Booster / FPS Unlocker",
-          "repo": "catsmoker/com.catsmoker.app",
-          "url": "https://github.com/catsmoker/com.catsmoker.app",
+          "repo": "catsmoker/catsmoker-app",
+          "url": "https://github.com/catsmoker/catsmoker-app",
           "access": "no-root",
           "description": "Game FPS unlocking and device profiling: resolution scaling, an FPS/CPU/RAM/temperature overlay, crosshair overlay and a DNS optimiser. Shizuku for no-root use, LSPosed if you are rooted.",
           "tags": ["fps", "overlay", "resolution", "spoofing"]
@@ -88,9 +88,9 @@
           "tags": ["resolution", "gaming", "adb"]
         },
         {
-          "name": "SystemUI Tuner",
-          "repo": "zacharee/SystemUITuner",
-          "url": "https://github.com/zacharee/SystemUITuner",
+          "name": "SystemUI Tuner Redesign",
+          "repo": "zacharee/SystemUITunerRedesign",
+          "url": "https://github.com/zacharee/SystemUITunerRedesign",
           "access": "no-root",
           "description": "Long-standing tool for hiding status-bar icons, tuning immersive mode and unlocking flags the OEM hides. Overlaps with this toolkit's display section and does it with more polish.",
           "tags": ["ui", "status-bar", "immersive"]
@@ -120,8 +120,8 @@
         },
         {
           "name": "Android battery optimization",
-          "repo": "Aatricks/Android-battery-optimization",
-          "url": "https://github.com/Aatricks/Android-battery-optimization",
+          "repo": "Aatricks/Android-battery-optimizer",
+          "url": "https://github.com/Aatricks/Android-battery-optimizer",
           "access": "adb",
           "description": "Focused ADB recipes that maximise battery life and screen-on time on a stock, non-rooted device without deep system modification.",
           "tags": ["battery", "sot", "adb"]
@@ -167,8 +167,8 @@
         },
         {
           "name": "Universal Android Debloater NG",
-          "repo": "0x192/universal-android-debloater-next-generation",
-          "url": "https://github.com/0x192/universal-android-debloater-next-generation",
+          "repo": "Universal-Debloater-Alliance/universal-android-debloater-next-generation",
+          "url": "https://github.com/Universal-Debloater-Alliance/universal-android-debloater-next-generation",
           "access": "adb",
           "description": "The maintained next-generation rewrite of the debloater. Better multi-user support and a cleaner package database.",
           "tags": ["debloat", "adb", "multi-user"]
@@ -285,8 +285,8 @@
         },
         {
           "name": "RootlessJamesDSP",
-          "repo": "ThePBone/RootlessJamesDSP",
-          "url": "https://github.com/ThePBone/RootlessJamesDSP",
+          "repo": "timschneeb/RootlessJamesDSP",
+          "url": "https://github.com/timschneeb/RootlessJamesDSP",
           "access": "no-root",
           "description": "JamesDSP's convolution and bass processing without root, using the audio playback capture API. The most capable no-root DSP available.",
           "tags": ["audio", "dsp", "no-root"]

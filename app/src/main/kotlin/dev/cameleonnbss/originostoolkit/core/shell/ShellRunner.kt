@@ -1,5 +1,6 @@
 package dev.cameleonnbss.originostoolkit.core.shell
 
+import dev.cameleonnbss.originostoolkit.core.ops.AccessLevel
 import dev.cameleonnbss.originostoolkit.core.ops.ShellCall
 
 data class ShellResult(
@@ -20,14 +21,21 @@ data class CommandResult(val command: String, val output: String, val ok: Boolea
 /**
  * Anything that can run a command on this device.
  *
- * Two implementations exist on purpose:
- *  * [ShizukuShell] — full privileges (the `shell` user), used for every write;
- *  * [LocalShell] — unprivileged, used only for read-only probes so the
- *    dashboard still shows something useful before Shizuku is set up.
+ * Three implementations exist on purpose:
+ *  * [ShizukuShell] — full privileges (the `shell` user), used for every write
+ *    that genuinely needs uid 2000;
+ *  * [SettingsShell] — unprivileged writes to the `system` namespace through
+ *    the app's own ContentResolver, once the user grants *modify system
+ *    settings*. This is what makes the toolkit usable without Shizuku;
+ *  * [LocalShell] — no privileges at all, for the few reads that still work
+ *    when nothing has been granted.
  */
 interface ShellRunner {
     /** Human-readable name for the status card. */
     val label: String
+
+    /** The strongest action this runner is allowed to perform. */
+    val level: AccessLevel
 
     fun isAvailable(): Boolean
 
@@ -48,6 +56,7 @@ interface ShellRunner {
  */
 class LocalShell : ShellRunner {
     override val label: String = "unprivileged (app uid)"
+    override val level: AccessLevel = AccessLevel.NONE
     override val canWrite: Boolean = false
 
     override fun isAvailable(): Boolean = true

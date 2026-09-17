@@ -21,6 +21,7 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.unit.dp
 import dev.cameleonnbss.originostoolkit.core.AppEntry
 import dev.cameleonnbss.originostoolkit.core.model.Profile
+import dev.cameleonnbss.originostoolkit.core.ops.Access
 import dev.cameleonnbss.originostoolkit.ui.ToolkitUiState
 import dev.cameleonnbss.originostoolkit.ui.ToolkitViewModel
 import dev.cameleonnbss.originostoolkit.ui.components.EmptyHint
@@ -52,19 +53,37 @@ fun DashboardScreen(
                 KeyValueRow("Model", snapshot.model)
                 KeyValueRow("Brand", snapshot.brand)
                 KeyValueRow("Android", "${snapshot.androidRelease} (API ${snapshot.sdk})")
-                KeyValueRow("OriginOS", snapshot.originOsVersion ?: "—")
+                KeyValueRow(
+                    "OriginOS",
+                    snapshot.originOsVersion
+                        ?: if (snapshot.originOsVersionUnreadable) "unreadable without Shizuku" else "—",
+                )
                 snapshot.originOsBuild?.let { KeyValueRow("Build", it) }
                 snapshot.funTouchVersion?.let { KeyValueRow("FuntouchOS", it) }
-                KeyValueRow("Density", snapshot.density?.toString() ?: "—")
+                KeyValueRow(
+                    "Density",
+                    snapshot.density?.let { "$it${if (snapshot.viaShell) "" else " (effective)"}" } ?: "—",
+                )
                 KeyValueRow("Resolution", snapshot.resolution ?: "—")
                 KeyValueRow("Peak refresh", snapshot.peakRefreshRate ?: "system default")
                 state.currentRefreshRate?.let { KeyValueRow("Refresh now", "%.0f Hz".format(it)) }
 
-                if (!snapshot.isOriginOs) {
+                if (!snapshot.isOriginOs && snapshot.originOsVersionUnreadable) {
                     Spacer(Modifier.height(10.dp))
                     Text(
-                        "No `ro.vivo.os.version` on this device. The OriginOS-specific notes " +
-                            "may not apply, but every generic Android tweak still works.",
+                        "This is a Vivo build but `ro.vivo.os.version` needs the shell user to " +
+                            "read, so the version is left blank rather than guessed. Everything " +
+                            "else on this page comes from the app's own APIs.",
+                        style = MaterialTheme.typography.bodySmall,
+                        color = MaterialTheme.colorScheme.onSurfaceVariant,
+                    )
+                }
+
+                if (!snapshot.isOriginOs && !snapshot.originOsVersionUnreadable) {
+                    Spacer(Modifier.height(10.dp))
+                    Text(
+                        "Not a Vivo/iQOO build. The OriginOS-specific notes may not apply, " +
+                            "but every generic Android tweak still works.",
                         style = MaterialTheme.typography.bodySmall,
                         color = MaterialTheme.colorScheme.onSurfaceVariant,
                     )
@@ -72,15 +91,47 @@ fun DashboardScreen(
             }
         }
 
+        val shellFree = state.catalog.tweaks.count { Access.runsWithoutShizuku(it) }
+
         SectionCard(
-            title = "Shizuku",
-            subtitle = "The only way this app can change a system setting without root.",
+            title = "Access",
+            subtitle = "Two independent routes to the same commands. Either one is enough; " +
+                "neither needs root.",
         ) {
+            // -- route 1: no extra app, no computer --------------------------
+            Text("Without Shizuku", style = MaterialTheme.typography.titleSmall)
+            Text(
+                "$shellFree of ${state.catalog.tweaks.size} tweaks only touch the `system` " +
+                    "namespace. Android lets this app write those itself once you flip one " +
+                    "special-access switch — nothing to install, nothing to keep running.",
+                style = MaterialTheme.typography.bodySmall,
+                color = MaterialTheme.colorScheme.onSurfaceVariant,
+            )
+            Spacer(Modifier.height(8.dp))
+            if (state.writeSettingsGranted) {
+                Text(
+                    "Granted — the refresh-rate, rotation and audio tweaks apply directly.",
+                    style = MaterialTheme.typography.bodySmall,
+                    color = MaterialTheme.colorScheme.primary,
+                )
+            } else {
+                Button(onClick = { viewModel.requestWriteSettings() }) {
+                    Text("Grant modify system settings")
+                }
+            }
+
+            Spacer(Modifier.height(16.dp))
+
+            // -- route 2: Shizuku, for everything else ----------------------
+            Text("With Shizuku", style = MaterialTheme.typography.titleSmall)
+            Spacer(Modifier.height(4.dp))
             when {
                 !state.shizuku.binderAlive -> {
                     Text(
-                        "Not running. Start Shizuku (wireless debugging or a one-time ADB " +
-                            "connection), then come back here.",
+                        "Optional. It is the only way to reach the shell user with no " +
+                            "computer, which is what the remaining " +
+                            "${state.catalog.tweaks.size - shellFree} tweaks need. Start it " +
+                            "with wireless debugging, then come back here.",
                         style = MaterialTheme.typography.bodySmall,
                         color = MaterialTheme.colorScheme.onSurfaceVariant,
                     )
@@ -118,7 +169,8 @@ fun DashboardScreen(
         SectionCard(title = "Live tools") {
             SwitchRow(
                 label = "Frame-rate overlay",
-                description = "Shows the vsync rate this device is actually running at, above every app.",
+                description = "Shows the panel refresh rate and, where the device allows it, the " +
+                    "real frame rate of the app in front.",
                 checked = state.overlayEnabled,
                 onChange = { if (!viewModel.toggleOverlay()) onRequestOverlayAccess() },
             )

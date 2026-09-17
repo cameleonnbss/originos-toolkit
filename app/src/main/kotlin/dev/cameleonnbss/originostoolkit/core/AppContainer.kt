@@ -5,6 +5,7 @@ import android.content.Intent
 import android.content.pm.PackageManager
 import dev.cameleonnbss.originostoolkit.core.model.Catalog
 import dev.cameleonnbss.originostoolkit.core.model.CatalogParser
+import dev.cameleonnbss.originostoolkit.core.ops.AccessLevel
 import dev.cameleonnbss.originostoolkit.core.shell.ShellProvider
 import dev.cameleonnbss.originostoolkit.core.shell.ShellRunner
 
@@ -55,6 +56,22 @@ class AppContainer(val appContext: Context) {
     fun currentRefreshRate(): Float? = DeviceInfo.currentRefreshRate(appContext)
 
     fun supportedRefreshRates(): List<Float> = DeviceInfo.supportedRefreshRates(appContext)
+
+    fun snapshot(): DeviceSnapshot = DeviceInfo.read(appContext, shell)
+
+    // -- access ------------------------------------------------------------
+
+    /** The strongest thing the runner we currently have may do. */
+    val accessLevel: AccessLevel get() = shell.level
+
+    /** True once the user grants *modify system settings*. */
+    fun writeSettingsGranted(): Boolean = shell.canWrite
+
+    /** Why [tweak] cannot be applied right now, or `null` when it can. */
+    fun refusalFor(tweak: dev.cameleonnbss.originostoolkit.core.model.Tweak): String? =
+        engine.refusalFor(tweak)
+
+    fun writeSettingsIntent(): Intent = SpecialAccess.writeSettingsIntent(appContext)
 
     /**
      * Every launchable app, for the per-app refresh picker.

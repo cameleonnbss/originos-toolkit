@@ -241,6 +241,36 @@ class DebloatTests(CliTestCase):
         self.assertNotIn("com.vivo.appstore", out)
 
 
+class NoShizukuFilterTests(CliTestCase):
+    """The CLI must be able to answer "what can I do without Shizuku?"."""
+
+    def test_catalog_no_shizuku_lists_only_shell_free_tweaks(self) -> None:
+        code, out = run("catalog", "--catalog", str(CATALOG_DIR), "--no-shizuku")
+        self.assertEqual(code, EXIT_OK, out)
+        self.assertIn("force-max-refresh-rate", out)
+        # A pm/device_config tweak cannot run in-process, so it must be gone.
+        self.assertNotIn("debloat-vivo-store", out)
+
+    def test_catalog_no_shizuku_json_flags_each_tweak(self) -> None:
+        code, out = run("catalog", "--catalog", str(CATALOG_DIR), "--no-shizuku", "--json")
+        self.assertEqual(code, EXIT_OK, out)
+        rows = json.loads(out)
+        self.assertTrue(rows)
+        self.assertTrue(all(row["withoutShizuku"] for row in rows))
+        self.assertTrue(all(row["requires"] == "settings" for row in rows))
+
+    def test_show_explains_that_no_shizuku_is_needed(self) -> None:
+        code, out = run("show", "--catalog", str(CATALOG_DIR), "force-max-refresh-rate")
+        self.assertEqual(code, EXIT_OK, out)
+        self.assertIn("access", out)
+        self.assertIn("no Shizuku needed", out)
+
+    def test_show_names_the_shell_requirement_for_the_others(self) -> None:
+        code, out = run("show", "--catalog", str(CATALOG_DIR), "dark-mode-always")
+        self.assertEqual(code, EXIT_OK, out)
+        self.assertIn("needs the shell user", out)
+
+
 class DoctorTests(CliTestCase):
     def test_doctor_without_adb_explains_what_to_do(self) -> None:
         """Only meaningful when adb is absent; otherwise it is a smoke test."""

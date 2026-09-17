@@ -87,10 +87,26 @@ The **Discover** screen ships the [Awesome OriginOS](docs/AWESOME-ORIGINOS.md) l
 tools, each labelled `NO-ROOT`, `ADB`, `SHIZUKU` or `ROOT`, so nobody installs a rooted
 Magisk module by accident.
 
+### Works without Shizuku
+
+8 of the 39 tweaks never need the `shell` user. They write the `system` settings namespace,
+which an ordinary app may write as soon as you grant *modify system settings* — one switch in
+Android Settings, nothing else to install:
+*Force maximum refresh rate*, *Refresh-rate overlay*, *Lock rotation*, *Font scale*,
+*Screen timeout*, *Adaptive brightness*, *Touch and lock sounds* and *Haptic feedback*.
+
+They apply and revert like any other tweak, they are journalled the same way, and the
+**Tweaks** screen has a *Works without Shizuku* filter that shows exactly this set.
+Everything else — debloat, phone config, display density — needs the shell user, either
+through [Shizuku](https://github.com/RikkaApps/Shizuku) on the phone or through the generated
+adb script from a computer.
+
 ### An honest FPS overlay
-A floating readout of the vsync rate the device is actually running — plus a manual
-`dumpsys SurfaceFlinger --latency` sample on the dashboard when you want real compositor
-timings rather than an approximation.
+A floating readout that does not lie about what it measures. The number comes from
+`SurfaceFlinger`'s own present timestamps for the app in front — the real frame rate, plus a
+**1% low** — not from counting vsync callbacks and calling the result "fps". When the shell
+user is not available it shows the panel refresh rate and says so, instead of inventing a
+frame rate it cannot see.
 
 ### A revert journal, and a panic button
 Everything applied is listed in **Settings → Revert journal** with the exact inverse that was
@@ -106,8 +122,10 @@ UI awkward.
 
 1. Grab the APK from [Releases](https://github.com/cameleonnbss/originos-toolkit/releases)
    (`originos-toolkit-*-debug.apk` installs directly).
-2. Install and start [Shizuku](https://github.com/RikkaApps/Shizuku).
-3. Grant this app the Shizuku permission.
+2. On **Home → Access**, tap **Grant modify system settings**. That is the whole setup for the
+   8 Shizuku-free tweaks, including forcing the maximum refresh rate.
+3. Optional, for everything else: install and start [Shizuku](https://github.com/RikkaApps/Shizuku),
+   then grant this app the Shizuku permission.
 4. Open the **Tweaks** tab, hit **Commands** on anything you are unsure about, then **Apply**.
 
 The **Home** tab tells you exactly what it detected: model, OriginOS build, current density
@@ -118,7 +136,8 @@ and the refresh rate in use right now.
 ```console
 $ pip install -e cli/          # or run it with PYTHONPATH=cli python -m originos_toolkit
 $ originos-toolkit doctor      # checks adb, device, Shizuku, shell access
-$ originos-toolkit apply gaming-max --dry-run
+$ originos-toolkit catalog --no-shizuku   # what works without Shizuku: 8 of 39
+$ originos-toolkit apply force-max-refresh-rate --dry-run
 $ originos-toolkit apply gaming-max
 $ originos-toolkit revert --all
 ```
@@ -193,6 +212,8 @@ $ gradle testDebugUnitTest                               # the same invariants i
 | Guarantee | How it is enforced |
 | --- | --- |
 | No root, ever | Only Shizuku's `shell` identity is used; there is no `su` call anywhere in the tree |
+| No over-broad settings access | `WRITE_SETTINGS` reaches the `system` namespace only. `Settings.Secure` and `Settings.Global` — the ones that matter for device state — remain out of reach and go through Shizuku instead. `WRITE_SECURE_SETTINGS` is not requested at all |
+| No lying numbers | The FPS overlay reads SurfaceFlinger present timestamps, and falls back to reporting the refresh rate by name when it cannot see frames |
 | No silent privilege growth | CI fails if a new `uses-permission` appears that is not listed in [docs/PERMISSIONS.md](docs/PERMISSIONS.md) |
 | No telemetry | The manifest has no `INTERNET` permission. None. |
 | No fake tweaks | Tweaks that are not verified on real hardware are marked `UNVERIFIED` and kept in an opt-in category |
@@ -213,7 +234,7 @@ and an `adb` binary.
 | --- | --- |
 | `doctor` | Checks adb, the device, Shizuku and shell access |
 | `info` | Model, OriginOS build, density, resolution, refresh-rate settings |
-| `catalog` | Lists every tweak (`--category`, `--risk`, `--json`) |
+| `catalog` | Lists every tweak (`--category`, `--risk`, `--json`, `--no-shizuku`) |
 | `show <id>` | Full description; `--commands` prints the exact ADB lines |
 | `profiles` | Lists the six bundles |
 | `apply <id…>` | Applies tweaks and/or profiles (`--dry-run`, `--yes`, `--force`, `--allow-experimental`) |

@@ -14,6 +14,22 @@
     <!-- Draw the FPS / refresh-rate overlay on top of other apps. -->
     <uses-permission android:name="android.permission.SYSTEM_ALERT_WINDOW" />
 
+    <!--
+      The no-Shizuku path.
+
+      WRITE_SETTINGS is what lets the app write the `system` settings namespace
+      itself, once the user flips the "modify system settings" switch. It reaches
+      that one namespace and nothing else: Settings.Secure and Settings.Global
+      stay out of reach, so it is not a substitute for WRITE_SECURE_SETTINGS and
+      cannot be used to change anything the shell user alone could change.
+
+      Declared here because `Settings.System.putString` is checked against the
+      manifest; the switch in Settings is what actually grants it.
+    -->
+    <uses-permission
+        android:name="android.permission.WRITE_SETTINGS"
+        tools:ignore="ProtectedPermissions" />
+
     <!-- Detect which app is in the foreground, for per-app refresh-rate profiles. -->
     <uses-permission
         android:name="android.permission.PACKAGE_USAGE_STATS"

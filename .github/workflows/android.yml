@@ -57,7 +57,7 @@ jobs:
       - name: Manifest guard
         run: |
           set -eu
-          allowed='SYSTEM_ALERT_WINDOW|PACKAGE_USAGE_STATS|QUERY_ALL_PACKAGES|FOREGROUND_SERVICE|FOREGROUND_SERVICE_SPECIAL_USE|POST_NOTIFICATIONS|API_V23'
+          allowed='SYSTEM_ALERT_WINDOW|WRITE_SETTINGS|PACKAGE_USAGE_STATS|QUERY_ALL_PACKAGES|FOREGROUND_SERVICE|FOREGROUND_SERVICE_SPECIAL_USE|POST_NOTIFICATIONS|API_V23'
           found=$(grep -o 'android:name="[^"]*"' app/src/main/AndroidManifest.xml \
             | sed 's/android:name="//;s/"//' \
             | grep -E '^android\.permission\.|^moe\.shizuku' || true)
@@ -141,9 +141,20 @@ jobs:
 
             ### Before you start
 
-            1. Install [Shizuku](https://github.com/RikkaApps/Shizuku) and start it over wireless debugging or a one-time ADB connection.
-            2. Grant this app the Shizuku permission.
-            3. Everything you apply is journalled and reversible from the app.
+            **You do not need Shizuku for everything.** 8 of the 39 tweaks — including
+            forcing the maximum refresh rate — write the `system` settings namespace, which
+            an ordinary app may do once you grant *modify system settings*:
+
+            1. Open the app, go to **Access**, and tap **Grant modify system settings**.
+            2. Those tweaks now apply and revert normally. Run
+               `originos-toolkit catalog --no-shizuku` for the list.
+
+            For the rest (debloat, phone-config, display density), pick one route:
+
+            * [Shizuku](https://github.com/RikkaApps/Shizuku) started over wireless debugging, for on-device use;
+            * or the generated adb script from a computer (`originos-toolkit export <profile>`).
+
+            Everything you apply is journalled and reversible from the app.
 
             No root, no telemetry, no network permission. Read
             [`docs/NO-ROOT-SETUP.md`](https://github.com/${{ github.repository }}/blob/main/docs/NO-ROOT-SETUP.md)

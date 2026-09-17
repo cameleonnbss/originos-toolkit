@@ -18,11 +18,18 @@ enum class Risk(val id: String) {
 }
 
 enum class Requirement(val id: String) {
+    /** Only the "modify system settings" grant: no Shizuku, no root, no PC. */
+    SETTINGS("settings"),
     SHIZUKU("shizuku"),
     ADB("adb"),
     EITHER("either");
 
     companion object {
+        /**
+         * Unknown values fall back to SHIZUKU: if the catalog says something we
+         * do not understand, assume it needs the most access rather than the
+         * least, and let the engine refuse it.
+         */
         fun fromId(id: String?): Requirement = entries.firstOrNull { it.id == id } ?: SHIZUKU
     }
 }

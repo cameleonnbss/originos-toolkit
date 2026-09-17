@@ -42,7 +42,7 @@ The keystone of the whole no-root ecosystem: starts a privileged shell over wire
 
 Official Google ADB binaries. Needed exactly once to bootstrap Shizuku or to run this toolkit's generated command sets from a computer.
 
-`google/adb` · tags: adb, foundation, official
+`developer.android.com/platform-tools` · tags: adb, foundation, official
 
 ### [LADB](https://github.com/tytydraco/LADB) — `NO-ROOT`
 
@@ -80,11 +80,11 @@ Overlay with a live FPS meter and thermal diagnostics, driving optimisation thro
 
 `MaheshSharan/FrameX-Android` · tags: fps-meter, overlay, thermal, vivo
 
-### [Game Booster / FPS Unlocker](https://github.com/catsmoker/com.catsmoker.app) — `NO-ROOT`
+### [Game Booster / FPS Unlocker](https://github.com/catsmoker/catsmoker-app) — `NO-ROOT`
 
 Game FPS unlocking and device profiling: resolution scaling, an FPS/CPU/RAM/temperature overlay, crosshair overlay and a DNS optimiser. Shizuku for no-root use, LSPosed if you are rooted.
 
-`catsmoker/com.catsmoker.app` · tags: fps, overlay, resolution, spoofing
+`catsmoker/catsmoker-app` · tags: fps, overlay, resolution, spoofing
 
 ### [Android Game Booster](https://github.com/Mathias-Boulay/Android-Game-Booster) — `ADB`
 
@@ -92,11 +92,11 @@ Universal resolution scaler with a one-time ADB setup for non-rooted devices. Cl
 
 `Mathias-Boulay/Android-Game-Booster` · tags: resolution, gaming, adb
 
-### [SystemUI Tuner](https://github.com/zacharee/SystemUITuner) — `NO-ROOT`
+### [SystemUI Tuner Redesign](https://github.com/zacharee/SystemUITunerRedesign) — `NO-ROOT`
 
 Long-standing tool for hiding status-bar icons, tuning immersive mode and unlocking flags the OEM hides. Overlaps with this toolkit's display section and does it with more polish.
 
-`zacharee/SystemUITuner` · tags: ui, status-bar, immersive
+`zacharee/SystemUITunerRedesign` · tags: ui, status-bar, immersive
 
 <a id="optimization"></a>
 
@@ -116,11 +116,11 @@ Ships power-saving, balanced and max-hardware profiles as ADB command sets, with
 
 `SchneeSchmitt/ADB-Android-Optimizer` · tags: profiles, adb, shizuku
 
-### [Android battery optimization](https://github.com/Aatricks/Android-battery-optimization) — `ADB`
+### [Android battery optimization](https://github.com/Aatricks/Android-battery-optimizer) — `ADB`
 
 Focused ADB recipes that maximise battery life and screen-on time on a stock, non-rooted device without deep system modification.
 
-`Aatricks/Android-battery-optimization` · tags: battery, sot, adb
+`Aatricks/Android-battery-optimizer` · tags: battery, sot, adb
 
 ### [AndroidTweaker](https://github.com/c0d3h01/AndroidTweaker) — `ROOT`
 
@@ -152,11 +152,11 @@ Cross-platform Rust GUI that debloats over ADB. Improves privacy, security and b
 
 `0x192/universal-android-debloater` · tags: debloat, rust, gui, adb
 
-### [Universal Android Debloater NG](https://github.com/0x192/universal-android-debloater-next-generation) — `ADB`
+### [Universal Android Debloater NG](https://github.com/Universal-Debloater-Alliance/universal-android-debloater-next-generation) — `ADB`
 
 The maintained next-generation rewrite of the debloater. Better multi-user support and a cleaner package database.
 
-`0x192/universal-android-debloater-next-generation` · tags: debloat, adb, multi-user
+`Universal-Debloater-Alliance/universal-android-debloater-next-generation` · tags: debloat, adb, multi-user
 
 ### [App Manager](https://github.com/MuntashirAkon/AppManager) — `NO-ROOT`
 
@@ -242,11 +242,11 @@ System-wide audio effects headphone profile, bass boost and auto-EQ, built on th
 
 `Pittvandewitt/Wavelet` · tags: audio, eq, headphones
 
-### [RootlessJamesDSP](https://github.com/ThePBone/RootlessJamesDSP) — `NO-ROOT`
+### [RootlessJamesDSP](https://github.com/timschneeb/RootlessJamesDSP) — `NO-ROOT`
 
 JamesDSP's convolution and bass processing without root, using the audio playback capture API. The most capable no-root DSP available.
 
-`ThePBone/RootlessJamesDSP` · tags: audio, dsp, no-root
+`timschneeb/RootlessJamesDSP` · tags: audio, dsp, no-root
 
 ### [Lawnchair](https://github.com/LawnchairLauncher/lawnchair) — `NO-ROOT`
 

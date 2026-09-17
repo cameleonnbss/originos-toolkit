@@ -42,6 +42,11 @@ jobs:
       - name: Check that the generated documentation is not stale
         run: python scripts/generate_docs.py --check
 
+      - name: Check that every published link still resolves
+        env:
+          GH_TOKEN: ${{ github.token }}
+        run: python scripts/check_links.py
+
       - name: Fail if a raw op has no explicit revert
         run: |
           # `lint` already enforces this; the explicit grep documents the rule
@@ -82,11 +87,17 @@ jobs:
         env:
           PYTHONPATH: cli
         run: |
-          python -m originos_toolkit.cli catalog --json | head -20
-          python -m originos_toolkit.cli show force-max-refresh-rate --commands
-          python -m originos_toolkit.cli apply gaming-max --dry-run --yes
-          python -m originos_toolkit.cli export gaming-max --format sh | head -20
-          python -m originos_toolkit.cli awesome --section fps-gaming
+          # pipefail so a `| head` cannot hide a failure, and an explicit
+          # non-empty check so this step can never pass by printing nothing.
+          set -euo pipefail
+          check() { out="$("$@")"; test -n "$out" || { echo "no output from: $*"; exit 1; }; }
+          check python -m originos_toolkit.cli catalog --json
+          check python -m originos_toolkit.cli show force-max-refresh-rate --commands
+          check python -m originos_toolkit.cli apply gaming-max --dry-run --yes
+          check python -m originos_toolkit.cli export gaming-max --format sh
+          check python -m originos_toolkit.cli awesome --section fps-gaming
+          check python -m originos_toolkit.cli catalog --no-shizuku
+          python -m originos_toolkit.cli catalog --no-shizuku | head -20
 
   package:
     name: Build the CLI package
