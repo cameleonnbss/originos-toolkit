@@ -673,7 +673,10 @@ def cmd_export(args) -> int:
         name=name,
     )
     if args.output:
-        Path(args.output).write_text(script, encoding="utf-8", newline="")
+        # write_bytes, not write_text: we need the newlines we chose in the
+        # renderer to survive verbatim (CRLF for .ps1, LF for .sh) on every
+        # platform, and Path.write_text only learned `newline=` in Python 3.10.
+        Path(args.output).write_bytes(script.encode("utf-8"))
         print(f"wrote {args.output} ({len(script.splitlines())} lines, {len(tweaks)} tweaks)")
     else:
         print(script)

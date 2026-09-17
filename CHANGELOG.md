@@ -4,6 +4,14 @@ All notable changes to this project are documented here.
 The format follows [Keep a Changelog](https://keepachangelog.com/en/1.1.0/) and the project
 adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
+## [Unreleased]
+
+### Fixed
+
+- `export -o <file>` no longer depends on `Path.write_text(newline=...)`, which only exists
+  on Python 3.10 and up. The generated script is now written as bytes, so the `LF` of a `.sh`
+  export and the `CRLF` of a `.ps1` export survive verbatim on every platform.
+
 ## [1.0.0] — 2026-09-16
 
 First public release. No-root tweaking for Vivo / iQOO OriginOS devices, built around one
