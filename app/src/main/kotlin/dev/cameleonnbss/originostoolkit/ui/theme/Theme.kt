@@ -4,7 +4,6 @@ import androidx.compose.foundation.isSystemInDarkTheme
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.BoxScope
 import androidx.compose.foundation.layout.fillMaxSize
-import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Shapes
 import androidx.compose.material3.Typography
@@ -149,17 +148,22 @@ private val LightColors = lightColorScheme(
 )
 
 /**
- * Squircle-ish geometry: everything is rounder than stock Material, because
- * OriginOS draws its own icons as squircles and the UI follows them. `medium`
- * is what every `Card` picks up, so the value here is what makes the whole app
- * look like one system.
+ * The shapes every surface is cut with: G2 corners, and rounder than stock
+ * Material. `medium` is what every `Card` picks up, so the values here are what
+ * make the whole app look like one system.
+ *
+ * The numbers are pinned to what the official OriginOS 6 plates measure — a
+ * panel's corner spans roughly a tenth to an eighth of its own width
+ * (`docs/ORIGINOS-LOOK.md`) — and then nudged up, because a G2 corner reads
+ * tighter than a circular one of the same radius: at 45° it is `0.225 r` from
+ * the corner point against the circle's `0.414 r`.
  */
 private val OriginShapes = Shapes(
-    extraSmall = RoundedCornerShape(10.dp),
-    small = RoundedCornerShape(14.dp),
-    medium = RoundedCornerShape(22.dp),
-    large = RoundedCornerShape(28.dp),
-    extraLarge = RoundedCornerShape(36.dp),
+    extraSmall = G2CornerShape(12.dp),
+    small = G2CornerShape(16.dp),
+    medium = G2CornerShape(24.dp),
+    large = G2CornerShape(30.dp),
+    extraLarge = G2CornerShape(38.dp),
 )
 
 @Composable

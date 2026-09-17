@@ -1,0 +1,250 @@
+<!doctype html>
+<html lang="en">
+<meta charset="utf-8">
+<title>OriginOS plate probe — corner geometry</title>
+<!--
+  Measures the corner radius of real UI elements on vivo's own OriginOS 6 plates,
+  so the numbers in docs/ORIGINOS-LOOK.md can be checked instead of believed.
+
+  Open it in any browser (`start scripts/design-probe.html` on Windows) — it
+  fetches the plates straight from vivo's CDN, so it needs a network connection
+  and nothing else. Every measurement is drawn back onto the page at 3× with the
+  fitted arc over it: if the red circles do not sit on the corners, the number is
+  wrong and you can see it.
+
+  How it works, and what it cannot do:
+
+   * Detection is "flat and bright" — a pixel counts towards a panel when its
+     luminance passes `thresh` and its gradient stays under `gradMax`. That finds
+     a card lying on a photograph. It does *not* find a dark panel over a
+     gradient (OriginOS's media panel), which is why some windows below are
+     marked as unrunnable rather than being given a number.
+   * The radius is fitted with a *circle*, which fits a circular corner exactly
+     and a G2 corner only approximately — and always from below. A G2 corner is
+     `0.225·r` from the corner point on the diagonal where a circle is `0.414·r`,
+     so a circular fit under-reports the radius the design was drawn with. The
+     fitted number is therefore a lower bound, which is how the doc treats it.
+   * Sample size is small: this measures a handful of elements, not a design
+     system. It is evidence, not a specification.
+-->
+<style>
+  body { margin:0; padding:12px; background:#0f1115; color:#e8ecf1;
+         font:11.5px/1.5 ui-monospace, "Cascadia Mono", monospace; }
+  h1 { font:650 13px/1.4 system-ui, sans-serif; margin:0 0 8px; }
+  pre { background:#151a21; border-radius:8px; padding:10px; white-space:pre-wrap; margin:0 0 12px; }
+  canvas { display:block; background:#000; border-radius:6px; margin-bottom:12px; }
+  .cap { color:#8b97a6; margin-bottom:4px; }
+</style>
+<h1>OriginOS 6 plate probe — corner curvature, measured in pixels</h1>
+<pre id="out">probing…</pre>
+<div id="shots"></div>
+<script>
+const VIVO = "https://asia-exstatic-vivofs.vivo.com/PSee2l50xoirPK7y/originos/1761562015474/zip/img/";
+// A real OriginOS 6 home screen, from the "Origin OS" article's screenshot.
+const WIKI = "https://upload.wikimedia.org/wikipedia/en/d/d5/OriginOS_Screenshot.jpg";
+
+// Each spec is an image plus a search window in that image's own pixels.
+// `minSide` keeps a stray highlight from being reported as a panel.
+const SPECS = [
+  {
+    name: "home · 2-column atomic component (Device battery)",
+    url: WIKI,
+    win: [95, 195, 212, 340], thresh: 205, gradMax: 7, minSide: 18,
+  },
+  {
+    name: "private space · system panel",
+    url: VIVO + "pad/vivo-originos-6-with-private-space-1.png",
+    win: [60, 60, 900, 1000], thresh: 200, gradMax: 9, minSide: 24,
+  },
+  // Unrunnable by this instrument, kept as a record of what was tried:
+  //
+  //   pad/vivo-originos-6-with-origin-island-function.png — the media panel is
+  //     dark over an orange gradient, so the flat-and-bright detector finds the
+  //     wallpaper instead of the panel.
+  //   pad/vivo-originos-6-with-immersive-photo-wall-mode.png — the gallery tiles
+  //     touch each other, so the connected component merges a whole row.
+  //   the launcher icons in the home screenshot — they sit on snow and sky,
+  //     which is flatter and brighter than they are.
+];
+
+function load(url) {
+  return new Promise((res, rej) => {
+    const i = new Image();
+    i.crossOrigin = "anonymous";
+    i.onload = () => res(i);
+    i.onerror = () => rej(new Error("load failed: " + url));
+    i.src = url;
+  });
+}
+
+/** Flat-and-bright mask: a UI panel, as opposed to a photograph. */
+function maskOf(data, w, h, thresh, gradMax) {
+  const lum = new Float32Array(w * h);
+  for (let i = 0, p = 0; i < lum.length; i++, p += 4) {
+    lum[i] = 0.2126 * data[p] + 0.7152 * data[p + 1] + 0.0722 * data[p + 2];
+  }
+  const m = new Uint8Array(w * h);
+  for (let y = 1; y < h - 1; y++) {
+    for (let x = 1; x < w - 1; x++) {
+      const i = y * w + x;
+      const g = Math.abs(lum[i] - lum[i + 1]) + Math.abs(lum[i] - lum[i + w])
+              + Math.abs(lum[i] - lum[i - 1]) + Math.abs(lum[i] - lum[i - w]);
+      if (lum[i] >= thresh && g <= gradMax) m[i] = 1;
+    }
+  }
+  return m;
+}
+
+/** Largest 4-connected component inside the window, as a bounding box. */
+function largestBox(m, w, h, win, minSide) {
+  const [x0, y0, x1, y1] = win;
+  const seen = new Uint8Array(w * h);
+  const stack = [];
+  let best = null;
+  for (let y = y0; y < Math.min(y1, h); y++) {
+    for (let x = x0; x < Math.min(x1, w); x++) {
+      const s = y * w + x;
+      if (!m[s] || seen[s]) continue;
+      stack.length = 0; stack.push(s); seen[s] = 1;
+      let bx0 = x, bx1 = x, by0 = y, by1 = y, count = 0;
+      while (stack.length) {
+        const c = stack.pop(), cy = (c / w) | 0, cx = c - cy * w;
+        count++;
+        if (cx < bx0) bx0 = cx; if (cx > bx1) bx1 = cx;
+        if (cy < by0) by0 = cy; if (cy > by1) by1 = cy;
+        for (const n of [c - 1, c + 1, c - w, c + w]) {
+          const ny = (n / w) | 0;
+          if (n >= 0 && n < m.length && !seen[n] && m[n] && Math.abs(ny - cy) <= 1) {
+            seen[n] = 1; stack.push(n);
+          }
+        }
+      }
+      const bw = bx1 - bx0 + 1, bh = by1 - by0 + 1;
+      if (bw >= minSide && bh >= minSide && (!best || count > best.area)) {
+        best = { bx0, bx1, by0, by1, bw, bh, area: count };
+      }
+    }
+  }
+  return best;
+}
+
+/**
+ * Fit a circle to the corner profile: across the rows of a corner, the filled
+ * region should start `r - sqrt(r² - (r-dy)²)` pixels inside the bounding box.
+ * The r with the smallest squared error wins; the four corners are averaged.
+ */
+function fitRadius(m, w, box) {
+  const { bx0, bx1, by0, by1, bw, bh } = box;
+  const at = (x, y) => m[y * w + x] ? 1 : 0;
+  const prof = (corner) => {
+    const pts = [];
+    for (let dy = 0; dy < Math.min(bh, 80); dy++) {
+      const y = corner === "tl" || corner === "tr" ? by0 + dy : by1 - dy;
+      let first = -1;
+      if (corner === "tl" || corner === "bl") {
+        for (let x = bx0; x <= bx1; x++) if (at(x, y)) { first = x; break; }
+        if (first >= 0) pts.push([dy, first - bx0]);
+      } else {
+        for (let x = bx1; x >= bx0; x--) if (at(x, y)) { first = x; break; }
+        if (first >= 0) pts.push([dy, bx1 - first]);
+      }
+    }
+    return pts;
+  };
+  const error = (pts, r) => pts.reduce((sum, [dy, inset]) => {
+    const expected = dy < r
+      ? r - Math.sqrt(Math.max(0, r * r - (r - dy) * (r - dy)))
+      : 0;
+    return sum + (inset - expected) ** 2;
+  }, 0);
+  const best = (pts) => {
+    let radius = 0, bestError = Infinity;
+    for (let r = 2; r <= Math.floor(Math.min(bw, bh) / 2); r++) {
+      const e = error(pts, r);
+      if (e < bestError) { bestError = e; radius = r; }
+    }
+    return radius;
+  };
+  const radii = ["tl", "tr", "bl", "br"].map((c) => best(prof(c)));
+  return { radii, mean: radii.reduce((a, b) => a + b, 0) / 4 };
+}
+
+(async () => {
+  const lines = [];
+  const shots = document.getElementById("shots");
+  for (const spec of SPECS) {
+    try {
+      const img = await load(spec.url);
+      const w = img.naturalWidth, h = img.naturalHeight;
+      const canvas = document.createElement("canvas");
+      canvas.width = w; canvas.height = h;
+      const ctx = canvas.getContext("2d", { willReadFrequently: true });
+      ctx.drawImage(img, 0, 0);
+      const data = ctx.getImageData(0, 0, w, h).data;
+      const mask = maskOf(data, w, h, spec.thresh, spec.gradMax);
+      const box = largestBox(mask, w, h, spec.win, spec.minSide);
+      lines.push(`▸ ${spec.name}`);
+      lines.push(`  plate ${w}×${h}`);
+      if (!box) {
+        lines.push("  no flat, bright panel in the window\n");
+        shots.appendChild(shot(img, null, null, spec.name));
+        continue;
+      }
+      const fit = fitRadius(mask, w, box);
+      lines.push(`  panel ${box.bw}×${box.bh} at (${box.bx0},${box.by0})`);
+      lines.push(`  corner radius (px, tl/tr/bl/br): ${fit.radii.join(" / ")} → mean ${fit.mean.toFixed(1)}`);
+      lines.push(`  radius ÷ panel width  = ${(fit.mean / box.bw).toFixed(3)}`);
+      lines.push(`  radius ÷ panel height = ${(fit.mean / box.bh).toFixed(3)}`);
+      lines.push("  (a circular fit under-reports a G2 corner, so read this as a floor)\n");
+      shots.appendChild(shot(img, box, fit, spec.name));
+    } catch (e) {
+      lines.push(`▸ ${spec.name}\n  ${e.message}\n`);
+    }
+  }
+  document.getElementById("out").textContent = lines.join("\n");
+})();
+
+/** The detected panel at 3×, with the fitted arcs drawn over it. */
+function shot(img, box, fit, label) {
+  const wrap = document.createElement("div");
+  const caption = document.createElement("div");
+  caption.className = "cap";
+  caption.textContent = label;
+  const scale = 3, pad = 14;
+  const sw = box
+    ? Math.min(box.bw + pad * 2, Math.floor(520 / scale))
+    : Math.min(img.naturalWidth, Math.floor(520 / scale));
+  const sh = box
+    ? Math.min(box.bh + pad * 2, Math.floor(520 / scale))
+    : Math.min(img.naturalHeight, Math.floor(260 / scale));
+  const canvas = document.createElement("canvas");
+  canvas.width = sw * scale; canvas.height = sh * scale;
+  const ctx = canvas.getContext("2d");
+  ctx.imageSmoothingEnabled = false;
+  const sx = box ? Math.max(0, box.bx0 - pad) : 0;
+  const sy = box ? Math.max(0, box.by0 - pad) : 0;
+  ctx.drawImage(img, sx, sy, sw, sh, 0, 0, canvas.width, canvas.height);
+  if (box && fit) {
+    const r = fit.mean * scale;
+    const ox = (box.bx0 - sx) * scale, oy = (box.by0 - sy) * scale;
+    ctx.strokeStyle = "rgba(255,60,60,.9)";
+    ctx.lineWidth = 2;
+    ctx.strokeRect(ox, oy, box.bw * scale, box.bh * scale);
+    const corners = [
+      [ox + r, oy + r],
+      [ox + box.bw * scale - r, oy + r],
+      [ox + r, oy + box.bh * scale - r],
+      [ox + box.bw * scale - r, oy + box.bh * scale - r],
+    ];
+    for (const [cx, cy] of corners) {
+      ctx.beginPath();
+      ctx.arc(cx, cy, r, 0, Math.PI * 2);
+      ctx.stroke();
+    }
+  }
+  wrap.appendChild(caption);
+  wrap.appendChild(canvas);
+  return wrap;
+}
+</script>
+</html>

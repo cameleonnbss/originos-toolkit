@@ -39,6 +39,7 @@ import dev.cameleonnbss.originostoolkit.core.model.Risk
 import dev.cameleonnbss.originostoolkit.core.model.Tweak
 import dev.cameleonnbss.originostoolkit.core.ops.Access
 import dev.cameleonnbss.originostoolkit.ui.PreviewState
+import dev.cameleonnbss.originostoolkit.ui.theme.G2CornerShape
 import dev.cameleonnbss.originostoolkit.ui.theme.brandBrush
 import dev.cameleonnbss.originostoolkit.ui.theme.riskColor
 
@@ -126,6 +127,13 @@ fun TweakBadges(tweak: Tweak) {
     }
 }
 
+/**
+ * A status chip.
+ *
+ * A G2 corner needs a larger number than a circular one to read the same, so
+ * this is `8.dp` where the circular version was `6.dp` — the chip keeps its
+ * shape, it just changes curvature.
+ */
 @Composable
 fun Badge(text: String, color: Color) {
     Text(
@@ -134,7 +142,7 @@ fun Badge(text: String, color: Color) {
         color = color,
         fontWeight = FontWeight.SemiBold,
         modifier = Modifier
-            .background(color.copy(alpha = 0.14f), RoundedCornerShape(6.dp))
+            .background(color.copy(alpha = 0.14f), G2CornerShape(8.dp))
             .padding(horizontal = 7.dp, vertical = 3.dp),
     )
 }

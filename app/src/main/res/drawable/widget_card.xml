@@ -1,0 +1,25 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!--
+  The panel behind a home-screen component.
+
+  It is translucent on purpose: an OriginOS atomic component sits *on* the
+  wallpaper rather than covering it, which is what the system's "translucent
+  color" layer is for. The edge is a hairline, not a shadow — the app's own
+  panels are built the same way.
+
+  The corner is circular because `RemoteViews` can only carry a shape drawable,
+  never a path, so the G2 curve the rest of the app uses cannot be drawn here.
+  The radius is set to the top of the band the official plates measure
+  (`docs/ORIGINOS-LOOK.md`) so the silhouette still reads as the same family —
+  a circular corner needs to be visibly larger than a G2 one before it looks as
+  round, since the G2 corner is only 0.225·r from the corner point at 45°
+  against the circle's 0.414·r.
+-->
+<shape xmlns:android="http://schemas.android.com/apk/res/android"
+    android:shape="rectangle">
+    <solid android:color="@color/widget_card" />
+    <corners android:radius="26dp" />
+    <stroke
+        android:width="1dp"
+        android:color="@color/widget_hairline" />
+</shape>

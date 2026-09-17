@@ -21,6 +21,7 @@ import dev.cameleonnbss.originostoolkit.core.shell.ShizukuBridge
 import dev.cameleonnbss.originostoolkit.core.shell.ShizukuState
 import dev.cameleonnbss.originostoolkit.service.FpsOverlayService
 import dev.cameleonnbss.originostoolkit.service.PerAppRefreshService
+import dev.cameleonnbss.originostoolkit.widget.WidgetUpdater
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
@@ -176,7 +177,15 @@ class ToolkitViewModel(private val container: AppContainer) : ViewModel() {
         }
     }
 
-    private fun refreshJournal() = _state.update { it.copy(journal = container.engine.journal) }
+    /**
+     * Re-reads the journal, and tells the home-screen components about it: what
+     * they display is derived from the journal, the settings values and the
+     * access level, so any apply or revert changes them.
+     */
+    private fun refreshJournal() {
+        _state.update { it.copy(journal = container.engine.journal) }
+        WidgetUpdater.refreshAll(container.appContext)
+    }
 
     // -- preview -----------------------------------------------------------
 

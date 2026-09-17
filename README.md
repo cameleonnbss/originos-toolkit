@@ -15,7 +15,8 @@ for Vivo / iQOO phones running OriginOS (FuntouchOS works too).**
 
 [Features](#features) · [Quick start](#quick-start) · [No-root setup](#no-root-setup-in-5-minutes) ·
 [The revert guarantee](#the-revert-guarantee) · [CLI](#command-line) · [Catalog format](#catalog-format) ·
-[Build](#build-from-source) · [FAQ](docs/FAQ.md) · [Awesome list](docs/AWESOME-ORIGINOS.md)
+[Build](#build-from-source) · [FAQ](docs/FAQ.md) · [Awesome list](docs/AWESOME-ORIGINOS.md) ·
+[The look](docs/ORIGINOS-LOOK.md)
 
 </div>
 
@@ -86,6 +87,26 @@ what is disabled, and what each package does.
 The **Discover** screen ships the [Awesome OriginOS](docs/AWESOME-ORIGINOS.md) list — 35
 tools, each labelled `NO-ROOT`, `ADB`, `SHIZUKU` or `ROOT`, so nobody installs a rooted
 Magisk module by accident.
+
+### Home-screen components, cut like the system's own
+
+Two *atomic components* — OriginOS's word for a home-screen widget — ship with the app:
+
+- a **2×2 refresh-rate tile** that shows the panel maximum and pins or releases
+  `force-max-refresh-rate` with one tap, and
+- a **4×2 status tile** with the model, the Android version, the density, the panel rate, the
+  number of applied tweaks and the access level the app is running with.
+
+The refresh tile is a second door into the same engine, not a shortcut around it: the change
+is read, journalled and only then written, exactly as in the app, so a tap on the home screen
+reverts from **Settings → Revert journal** like anything else. Both are `RemoteViews` — no
+Glance, no extra dependency, no new permission — and they read only what an unprivileged app
+can read, so a widget never makes Shizuku wake up just to draw a label.
+
+They are shaped the way the system shapes its own components, which is measured rather than
+copied by eye: see **[docs/ORIGINOS-LOOK.md](docs/ORIGINOS-LOOK.md)** for the plates, the pixel
+measurements, and the one part of the look a widget cannot have (a `RemoteViews` panel carries
+a shape drawable, never a path, so its corner is circular where the app's is G2).
 
 ### Works without Shizuku
 
@@ -299,8 +320,10 @@ app/                Android app (Kotlin, Jetpack Compose, Shizuku)
   ui/               Compose screens and view model
   src/test/         JVM tests mirroring the Python suite
 cli/                Python CLI (stdlib only) + 128 unit tests
-docs/               TWEAKS.md · AWESOME-ORIGINOS.md · NO-ROOT-SETUP.md · ARCHITECTURE.md · …
-scripts/            generate_docs.py — keeps the docs honest
+docs/               TWEAKS.md · AWESOME-ORIGINOS.md · NO-ROOT-SETUP.md · ARCHITECTURE.md ·
+                    ORIGINOS-LOOK.md · …
+scripts/            generate_docs.py — keeps the docs honest; design-probe.html — the
+                    corner measurements behind docs/ORIGINOS-LOOK.md
 .github/workflows/  Android build/test/lint/release · catalog + CLI tests
 ```
 

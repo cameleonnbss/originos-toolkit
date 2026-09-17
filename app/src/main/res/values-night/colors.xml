@@ -5,4 +5,15 @@
 <resources>
     <color name="surface">#07090C</color>
     <color name="accent">#5B9DFF</color>
+
+    <!-- Widget surfaces, inverted. The panel goes near-black and translucent, the
+         hairline turns white, and the accent is the lifted blue the dark Compose
+         theme uses. -->
+    <color name="widget_card">#E610141A</color>
+    <color name="widget_hairline">#33FFFFFF</color>
+    <color name="widget_text">#FFE8ECF1</color>
+    <color name="widget_muted">#FFAEB8C4</color>
+    <color name="widget_chip">#26FFFFFF</color>
+    <color name="widget_accent">#FF5B9DFF</color>
+    <color name="widget_action_text">#FF00214D</color>
 </resources>

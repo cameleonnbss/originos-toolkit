@@ -41,6 +41,7 @@ DOC_FILES = (
     "docs/DEVICE-SUPPORT.md",
     "docs/FAQ.md",
     "docs/NO-ROOT-SETUP.md",
+    "docs/ORIGINOS-LOOK.md",
     "docs/PERMISSIONS.md",
 )
 

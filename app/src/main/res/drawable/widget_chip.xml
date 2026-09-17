@@ -1,0 +1,7 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!-- A quiet status chip: no accent fill, no stroke, just a wash. -->
+<shape xmlns:android="http://schemas.android.com/apk/res/android"
+    android:shape="rectangle">
+    <solid android:color="@color/widget_chip" />
+    <corners android:radius="13dp" />
+</shape>

@@ -4,6 +4,36 @@ All notable changes to this project are documented here.
 The format follows [Keep a Changelog](https://keepachangelog.com/en/1.1.0/) and the project
 adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
+## [Unreleased]
+
+### Added
+
+- **Two home-screen components** — the OriginOS word for them is *atomic components*: a 2×2
+  refresh-rate tile whose chip pins or releases `force-max-refresh-rate` in one tap, and a 4×2
+  status tile with the model, Android version, density, panel rate, applied count and access
+  level. The tile goes through the same engine as the app, journal included, so a tap on the
+  home screen reverts exactly like one made in the app. `RemoteViews` only: no Glance, no new
+  dependency, and no new permission — the refresh tile's chip sends an explicit intent at this
+  package from a `PendingIntent` this app created, so nothing outside can trigger it.
+- **G2 corners** (`ui/theme/G2Shape.kt`): every surface is now drawn with a
+  curvature-continuous corner — a superellipse of exponent 4 with the same tangent points a
+  circular corner would have — instead of a quarter circle. The theme's radii move up with it
+  (`medium` 22 → 24 dp) because a G2 corner reads tighter than a circular one of the same
+  radius.
+- **[docs/ORIGINOS-LOOK.md](docs/ORIGINOS-LOOK.md)**, the design note behind both: the
+  sources, the pixel measurements taken from vivo's own OriginOS 6 plates, what those
+  measurements do *not* establish, and which file implements which rule.
+- **[scripts/design-probe.html](scripts/design-probe.html)**, the instrument used for those
+  measurements, committed so the numbers can be checked rather than believed: it fetches the
+  plates, fits a circle to a panel's corners, and draws the fitted arcs back over the crop at
+  3×.
+
+### Changed
+
+- Panels, badges and dialogs are cut with the G2 shape, and the chip radius goes from 6 dp to
+  8 dp for the same reason the card radii go up: a G2 corner needs a larger number to look as
+  round as a circular one.
+
 ## [1.0.1] — 2026-09-17
 
 A correctness release. The headline: **the toolkit no longer needs Shizuku for everything**,

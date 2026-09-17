@@ -1,0 +1,10 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!--
+  The one accent surface on the home screen: the chip that does something.
+  OriginOS system panels carry exactly one accent, and this is it.
+-->
+<shape xmlns:android="http://schemas.android.com/apk/res/android"
+    android:shape="rectangle">
+    <solid android:color="@color/widget_accent" />
+    <corners android:radius="13dp" />
+</shape>

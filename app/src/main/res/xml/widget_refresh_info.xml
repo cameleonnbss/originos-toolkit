@@ -1,0 +1,22 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!--
+  A 2×2 component: one number, one switch.
+
+  `updatePeriodMillis` is 0 on purpose. A periodic update would wake the app
+  every half hour to redraw something that only changes when the user changes it;
+  the component is refreshed on tap, when the app applies or reverts a tweak, and
+  when the launcher asks for it after a resize or a reboot.
+-->
+<appwidget-provider xmlns:android="http://schemas.android.com/apk/res/android"
+    android:description="@string/widget_refresh_description"
+    android:initialLayout="@layout/widget_refresh"
+    android:minHeight="110dp"
+    android:minResizeHeight="110dp"
+    android:minResizeWidth="110dp"
+    android:minWidth="110dp"
+    android:previewLayout="@layout/widget_refresh"
+    android:resizeMode="horizontal|vertical"
+    android:targetCellHeight="2"
+    android:targetCellWidth="2"
+    android:updatePeriodMillis="0"
+    android:widgetCategory="home_screen" />

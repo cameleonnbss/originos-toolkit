@@ -26,6 +26,7 @@ import androidx.compose.material3.Text
 import androidx.compose.material3.TopAppBar
 import androidx.compose.material3.TopAppBarDefaults
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.remember
 import androidx.compose.ui.Modifier
@@ -68,15 +69,27 @@ private val DESTINATIONS = listOf(
 /**
  * The navigation surface: five daily-use tabs, plus Discover, which is a
  * reference list rather than something you open every day.
+ *
+ * [startRoute] is how a home-screen component asks for a tab — the refresh tile
+ * opens the refresh screen rather than dropping the user on Home. It is checked
+ * against the real destinations, so nothing outside this file can name a route
+ * that does not exist.
  */
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
-fun AppNav(viewModel: ToolkitViewModel, container: AppContainer) {
+fun AppNav(viewModel: ToolkitViewModel, container: AppContainer, startRoute: String? = null) {
     val state by viewModel.state.collectAsStateWithLifecycle()
     val context = LocalContext.current
     val navController = rememberNavController()
     val backStackEntry by navController.currentBackStackEntryAsState()
     val currentRoute = backStackEntry?.destination?.route ?: "dashboard"
+
+    LaunchedEffect(startRoute) {
+        val route = startRoute?.takeIf { candidate -> DESTINATIONS.any { it.route == candidate } }
+        if (route != null && route != currentRoute) {
+            navController.navigate(route) { launchSingleTop = true }
+        }
+    }
 
     val openUrl: (String) -> Unit = { url -> context.openUrl(url) }
     val overlayAccess: () -> Unit = { context.startActivity(SpecialAccess.overlaySettingsIntent(context)) }

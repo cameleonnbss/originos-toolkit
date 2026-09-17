@@ -48,4 +48,27 @@
     <string name="channel_overlay_name">Frame-rate overlay</string>
     <string name="channel_refresh_name">Per-app refresh rate</string>
     <string name="channel_generic_name">Toolkit</string>
+
+    <!--
+      Home-screen atomic components.
+
+      The small labels are upper-cased by `android:textAllCaps` rather than being
+      typed in caps, so a translated string keeps its own casing rules.
+    -->
+    <string name="widget_refresh_title">Refresh rate</string>
+    <string name="widget_refresh_description">The panel maximum, with a one-tap switch that needs no Shizuku.</string>
+    <string name="widget_refresh_action_pin">Pin at maximum</string>
+    <string name="widget_refresh_action_unpin">Back to system</string>
+    <string name="widget_refresh_action_blocked">Grant settings access</string>
+    <string name="widget_refresh_summary">panel %1$s · min %2$s</string>
+    <string name="widget_unit_hz">Hz</string>
+    <string name="widget_toolkit_description">Device, access and applied-tweak status at a glance.</string>
+    <string name="widget_toolkit_subtitle">%1$s · %2$s Hz panel</string>
+    <string name="widget_toolkit_stat_density">Density</string>
+    <string name="widget_toolkit_stat_panel">Panel</string>
+    <string name="widget_toolkit_stat_applied">Applied</string>
+    <string name="widget_access_shell">Shell access</string>
+    <string name="widget_access_settings">No Shizuku</string>
+    <string name="widget_access_none">No access</string>
+    <string name="widget_value_unknown">—</string>
 </resources>

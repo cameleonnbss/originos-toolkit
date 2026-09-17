@@ -57,4 +57,22 @@
     <string name="channel_overlay_name">帧率悬浮窗</string>
     <string name="channel_refresh_name">逐应用刷新率</string>
     <string name="channel_generic_name">工具箱</string>
+
+    <!-- 桌面原子组件。 -->
+    <string name="widget_refresh_title">刷新率</string>
+    <string name="widget_refresh_description">屏幕最高刷新率，一键切换，无需 Shizuku。</string>
+    <string name="widget_refresh_action_pin">锁定最高刷新率</string>
+    <string name="widget_refresh_action_unpin">恢复系统设置</string>
+    <string name="widget_refresh_action_blocked">授予设置权限</string>
+    <string name="widget_refresh_summary">屏幕 %1$s · 最低 %2$s</string>
+    <string name="widget_unit_hz">Hz</string>
+    <string name="widget_toolkit_description">一眼看清机型、权限与已应用的调校。</string>
+    <string name="widget_toolkit_subtitle">%1$s · %2$s Hz 屏幕</string>
+    <string name="widget_toolkit_stat_density">密度</string>
+    <string name="widget_toolkit_stat_panel">屏幕</string>
+    <string name="widget_toolkit_stat_applied">已应用</string>
+    <string name="widget_access_shell">Shell 权限</string>
+    <string name="widget_access_settings">无 Shizuku</string>
+    <string name="widget_access_none">无权限</string>
+    <string name="widget_value_unknown">—</string>
 </resources>

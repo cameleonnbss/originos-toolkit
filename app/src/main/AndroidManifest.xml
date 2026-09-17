@@ -103,6 +103,39 @@
             android:exported="false"
             android:process=":service" />
 
+        <!--
+          The home-screen components (OriginOS calls the same thing an atomic
+          component): a 2×2 refresh-rate switch and a 4×2 status tile.
+
+          Neither is exported, and neither declares a permission. The refresh
+          tile's chip sends an explicit intent at *this* package from a
+          PendingIntent this app created, so it is delivered here and nowhere
+          else; the launcher never gets to name a target.
+        -->
+        <receiver
+            android:name=".widget.RefreshWidgetProvider"
+            android:exported="false"
+            android:label="@string/widget_refresh_title">
+            <intent-filter>
+                <action android:name="android.appwidget.action.APPWIDGET_UPDATE" />
+            </intent-filter>
+            <meta-data
+                android:name="android.appwidget.provider"
+                android:resource="@xml/widget_refresh_info" />
+        </receiver>
+
+        <receiver
+            android:name=".widget.ToolkitWidgetProvider"
+            android:exported="false"
+            android:label="@string/app_name">
+            <intent-filter>
+                <action android:name="android.appwidget.action.APPWIDGET_UPDATE" />
+            </intent-filter>
+            <meta-data
+                android:name="android.appwidget.provider"
+                android:resource="@xml/widget_toolkit_info" />
+        </receiver>
+
         <!-- Shizuku's binder bridge. Required by dev.rikka.shizuku:provider. -->
         <provider
             android:name="rikka.shizuku.ShizukuProvider"

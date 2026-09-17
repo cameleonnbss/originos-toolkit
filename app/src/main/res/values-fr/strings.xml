@@ -48,4 +48,22 @@
     <string name="channel_overlay_name">Overlay de fréquence d\'images</string>
     <string name="channel_refresh_name">Rafraîchissement par app</string>
     <string name="channel_generic_name">Toolkit</string>
+
+    <!-- Composants atomiques de l\'écran d\'accueil. -->
+    <string name="widget_refresh_title">Fréquence d\'affichage</string>
+    <string name="widget_refresh_description">Le maximum de la dalle, avec un interrupteur d\'un seul geste qui ne demande pas Shizuku.</string>
+    <string name="widget_refresh_action_pin">Bloquer au maximum</string>
+    <string name="widget_refresh_action_unpin">Revenir au système</string>
+    <string name="widget_refresh_action_blocked">Autoriser les réglages</string>
+    <string name="widget_refresh_summary">dalle %1$s · min %2$s</string>
+    <string name="widget_unit_hz">Hz</string>
+    <string name="widget_toolkit_description">Appareil, accès et réglages appliqués, en un coup d\'œil.</string>
+    <string name="widget_toolkit_subtitle">%1$s · dalle %2$s Hz</string>
+    <string name="widget_toolkit_stat_density">Densité</string>
+    <string name="widget_toolkit_stat_panel">Dalle</string>
+    <string name="widget_toolkit_stat_applied">Appliqués</string>
+    <string name="widget_access_shell">Accès shell</string>
+    <string name="widget_access_settings">Sans Shizuku</string>
+    <string name="widget_access_none">Aucun accès</string>
+    <string name="widget_value_unknown">—</string>
 </resources>

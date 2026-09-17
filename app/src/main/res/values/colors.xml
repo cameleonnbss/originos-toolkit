@@ -15,4 +15,23 @@
     <!-- Ends of the OriginOS sweep. Kept here for the swept wordmark underline. -->
     <color name="brand_coral">#FF5E4A</color>
     <color name="brand_violet">#A94ED6</color>
+
+    <!--
+      The home-screen components.
+
+      These are the only colours the XML side needs beyond the launch window, and
+      they follow the same rules as the Compose theme: a translucent panel that
+      lets the wallpaper through, a hairline edge instead of a shadow, muted
+      labels, and exactly one accent — the chip that does something.
+
+      Every one of them has a dark counterpart in values-night/, because a
+      launcher that is in dark mode resolves them in the host's configuration.
+    -->
+    <color name="widget_card">#E6FBFCFE</color>
+    <color name="widget_hairline">#1A101418</color>
+    <color name="widget_text">#FF101418</color>
+    <color name="widget_muted">#FF59616E</color>
+    <color name="widget_chip">#14101418</color>
+    <color name="widget_accent">#FF1A6DFF</color>
+    <color name="widget_action_text">#FFFFFFFF</color>
 </resources>

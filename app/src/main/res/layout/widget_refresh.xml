@@ -1,0 +1,91 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!--
+  The 2×2 "refresh rate" atomic component.
+
+  A big number, one word about which state it is in, and one chip that changes
+  it. RemoteViews allows only a fixed set of views — TextView, ImageView and the
+  four layout containers — so the composition is deliberately plain, and `Space`
+  is avoided (it is not on that list): the summary line is pushed to the bottom
+  with a layout weight instead.
+-->
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:id="@+id/widget_refresh_root"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:background="@drawable/widget_card"
+    android:orientation="vertical"
+    android:padding="14dp">
+
+    <TextView
+        android:id="@+id/widget_refresh_label"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:letterSpacing="0.1"
+        android:maxLines="1"
+        android:text="@string/widget_refresh_title"
+        android:textAllCaps="true"
+        android:textColor="@color/widget_muted"
+        android:textSize="9sp"
+        android:textStyle="bold" />
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="4dp"
+        android:baselineAligned="true"
+        android:orientation="horizontal">
+
+        <TextView
+            android:id="@+id/widget_refresh_value"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:includeFontPadding="false"
+            android:maxLines="1"
+            android:textColor="@color/widget_text"
+            android:textSize="34sp"
+            android:textStyle="bold"
+            tools:text="144" />
+
+        <TextView
+            android:id="@+id/widget_refresh_unit"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginStart="4dp"
+            android:includeFontPadding="false"
+            android:maxLines="1"
+            android:text="@string/widget_unit_hz"
+            android:textColor="@color/widget_muted"
+            android:textSize="13sp" />
+    </LinearLayout>
+
+    <TextView
+        android:id="@+id/widget_refresh_chip"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_gravity="start"
+        android:layout_marginTop="8dp"
+        android:background="@drawable/widget_chip"
+        android:maxLines="1"
+        android:paddingStart="9dp"
+        android:paddingTop="4dp"
+        android:paddingEnd="9dp"
+        android:paddingBottom="4dp"
+        android:textAllCaps="true"
+        android:textColor="@color/widget_muted"
+        android:textSize="9sp"
+        android:textStyle="bold"
+        tools:text="PIN AT MAXIMUM" />
+
+    <TextView
+        android:id="@+id/widget_refresh_summary"
+        android:layout_width="match_parent"
+        android:layout_height="0dp"
+        android:layout_marginTop="4dp"
+        android:layout_weight="1"
+        android:gravity="bottom"
+        android:maxLines="2"
+        android:textColor="@color/widget_muted"
+        android:textSize="10sp"
+        tools:text="panel 144 · min 60" />
+</LinearLayout>
