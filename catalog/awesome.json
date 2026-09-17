@@ -1,5 +1,5 @@
 {
-  "awesomeVersion": 1,
+  "awesomeVersion": 2,
   "updatedAt": "2026-09-17",
   "note": "Community-curated, no-root-first. Every entry lists an explicit access requirement. Descriptions are paraphrased; links point at the upstream project.",
   "sections": [
@@ -314,6 +314,14 @@
           "access": "no-root",
           "description": "Boots a GSI or a second Android image through Dynamic System Updates without erasing your data. The safest way to try a different ROM before committing.",
           "tags": ["dsu", "gsi", "rom"]
+        },
+        {
+          "name": "CunnyPlayground",
+          "repo": "theVakhovskeIsTaken/CunnyPlayground",
+          "url": "https://github.com/theVakhovskeIsTaken/CunnyPlayground",
+          "access": "no-root",
+          "description": "An interactive lab for Android 16's Live Updates API: promoted ongoing notifications with a progress bar, status chip and full-screen intent, plus a recaster that re-posts any notification you already receive as a Live Update or as a HyperIsland island. Live Updates are AOSP, so that half is a working reference for what OriginOS 6 can do with them; the island half targets HyperOS builds and does nothing on a Vivo phone. Needs Android 16 and a notification-listener grant, so treat it as instrumentation rather than a daily driver.",
+          "tags": ["live-updates", "notifications", "android16", "hyperisland", "playground"]
         }
       ]
     }

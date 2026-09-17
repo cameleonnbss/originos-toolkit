@@ -2,7 +2,7 @@
 
 # Awesome OriginOS
 
-A curated list of **34** tools for Vivo / iQOO devices running OriginOS (and FuntouchOS), with the access level each one needs stated up front.
+A curated list of **35** tools for Vivo / iQOO devices running OriginOS (and FuntouchOS), with the access level each one needs stated up front.
 
 This is the same list the app shows on its **Discover** screen, shipped from [`catalog/awesome.json`](../catalog/awesome.json). It is community-maintained: if a project moved, was archived or a better alternative exists, open a pull request.
 
@@ -265,6 +265,12 @@ Low-latency screen mirroring and control over ADB, no root and no app installed 
 Boots a GSI or a second Android image through Dynamic System Updates without erasing your data. The safest way to try a different ROM before committing.
 
 `VegaBobo/DSU-Sideloader` · tags: dsu, gsi, rom
+
+### [CunnyPlayground](https://github.com/theVakhovskeIsTaken/CunnyPlayground) — `NO-ROOT`
+
+An interactive lab for Android 16's Live Updates API: promoted ongoing notifications with a progress bar, status chip and full-screen intent, plus a recaster that re-posts any notification you already receive as a Live Update or as a HyperIsland island. Live Updates are AOSP, so that half is a working reference for what OriginOS 6 can do with them; the island half targets HyperOS builds and does nothing on a Vivo phone. Needs Android 16 and a notification-listener grant, so treat it as instrumentation rather than a daily driver.
+
+`theVakhovskeIsTaken/CunnyPlayground` · tags: live-updates, notifications, android16, hyperisland, playground
 
 ## Contributing an entry
 

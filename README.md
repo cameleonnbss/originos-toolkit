@@ -38,7 +38,7 @@ Three things make it more than a wrapper around `settings put`:
 
 1. **Nothing is written before its previous value is read and stored.** Reverting restores
    the exact state — including "this key did not exist before".
-2. **The catalog is data, not code.** 39 tweaks, 6 profiles and 34 curated tools live in
+2. **The catalog is data, not code.** 39 tweaks, 6 profiles and 35 curated tools live in
    [`catalog/*.json`](catalog/), shared verbatim by the Android app and the CLI, and linted
    in CI. A tweak without a documented inverse fails the build.
 3. **There is no network permission.** The app cannot phone home, because it cannot reach
@@ -83,7 +83,7 @@ the data stays put, and re-enabling restores everything. The app shows what is i
 what is disabled, and what each package does.
 
 ### A curated *no-root* index, built in
-The **Discover** screen ships the [Awesome OriginOS](docs/AWESOME-ORIGINOS.md) list — 34
+The **Discover** screen ships the [Awesome OriginOS](docs/AWESOME-ORIGINOS.md) list — 35
 tools, each labelled `NO-ROOT`, `ADB`, `SHIZUKU` or `ROOT`, so nobody installs a rooted
 Magisk module by accident.
 

@@ -1,7 +1,7 @@
 #!/usr/bin/env python3
 """Check every link this project publishes, so a dead one fails CI.
 
-The curated index in `catalog/awesome.json` points at 34 third-party projects
+The curated index in `catalog/awesome.json` points at 35 third-party projects
 and the documentation links to a few more. Those links rot: projects get
 renamed, archived or deleted. A curated list whose links are half dead is worse
 than no list at all, so this runs on every pull request.
