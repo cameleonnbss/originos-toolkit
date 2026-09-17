@@ -67,6 +67,9 @@ delivers, and throws away everything except what the user picked:
 
 - not from a picked app → dropped;
 - the source notification has no text → dropped;
+- **media notifications** (a music player's) are treated the way OriginOS
+  treats its own: the app's launcher icon rides the island bundles, and the
+  artist–title line (`bigText`) is preferred over the shade's fragment;
 - the source carries a live progress pair (0 < progress < max) → cast with the
   **progress** template, percent and all, whatever template the app was given;
 - otherwise → cast with the app's configured template, its title on the
@@ -75,6 +78,11 @@ delivers, and throws away everything except what the user picked:
 A new cast from the same app replaces the previous one, and when the source
 notification is removed the cast is unmounted — the island shows what is
 playing *now*, not a history.
+
+The picker's quick filters (All / Music / Navigation) bucket apps by their
+label and package — a music player calls itself a music player — and picking
+a recognised media app defaults its template to text + icon, the shape OriginOS
+media pills use. Overriding per app stays one tap.
 
 ## Where the knowledge comes from, and its limits
 

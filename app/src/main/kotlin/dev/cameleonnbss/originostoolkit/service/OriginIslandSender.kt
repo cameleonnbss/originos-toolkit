@@ -53,8 +53,17 @@ object OriginIslandSender {
     /**
      * Posts (or updates) the island notification for [request]. Returns the
      * framework's answer, or an error string — never throws.
+     *
+     * [sourceIcon] is the casted app's own icon: the island bundles carry it
+     * (that is how OriginOS itself shows a media app's icon in the pill) while
+     * the shade keeps this app's static icon, which Android can always render.
      */
-    fun post(context: Context, request: OriginIsland.Request, id: Int = ID_ISLAND): String {
+    fun post(
+        context: Context,
+        request: OriginIsland.Request,
+        id: Int = ID_ISLAND,
+        sourceIcon: Icon? = null,
+    ): String {
         ensureChannel(context)
         val manager = context.getSystemService(NotificationManager::class.java)
             ?: return "no notification manager"
@@ -74,7 +83,7 @@ object OriginIslandSender {
             .setOnlyAlertOnce(true)
             .setVisibility(NotificationCompat.VISIBILITY_PUBLIC)
 
-        builder.extras.putAll(OriginIsland.buildExtras(request, smallIcon = icon))
+        builder.extras.putAll(OriginIsland.buildExtras(request, smallIcon = sourceIcon ?: icon))
 
         return try {
             manager.notify(id, builder.build())

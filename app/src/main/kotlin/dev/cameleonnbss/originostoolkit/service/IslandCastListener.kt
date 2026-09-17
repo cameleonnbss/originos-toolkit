@@ -1,6 +1,7 @@
 package dev.cameleonnbss.originostoolkit.service
 
 import android.app.Notification
+import android.graphics.drawable.Icon
 import android.service.notification.NotificationListenerService
 import android.service.notification.StatusBarNotification
 import dev.cameleonnbss.originostoolkit.OriginOsApp
@@ -16,6 +17,11 @@ import dev.cameleonnbss.originostoolkit.core.OriginIsland
  * log line. A picked app's latest notification replaces the previous cast —
  * the island is a *place*, not a feed — and the removed hook unmounts it
  * instead of leaving the last payload hanging in the pill.
+ *
+ * Media notifications (a music player's) get the OriginOS treatment: the
+ * source app's own icon rides the island bundles, and the artist–title line
+ * is preferred over whatever the shade would have shown, because that is the
+ * line a pill is for.
  *
  * Permission reality: `NotificationListenerService` needs the user to grant
  * *notification access* in system settings, and OriginOS will suspend the
@@ -53,12 +59,15 @@ class IslandCastListener : NotificationListenerService() {
 
         val n: Notification = sbn.notification
         val extras = n.extras
-        val content = IslandRecast.cleanText(extras.getCharSequence(Notification.EXTRA_TEXT))
-            ?: return
+
+        // Media sessions put the artist–title line in bigText and leave the
+        // shade text as a fragment; the pill wants the full line.
+        val bigText = IslandRecast.cleanText(extras.getCharSequence(Notification.EXTRA_BIG_TEXT))
+        val text = IslandRecast.cleanText(extras.getCharSequence(Notification.EXTRA_TEXT))
+        val content = bigText ?: text ?: return
         val title = IslandRecast.cleanText(extras.getCharSequence(Notification.EXTRA_TITLE))
         val subText = IslandRecast.cleanText(extras.getCharSequence(Notification.EXTRA_SUB_TEXT))
 
-        // Progress lives in the extras, not on Notification itself.
         val decision = IslandRecast.decide(
             configured = manager.prefs.islandTemplateFor(sbn.packageName),
             progress = extras.getInt(Notification.EXTRA_PROGRESS),
@@ -80,8 +89,23 @@ class IslandCastListener : NotificationListenerService() {
                 rightText = content,
             ),
             id = OriginIslandSender.ID_RECAST,
+            sourceIcon = sourceIcon(sbn.packageName),
         )
     }
+
+    /**
+     * The casted app's launcher icon, drawn once into a bitmap so the island
+     * bundles carry a self-contained `Icon`. Loaded defensively: a cast without
+     * an icon is better than a listener crash on a weird app.
+     */
+    private fun sourceIcon(packageName: String): Icon? = runCatching {
+        val drawable = packageManager.getApplicationIcon(packageName)
+        val bitmap = android.graphics.Bitmap.createBitmap(96, 96, android.graphics.Bitmap.Config.ARGB_8888)
+        val canvas = android.graphics.Canvas(bitmap)
+        drawable.setBounds(0, 0, 96, 96)
+        drawable.draw(canvas)
+        Icon.createWithBitmap(bitmap)
+    }.getOrNull()
 
     /**
      * The Application owns the object graph; the container is read per cast so a

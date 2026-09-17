@@ -49,4 +49,24 @@ object IslandRecast {
         val text = raw?.toString()?.trim()
         return text?.takeIf { it.isNotEmpty() }
     }
+
+    /** The loose bucket an app falls into, for the picker's quick filters and smart defaults. */
+    enum class AppKind { MUSIC, NAVIGATION, OTHER }
+
+    /**
+     * Keyword buckets over the app's label and package — deliberately shallow.
+     * No permissions, no heuristics beyond strings: a music player calls itself
+     * a music player.
+     */
+    fun kindFor(label: String?, packageName: String): AppKind {
+        val haystack = (label.orEmpty() + " " + packageName).lowercase()
+        val music = listOf("music", "audio", "player", "spotify", "deezer", "soundcloud",
+            "tidal", "podcast", "radio", "bandcamp", "musique", "ytmusic", "aac")
+        val nav = listOf("map", "maps", "nav", "waze", "gps", "tomtom", "here", "moovit", "transit")
+        return when {
+            music.any { it in haystack } -> AppKind.MUSIC
+            nav.any { it in haystack } -> AppKind.NAVIGATION
+            else -> AppKind.OTHER
+        }
+    }
 }

@@ -100,6 +100,10 @@
     <string name="island_recast_switch">Projeter les notifications des apps choisies</string>
     <string name="island_grant_listener">Accorder l\'accès aux notifications</string>
     <string name="island_tap_template">template ›</string>
+    <string name="island_media_badge">média</string>
+    <string name="island_filter_all">Tout</string>
+    <string name="island_filter_music">Musique</string>
+    <string name="island_filter_navigation">Navigation</string>
     <string name="island_template_pick_title">Template</string>
     <string name="island_close">Fermer</string>
     <string name="island_playground_title">Envoi manuel</string>

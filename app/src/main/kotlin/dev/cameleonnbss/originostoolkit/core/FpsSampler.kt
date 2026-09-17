@@ -188,6 +188,35 @@ object FpsSampler {
         return null
     }
 
+    /**
+     * The foreground package from `dumpsys window`, as a second opinion.
+     *
+     * Some builds (OriginOS included, at times) summarise `activity activities`
+     * so heavily that no resumed-activity line survives; the window manager's
+     * `mCurrentFocus` line survives those builds more often than not. Parsing it
+     * is the fallback that turns "could not tell which app is in front" into a
+     * sample on the phones where the first dump came back empty.
+     */
+    fun foregroundPackageFromWindow(windowOutput: String): String? {
+        val patterns = listOf(
+            Regex("mCurrentFocus=Window\\{[^}]*\\s([a-zA-Z0-9_.]+)/"),
+            Regex("mFocusedWindow=Window\\{[^}]*\\s([a-zA-Z0-9_.]+)/"),
+            Regex("mFocusedApp=ActivityRecord\\{[^}]*\\s([a-zA-Z0-9_.]+)/"),
+        )
+        for (pattern in patterns) {
+            val match = pattern.find(windowOutput) ?: continue
+            val pkg = match.groupValues[1]
+            // The launcher is a legitimate focus target but never the app the
+            // user is measuring; skip it and keep looking.
+            if (pkg.isNotBlank() && pkg.contains('.') && pkg !in LAUNCHER_PACKAGES) return pkg
+        }
+        return null
+    }
+
+    private val LAUNCHER_PACKAGES = setOf(
+        "com.android.launcher", "com.android.launcher3", "com.google.android.apps.nexuslauncher",
+    )
+
     /** One line for the overlay: what was measured, and how. */
     fun describe(timings: FrameTimings, label: String? = null): String? {
         if (timings.isEmpty) return null

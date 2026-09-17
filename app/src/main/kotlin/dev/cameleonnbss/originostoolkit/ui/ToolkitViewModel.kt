@@ -371,8 +371,24 @@ class ToolkitViewModel(private val container: AppContainer) : ViewModel() {
 
         val activity = shell.exec("dumpsys activity activities").stdout
         val foreground = FpsSampler.foregroundPackage(activity)
+            ?: FpsSampler.foregroundPackageFromWindow(shell.exec("dumpsys window").stdout)
         if (foreground == null) {
-            _state.update { it.copy(commandOutput = "Could not tell which app is in front.") }
+            // Both dumps came back unparseable. Say what that means and what to
+            // do about it, instead of the dead end this used to be.
+            _state.update {
+                it.copy(
+                    commandOutput = "The system would not say which app is in front — both " +
+                        "dumps (activity, window) came back empty or summarised. That usually " +
+                        "means Shizuku is not really running, or OriginOS filtered the output.\n\n" +
+                        "Try, in order:\n" +
+                        "1. open Shizuku and make sure it says \"running\" (wireless debugging " +
+                        "survives until reboot, not past it);\n" +
+                        "2. come back here and tap again — a half-started Shizuku answers " +
+                        "with empty dumps;\n" +
+                        "3. if it still fails, the Home tab shows exactly what the app sees, " +
+                        "and the per-app refresh watcher keeps working without this meter.",
+                )
+            }
             return@background
         }
 

@@ -45,6 +45,7 @@ import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.dp
 import androidx.core.graphics.drawable.toBitmap
 import dev.cameleonnbss.originostoolkit.R
+import dev.cameleonnbss.originostoolkit.core.IslandRecast
 import dev.cameleonnbss.originostoolkit.core.OriginIsland
 import dev.cameleonnbss.originostoolkit.core.Prefs
 import dev.cameleonnbss.originostoolkit.service.OriginIslandSender
@@ -73,6 +74,7 @@ fun OriginIslandScreen() {
     var templateFor by remember { mutableStateOf(prefs.islandAppTemplates()) }
     var templateTarget by remember { mutableStateOf<String?>(null) }
     var listenerGranted by remember { mutableStateOf(listenerEnabled(context)) }
+    var filter by remember { mutableStateOf<String?>(null) }
 
     // -- playground state -----------------------------------------------------
     var title by remember { mutableStateOf("OriginOS Toolkit") }
@@ -98,11 +100,26 @@ fun OriginIslandScreen() {
             },
             picked = picked,
             onPick = { pkg ->
-                picked = (if (pkg in picked) picked - pkg else picked + pkg).also {
+                val nowPicked = pkg !in picked
+                picked = (if (nowPicked) picked + pkg else picked - pkg).also {
                     prefs.setIslandApps(it)
+                }
+                // A media app reads best as icon + text, the way OriginOS casts
+                // its own media pills; the user can still override per app.
+                if (nowPicked) {
+                    val app = loadApps(context).firstOrNull { it.pkg == pkg }
+                    if (app != null &&
+                        IslandRecast.kindFor(app.label, pkg) != IslandRecast.AppKind.OTHER &&
+                        templateFor[pkg] == null
+                    ) {
+                        templateFor = templateFor + (pkg to OriginIsland.OriginIslandTemplate.TEXT_ICON.id)
+                        prefs.setIslandTemplate(pkg, OriginIsland.OriginIslandTemplate.TEXT_ICON.id)
+                    }
                 }
             },
             onTemplateRequest = { pkg -> templateTarget = pkg },
+            filter = filter,
+            onFilter = { filter = it },
             installedApps = remember { loadApps(context) },
             iconFor = { pkg -> appIcon(context, pkg) },
             labelFor = { pkg -> OriginIslandSender.appLabel(context, pkg) },
@@ -165,6 +182,8 @@ private fun RecastCard(
     picked: List<String>,
     onPick: (String) -> Unit,
     onTemplateRequest: (String) -> Unit,
+    filter: String?,
+    onFilter: (String?) -> Unit,
     installedApps: List<AppRow>,
     iconFor: (String) -> ImageBitmap?,
     labelFor: (String) -> String,
@@ -185,6 +204,23 @@ private fun RecastCard(
         }
         if (recastOn) {
             Spacer(Modifier.height(8.dp))
+            Row(
+                Modifier.horizontalScroll(rememberScrollState()),
+                horizontalArrangement = Arrangement.spacedBy(8.dp),
+            ) {
+                listOf(
+                    null to stringResource(R.string.island_filter_all),
+                    IslandRecast.AppKind.MUSIC.name to stringResource(R.string.island_filter_music),
+                    IslandRecast.AppKind.NAVIGATION.name to stringResource(R.string.island_filter_navigation),
+                ).forEach { (id, label) ->
+                    androidx.compose.material3.FilterChip(
+                        selected = filter == id,
+                        onClick = { onFilter(if (filter == id) null else id) },
+                        label = { Text(label) },
+                    )
+                }
+            }
+            Spacer(Modifier.height(8.dp))
             AppPickerChips(
                 picked = picked,
                 onPick = onPick,
@@ -192,6 +228,7 @@ private fun RecastCard(
                 installedApps = installedApps,
                 iconFor = iconFor,
                 labelFor = labelFor,
+                filter = filter,
             )
         }
     }
@@ -205,11 +242,17 @@ private fun AppPickerChips(
     installedApps: List<AppRow>,
     iconFor: (String) -> ImageBitmap?,
     labelFor: (String) -> String,
+    filter: String?,
 ) {
     // Picked apps first, then everything else; a single horizontal row keeps
     // the card at OriginOS compactness instead of a scrolling settings list.
-    val ordered = picked.mapNotNull { pkg -> installedApps.firstOrNull { it.pkg == pkg } } +
-        installedApps.filter { it.pkg !in picked }
+    // The quick filters (music, navigation) narrow the row instead of hiding
+    // the picked set: a filtered-out picked app stays in the row.
+    val visible = installedApps.filter { app ->
+        filter == null || IslandRecast.kindFor(app.label, app.pkg).name == filter || app.pkg in picked
+    }
+    val ordered = picked.mapNotNull { pkg -> visible.firstOrNull { it.pkg == pkg } } +
+        visible.filter { it.pkg !in picked }
 
     Row(
         Modifier.horizontalScroll(rememberScrollState()),
@@ -250,6 +293,12 @@ private fun AppPickerChips(
                         stringResource(R.string.island_tap_template),
                         style = MaterialTheme.typography.labelSmall,
                         color = MaterialTheme.colorScheme.primary,
+                    )
+                } else if (IslandRecast.kindFor(app.label, app.pkg) != IslandRecast.AppKind.OTHER) {
+                    Text(
+                        stringResource(R.string.island_media_badge),
+                        style = MaterialTheme.typography.labelSmall,
+                        color = MaterialTheme.colorScheme.onSurfaceVariant,
                     )
                 }
             }

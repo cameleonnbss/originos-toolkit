@@ -8,6 +8,32 @@ adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
 Nothing yet.
 
+## [1.4.0] — 2026-09-17
+
+The island learns to show media, and the meter learns to say why.
+
+### Added
+
+- **Media casting.** A music app's cast now carries the app's own launcher icon
+  in the island bundles — the way OriginOS renders its media pills — and prefers
+  the artist–title line (`bigText`) over the shade's truncated fragment. Google
+  Maps-style navigation notifications cast the same way, progress bar included.
+- **Quick filters in the app picker**: All / Music / Navigation, bucketed by the
+  app's own label and package (no permissions, no heuristics beyond strings).
+  Picking a recognised media app defaults its template to text + icon, the shape
+  OriginOS media pills use; overriding per app stays one tap. Picked apps show a
+  `media` badge, and a filtered view never hides an already-picked app.
+
+### Fixed
+
+- **"Could not tell which app is in front" says what to do now.** When
+  `dumpsys activity activities` comes back unparseable, the sampler falls back
+  to the window manager's `mCurrentFocus` / `mFocusedApp` lines — the ones that
+  survive on OriginOS builds that summarise the activity dump — before giving
+  up, and the failure message now walks through the actual fix instead of
+  dead-ending: Shizuku that reports running but answers with empty dumps is the
+  common cause, and a half-started Shizuku is exactly what a reboot clears.
+
 ## [1.3.0] — 2026-09-17
 
 The Island tab becomes a caster, not just a playground.
@@ -183,6 +209,8 @@ and two things that claimed to work did not.
 - `WRITE_SETTINGS` is declared in the manifest and documented in `docs/PERMISSIONS.md`, with
   the narrowing spelled out: it reaches `system` and nothing else, and `WRITE_SECURE_SETTINGS`
   is still not requested.
+
+[1.4.0]: https://github.com/cameleonnbss/originos-toolkit/releases/tag/v1.4.0
 
 [1.3.0]: https://github.com/cameleonnbss/originos-toolkit/releases/tag/v1.3.0
 

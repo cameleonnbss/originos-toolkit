@@ -1,5 +1,6 @@
 package dev.cameleonnbss.originostoolkit
 
+import dev.cameleonnbss.originostoolkit.core.FpsSampler
 import dev.cameleonnbss.originostoolkit.core.IslandRecast
 import dev.cameleonnbss.originostoolkit.core.OriginIsland.OriginIslandTemplate
 import org.junit.Assert.assertEquals
@@ -52,5 +53,41 @@ class IslandRecastTest {
         assertEquals("Playing", IslandRecast.cleanText("  Playing "))
         assertNull(IslandRecast.cleanText("   "))
         assertNull(IslandRecast.cleanText(null))
+    }
+
+    @Test
+    fun `media and navigation apps land in their buckets`() {
+        assertEquals(IslandRecast.AppKind.MUSIC, IslandRecast.kindFor("Spotify", "com.spotify.music"))
+        assertEquals(IslandRecast.AppKind.MUSIC, IslandRecast.kindFor(null, "com.deezer.android.app"))
+        assertEquals(
+            IslandRecast.AppKind.NAVIGATION,
+            IslandRecast.kindFor("Maps", "com.google.android.apps.maps"),
+        )
+        assertEquals(IslandRecast.AppKind.NAVIGATION, IslandRecast.kindFor("Waze", "com.waze"))
+        assertEquals(IslandRecast.AppKind.OTHER, IslandRecast.kindFor("Messages", "com.android.messaging"))
+    }
+
+    @Test
+    fun `the window-manager fallback reads focused windows`() {
+        // A build that summarises `activity activities` away still prints the
+        // window manager's focus line; the fallback must read it.
+        assertEquals(
+            "com.example.browser",
+            FpsSampler.foregroundPackageFromWindow(
+                "  mCurrentFocus=Window{a1b2c3 u0 com.example.browser/com.example.BrowserActivity}",
+            ),
+        )
+        assertNull(FpsSampler.foregroundPackageFromWindow("no focus lines here"))
+    }
+
+    @Test
+    fun `the fallback skips launchers`() {
+        assertEquals(
+            "com.example.app",
+            FpsSampler.foregroundPackageFromWindow(
+                "mCurrentFocus=Window{a1b2 u0 com.google.android.apps.nexuslauncher/com.google.android.apps.nexuslauncher.NexusLauncherActivity}\n" +
+                    "mFocusedApp=ActivityRecord{c3d4 u0 com.example.app/.MainActivity}",
+            ),
+        )
     }
 }

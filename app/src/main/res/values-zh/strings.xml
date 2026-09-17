@@ -109,6 +109,10 @@
     <string name="island_recast_switch">投射所选应用的通知</string>
     <string name="island_grant_listener">授予通知访问权限</string>
     <string name="island_tap_template">模板 ›</string>
+    <string name="island_media_badge">媒体</string>
+    <string name="island_filter_all">全部</string>
+    <string name="island_filter_music">音乐</string>
+    <string name="island_filter_navigation">导航</string>
     <string name="island_template_pick_title">模板</string>
     <string name="island_close">关闭</string>
     <string name="island_playground_title">手动投射</string>
