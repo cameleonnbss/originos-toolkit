@@ -1,6 +1,18 @@
 <?xml version="1.0" encoding="utf-8"?>
+<!--
+  The few colours the XML side needs. Everything else lives in Theme.kt, because
+  the whole UI is Compose; these exist only so themes.xml and the notification
+  accent have something to point at before the first frame is composed.
+
+  `surface` is the launch-window background: the value in this folder is the
+  light one, and values-night/colors.xml overrides it so a launch never flashes
+  the wrong end of the theme.
+-->
 <resources>
-    <color name="ic_launcher_background">#10131A</color>
-    <color name="surface">#10131A</color>
-    <color name="accent">#4CC2FF</color>
+    <color name="surface">#F1F3F6</color>
+    <color name="accent">#1A6DFF</color>
+
+    <!-- Ends of the OriginOS sweep. Kept here for the swept wordmark underline. -->
+    <color name="brand_coral">#FF5E4A</color>
+    <color name="brand_violet">#A94ED6</color>
 </resources>

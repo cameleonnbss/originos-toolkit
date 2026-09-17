@@ -18,6 +18,10 @@
     <string name="shizuku_install">Install Shizuku</string>
     <string name="shizuku_help">Set up without root</string>
 
+    <string name="settings_language_title">Language</string>
+    <string name="settings_language_summary">The interface language. System follows Android\'s own setting.</string>
+    <string name="settings_language_system">System</string>
+
     <string name="action_apply">Apply</string>
     <string name="action_revert">Revert</string>
     <string name="action_preview">Preview commands</string>

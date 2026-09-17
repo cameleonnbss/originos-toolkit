@@ -1,0 +1,60 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!--
+  Simplified Chinese.
+
+  `resourceConfigurations += listOf("en", "fr", "zh")` in app/build.gradle.kts has
+  claimed to ship Chinese since the beginning, but there was no values-zh folder:
+  the APK was filtered down to three languages and only two existed. OriginOS is
+  a Chinese platform, so this was the most likely audience resolving to English.
+-->
+<resources>
+    <string name="app_name">OriginOS Toolkit</string>
+    <string name="app_tagline">面向 vivo / iQOO 的免 root 调校</string>
+
+    <string name="nav_dashboard">首页</string>
+    <string name="nav_tweaks">调校</string>
+    <string name="nav_refresh">刷新率</string>
+    <string name="nav_debloat">精简</string>
+    <string name="nav_awesome">发现</string>
+    <string name="nav_settings">设置</string>
+
+    <string name="shizuku_title">Shizuku</string>
+    <string name="shizuku_running">运行中 — 命令将以 shell 用户身份执行。</string>
+    <string name="shizuku_stopped">未运行。请启动 Shizuku，然后为本应用授权。</string>
+    <string name="shizuku_granted">已授权</string>
+    <string name="shizuku_denied">授权被拒绝</string>
+    <string name="shizuku_request">授权</string>
+    <string name="shizuku_install">安装 Shizuku</string>
+    <string name="shizuku_help">免 root 配置教程</string>
+
+    <string name="settings_language_title">语言</string>
+    <string name="settings_language_summary">界面语言。“跟随系统”使用 Android 自身的语言设置。</string>
+    <string name="settings_language_system">跟随系统</string>
+
+    <string name="action_apply">应用</string>
+    <string name="action_revert">还原</string>
+    <string name="action_preview">预览命令</string>
+    <string name="action_revert_all">全部还原</string>
+    <string name="action_copy">复制</string>
+    <string name="action_close">关闭</string>
+    <string name="action_apply_profile">应用方案</string>
+    <string name="action_enable">启用</string>
+    <string name="action_disable">停用</string>
+
+    <string name="experimental_warning">实验性调校会执行真实命令，结果取决于你的 OriginOS 版本。启用前请先阅读说明。</string>
+    <string name="high_risk_warning">这是高风险调校。执行前会先显示完整命令。</string>
+
+    <string name="journal_title">还原日志</string>
+    <string name="journal_empty">尚未应用任何调校。应用过的内容都会记录在此，以便精确还原。</string>
+    <string name="panic_reset">紧急重置</string>
+    <string name="panic_reset_summary">先恢复出厂显示密度与窗口尺寸，再反向重放整份日志。界面无法使用时请用此项。</string>
+
+    <string name="overlay_off">悬浮窗已关闭</string>
+    <string name="overlay_on">悬浮窗已开启</string>
+    <string name="refresh_watcher_off">逐应用监视已关闭</string>
+    <string name="refresh_watcher_on">逐应用监视已开启</string>
+
+    <string name="channel_overlay_name">帧率悬浮窗</string>
+    <string name="channel_refresh_name">逐应用刷新率</string>
+    <string name="channel_generic_name">工具箱</string>
+</resources>

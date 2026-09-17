@@ -1,19 +1,173 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!--
+  OriginOS Toolkit — adaptive-icon foreground.
+
+  The brand mark: the OriginOS ring (a full-hue sweep, drawn as one even-odd
+  donut), a silver gear with a wrench lying across it inside the bore, and the
+  amber sphere that sits off the ring at the top right.
+
+  Geometry is in the 108-unit adaptive grid. Everything meaningful stays inside
+  the 66dp safe circle so no launcher mask can clip it: the ring's outer radius
+  is 26.4 and the wrench stops at (64,64), both well inside 33.
+
+  Draw order matters and is deliberate — shadow, ring, its highlights, the gear
+  teeth, the hub, then the wrench in front of the hub, then the sphere.
+-->
 <vector xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:aapt="http://schemas.android.com/aapt"
     android:width="108dp"
     android:height="108dp"
     android:viewportWidth="108"
     android:viewportHeight="108">
 
-    <!-- Refresh ring: the "144 Hz" idea, drawn as an open circle. -->
+    <!-- Contact shadow, offset down-right so the ring reads as raised. -->
     <path
-        android:pathData="M54,54 m-34,0 a34,34 0 1,0 68,0 a34,34 0 1,0 -68,0"
-        android:strokeColor="#4CC2FF"
-        android:strokeWidth="5"
-        android:strokeLineCap="round"
-        android:fillColor="#00000000" />
+        android:fillColor="#14000000"
+        android:fillType="evenOdd"
+        android:pathData="M55.2,56 m-27,0 a27,27 0 1,0 54,0 a27,27 0 1,0 -54,0
+                          M55.2,56 m-19,0 a19,19 0 1,0 38,0 a19,19 0 1,0 -38,0" />
 
-    <!-- Lightning bolt: the tweak. -->
+    <!-- The ring: one sweep gradient starting at 3 o'clock, turning clockwise. -->
+    <path android:fillType="evenOdd"
+        android:pathData="M54,54 m-26.4,0 a26.4,26.4 0 1,0 52.8,0 a26.4,26.4 0 1,0 -52.8,0
+                          M54,54 m-18.8,0 a18.8,18.8 0 1,0 37.6,0 a18.8,18.8 0 1,0 -37.6,0">
+        <aapt:attr name="android:fillColor">
+            <gradient
+                android:type="sweep"
+                android:centerX="54"
+                android:centerY="54">
+                <item android:offset="0.000" android:color="#FFEF4E86" />
+                <item android:offset="0.125" android:color="#FFA94ED6" />
+                <item android:offset="0.250" android:color="#FF4E63E6" />
+                <item android:offset="0.375" android:color="#FF3E9EE6" />
+                <item android:offset="0.500" android:color="#FF6B58DE" />
+                <item android:offset="0.625" android:color="#FFC4509E" />
+                <item android:offset="0.750" android:color="#FFFF8F35" />
+                <item android:offset="0.875" android:color="#FFFF5E4A" />
+                <item android:offset="1.000" android:color="#FFEF4E86" />
+            </gradient>
+        </aapt:attr>
+    </path>
+
+    <!-- Two specular arcs: the gloss that sells the ring as a solid torus. -->
     <path
-        android:fillColor="#FFFFFF"
-        android:pathData="M59,22 L36,58 L52,58 L45,88 L74,48 L57,48 Z" />
+        android:pathData="M32.39,46.13 A23,23 0 0 1 46.13,32.39"
+        android:strokeColor="#4DFFFFFF"
+        android:strokeWidth="2.4"
+        android:strokeLineCap="round" />
+    <path
+        android:pathData="M77.96,62.72 A25.5,25.5 0 0 1 62.72,77.96"
+        android:strokeColor="#33FFFFFF"
+        android:strokeWidth="1.6"
+        android:strokeLineCap="round" />
+
+    <!--
+      Eight gear teeth, 45° apart. One path, rotated into place by a group, so
+      the tooth geometry stays readable instead of being pre-baked eight times.
+    -->
+    <group android:pivotX="54" android:pivotY="54" android:rotation="22.5">
+        <path android:pathData="M63.0,50.2 L68.4,51.2 L68.4,56.8 L63.0,57.8 Z"
+            android:fillColor="#FFB4BDC8" android:strokeColor="#596E7681" android:strokeWidth="0.7" />
+    </group>
+    <group android:pivotX="54" android:pivotY="54" android:rotation="67.5">
+        <path android:pathData="M63.0,50.2 L68.4,51.2 L68.4,56.8 L63.0,57.8 Z"
+            android:fillColor="#FFB4BDC8" android:strokeColor="#596E7681" android:strokeWidth="0.7" />
+    </group>
+    <group android:pivotX="54" android:pivotY="54" android:rotation="112.5">
+        <path android:pathData="M63.0,50.2 L68.4,51.2 L68.4,56.8 L63.0,57.8 Z"
+            android:fillColor="#FFB4BDC8" android:strokeColor="#596E7681" android:strokeWidth="0.7" />
+    </group>
+    <group android:pivotX="54" android:pivotY="54" android:rotation="157.5">
+        <path android:pathData="M63.0,50.2 L68.4,51.2 L68.4,56.8 L63.0,57.8 Z"
+            android:fillColor="#FFB4BDC8" android:strokeColor="#596E7681" android:strokeWidth="0.7" />
+    </group>
+    <group android:pivotX="54" android:pivotY="54" android:rotation="202.5">
+        <path android:pathData="M63.0,50.2 L68.4,51.2 L68.4,56.8 L63.0,57.8 Z"
+            android:fillColor="#FFB4BDC8" android:strokeColor="#596E7681" android:strokeWidth="0.7" />
+    </group>
+    <group android:pivotX="54" android:pivotY="54" android:rotation="247.5">
+        <path android:pathData="M63.0,50.2 L68.4,51.2 L68.4,56.8 L63.0,57.8 Z"
+            android:fillColor="#FFB4BDC8" android:strokeColor="#596E7681" android:strokeWidth="0.7" />
+    </group>
+    <group android:pivotX="54" android:pivotY="54" android:rotation="292.5">
+        <path android:pathData="M63.0,50.2 L68.4,51.2 L68.4,56.8 L63.0,57.8 Z"
+            android:fillColor="#FFB4BDC8" android:strokeColor="#596E7681" android:strokeWidth="0.7" />
+    </group>
+    <group android:pivotX="54" android:pivotY="54" android:rotation="337.5">
+        <path android:pathData="M63.0,50.2 L68.4,51.2 L68.4,56.8 L63.0,57.8 Z"
+            android:fillColor="#FFB4BDC8" android:strokeColor="#596E7681" android:strokeWidth="0.7" />
+    </group>
+
+    <!-- The hub, with its bore left open so the wrench can pass through. -->
+    <path android:fillType="evenOdd"
+        android:pathData="M54,54 m-11.2,0 a11.2,11.2 0 1,0 22.4,0 a11.2,11.2 0 1,0 -22.4,0
+                          M54,54 m-4.2,0 a4.2,4.2 0 1,0 8.4,0 a4.2,4.2 0 1,0 -8.4,0">
+        <aapt:attr name="android:fillColor">
+            <gradient
+                android:type="linear"
+                android:startX="54"
+                android:startY="42.8"
+                android:endX="54"
+                android:endY="65.2">
+                <item android:offset="0" android:color="#FFF2F5F8" />
+                <item android:offset="0.5" android:color="#FF98A1AD" />
+                <item android:offset="1" android:color="#FFD8DEE6" />
+            </gradient>
+        </aapt:attr>
+    </path>
+    <path
+        android:pathData="M54,54 m-11.2,0 a11.2,11.2 0 1,0 22.4,0 a11.2,11.2 0 1,0 -22.4,0"
+        android:strokeColor="#596E7681"
+        android:strokeWidth="0.9"
+        android:strokeLineCap="butt" />
+
+    <!--
+      The wrench, lying across the hub. Edge pass first, then the metal.
+
+      The handle reaches (67,67) — a radius of 18.4, which is past the gear's
+      outermost tooth (14.4) but still inside the ring's bore (18.8). That
+      length is the difference between "a gear" and "a gear a wrench is lying
+      on": at 48dp a handle that stops at the teeth is swallowed by the silver
+      hub, and the mark loses the half of itself that says what the app does.
+    -->
+    <path android:pathData="M47.69,42.06 A4.6,4.6 0 1 1 42.06,47.69"
+        android:strokeColor="#8C6E7681" android:strokeWidth="5.4" android:strokeLineCap="round" />
+    <path android:pathData="M47.5,47.5 L67,67"
+        android:strokeColor="#8C6E7681" android:strokeWidth="5.4" android:strokeLineCap="round" />
+    <path android:pathData="M47.69,42.06 A4.6,4.6 0 1 1 42.06,47.69"
+        android:strokeColor="#FFC6CDD7" android:strokeWidth="4.2" android:strokeLineCap="round" />
+    <path android:pathData="M47.5,47.5 L67,67"
+        android:strokeColor="#FFC6CDD7" android:strokeWidth="4.2" android:strokeLineCap="round" />
+    <path android:pathData="M48.5,48.5 L66,66"
+        android:strokeColor="#FFEFF3F7" android:strokeWidth="1.5" android:strokeLineCap="round" />
+
+    <!-- The sphere: a pale halo, the body, then a small specular dot. -->
+    <path android:pathData="M74.2,33.8 m-6.6,0 a6.6,6.6 0 1,0 13.2,0 a6.6,6.6 0 1,0 -13.2,0">
+        <aapt:attr name="android:fillColor">
+            <gradient
+                android:type="radial"
+                android:centerX="74.2"
+                android:centerY="33.8"
+                android:gradientRadius="6.6">
+                <item android:offset="0" android:color="#40F9AE3B" />
+                <item android:offset="1" android:color="#00F9AE3B" />
+            </gradient>
+        </aapt:attr>
+    </path>
+    <path android:pathData="M74.2,33.8 m-4.4,0 a4.4,4.4 0 1,0 8.8,0 a4.4,4.4 0 1,0 -8.8,0">
+        <aapt:attr name="android:fillColor">
+            <gradient
+                android:type="radial"
+                android:centerX="72.8"
+                android:centerY="32.4"
+                android:gradientRadius="6">
+                <item android:offset="0" android:color="#FFFFE9AE" />
+                <item android:offset="0.45" android:color="#FFFBB03B" />
+                <item android:offset="1" android:color="#FFE07E1B" />
+            </gradient>
+        </aapt:attr>
+    </path>
+    <path
+        android:fillColor="#66FFFFFF"
+        android:pathData="M72.6,31.9 m-1.2,0 a1.2,1.2 0 1,0 2.4,0 a1.2,1.2 0 1,0 -2.4,0" />
 </vector>

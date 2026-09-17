@@ -1,0 +1,149 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!--
+  OriginOS Toolkit — in-app brand mark.
+
+  Identical geometry to the launcher foreground, shifted by (-18,-18) into a
+  72-unit viewport so the ring fills 73% of its box. The launcher layer is
+  generous on purpose — an adaptive icon needs the 66dp safe circle — but that
+  same padding looks like a bug when the mark sits in a toolbar at 40dp. Hence
+  a second, tightly-cropped copy rather than a scale factor at the call site.
+
+  Draw it with `Icon(..., tint = Color.Unspecified)`; the sweep gradient is the
+  whole point and a theme tint would flatten it.
+-->
+<vector xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:aapt="http://schemas.android.com/aapt"
+    android:width="72dp"
+    android:height="72dp"
+    android:viewportWidth="72"
+    android:viewportHeight="72">
+
+    <path android:fillType="evenOdd"
+        android:pathData="M36,36 m-26.4,0 a26.4,26.4 0 1,0 52.8,0 a26.4,26.4 0 1,0 -52.8,0
+                          M36,36 m-18.8,0 a18.8,18.8 0 1,0 37.6,0 a18.8,18.8 0 1,0 -37.6,0">
+        <aapt:attr name="android:fillColor">
+            <gradient
+                android:type="sweep"
+                android:centerX="36"
+                android:centerY="36">
+                <item android:offset="0.000" android:color="#FFEF4E86" />
+                <item android:offset="0.125" android:color="#FFA94ED6" />
+                <item android:offset="0.250" android:color="#FF4E63E6" />
+                <item android:offset="0.375" android:color="#FF3E9EE6" />
+                <item android:offset="0.500" android:color="#FF6B58DE" />
+                <item android:offset="0.625" android:color="#FFC4509E" />
+                <item android:offset="0.750" android:color="#FFFF8F35" />
+                <item android:offset="0.875" android:color="#FFFF5E4A" />
+                <item android:offset="1.000" android:color="#FFEF4E86" />
+            </gradient>
+        </aapt:attr>
+    </path>
+
+    <path
+        android:pathData="M14.39,28.13 A23,23 0 0 1 28.13,14.39"
+        android:strokeColor="#4DFFFFFF"
+        android:strokeWidth="2.4"
+        android:strokeLineCap="round" />
+    <path
+        android:pathData="M59.96,44.72 A25.5,25.5 0 0 1 44.72,59.96"
+        android:strokeColor="#33FFFFFF"
+        android:strokeWidth="1.6"
+        android:strokeLineCap="round" />
+
+    <group android:pivotX="36" android:pivotY="36" android:rotation="22.5">
+        <path android:pathData="M45.0,32.2 L50.4,33.2 L50.4,38.8 L45.0,39.8 Z"
+            android:fillColor="#FFB4BDC8" android:strokeColor="#596E7681" android:strokeWidth="0.7" />
+    </group>
+    <group android:pivotX="36" android:pivotY="36" android:rotation="67.5">
+        <path android:pathData="M45.0,32.2 L50.4,33.2 L50.4,38.8 L45.0,39.8 Z"
+            android:fillColor="#FFB4BDC8" android:strokeColor="#596E7681" android:strokeWidth="0.7" />
+    </group>
+    <group android:pivotX="36" android:pivotY="36" android:rotation="112.5">
+        <path android:pathData="M45.0,32.2 L50.4,33.2 L50.4,38.8 L45.0,39.8 Z"
+            android:fillColor="#FFB4BDC8" android:strokeColor="#596E7681" android:strokeWidth="0.7" />
+    </group>
+    <group android:pivotX="36" android:pivotY="36" android:rotation="157.5">
+        <path android:pathData="M45.0,32.2 L50.4,33.2 L50.4,38.8 L45.0,39.8 Z"
+            android:fillColor="#FFB4BDC8" android:strokeColor="#596E7681" android:strokeWidth="0.7" />
+    </group>
+    <group android:pivotX="36" android:pivotY="36" android:rotation="202.5">
+        <path android:pathData="M45.0,32.2 L50.4,33.2 L50.4,38.8 L45.0,39.8 Z"
+            android:fillColor="#FFB4BDC8" android:strokeColor="#596E7681" android:strokeWidth="0.7" />
+    </group>
+    <group android:pivotX="36" android:pivotY="36" android:rotation="247.5">
+        <path android:pathData="M45.0,32.2 L50.4,33.2 L50.4,38.8 L45.0,39.8 Z"
+            android:fillColor="#FFB4BDC8" android:strokeColor="#596E7681" android:strokeWidth="0.7" />
+    </group>
+    <group android:pivotX="36" android:pivotY="36" android:rotation="292.5">
+        <path android:pathData="M45.0,32.2 L50.4,33.2 L50.4,38.8 L45.0,39.8 Z"
+            android:fillColor="#FFB4BDC8" android:strokeColor="#596E7681" android:strokeWidth="0.7" />
+    </group>
+    <group android:pivotX="36" android:pivotY="36" android:rotation="337.5">
+        <path android:pathData="M45.0,32.2 L50.4,33.2 L50.4,38.8 L45.0,39.8 Z"
+            android:fillColor="#FFB4BDC8" android:strokeColor="#596E7681" android:strokeWidth="0.7" />
+    </group>
+
+    <path android:fillType="evenOdd"
+        android:pathData="M36,36 m-11.2,0 a11.2,11.2 0 1,0 22.4,0 a11.2,11.2 0 1,0 -22.4,0
+                          M36,36 m-4.2,0 a4.2,4.2 0 1,0 8.4,0 a4.2,4.2 0 1,0 -8.4,0">
+        <aapt:attr name="android:fillColor">
+            <gradient
+                android:type="linear"
+                android:startX="36"
+                android:startY="24.8"
+                android:endX="36"
+                android:endY="47.2">
+                <item android:offset="0" android:color="#FFF2F5F8" />
+                <item android:offset="0.5" android:color="#FF98A1AD" />
+                <item android:offset="1" android:color="#FFD8DEE6" />
+            </gradient>
+        </aapt:attr>
+    </path>
+    <path
+        android:pathData="M36,36 m-11.2,0 a11.2,11.2 0 1,0 22.4,0 a11.2,11.2 0 1,0 -22.4,0"
+        android:strokeColor="#596E7681"
+        android:strokeWidth="0.9"
+        android:strokeLineCap="butt" />
+
+    <!-- Handle runs to (49,49): radius 18.4 in this grid, i.e. past the teeth
+         but short of the bore. See ic_launcher_foreground.xml for why. -->
+    <path android:pathData="M29.69,24.06 A4.6,4.6 0 1 1 24.06,29.69"
+        android:strokeColor="#8C6E7681" android:strokeWidth="5.4" android:strokeLineCap="round" />
+    <path android:pathData="M29.5,29.5 L49,49"
+        android:strokeColor="#8C6E7681" android:strokeWidth="5.4" android:strokeLineCap="round" />
+    <path android:pathData="M29.69,24.06 A4.6,4.6 0 1 1 24.06,29.69"
+        android:strokeColor="#FFC6CDD7" android:strokeWidth="4.2" android:strokeLineCap="round" />
+    <path android:pathData="M29.5,29.5 L49,49"
+        android:strokeColor="#FFC6CDD7" android:strokeWidth="4.2" android:strokeLineCap="round" />
+    <path android:pathData="M30.5,30.5 L48,48"
+        android:strokeColor="#FFEFF3F7" android:strokeWidth="1.5" android:strokeLineCap="round" />
+
+    <path android:pathData="M56.2,15.8 m-6.6,0 a6.6,6.6 0 1,0 13.2,0 a6.6,6.6 0 1,0 -13.2,0">
+        <aapt:attr name="android:fillColor">
+            <gradient
+                android:type="radial"
+                android:centerX="56.2"
+                android:centerY="15.8"
+                android:gradientRadius="6.6">
+                <item android:offset="0" android:color="#40F9AE3B" />
+                <item android:offset="1" android:color="#00F9AE3B" />
+            </gradient>
+        </aapt:attr>
+    </path>
+    <path android:pathData="M56.2,15.8 m-4.4,0 a4.4,4.4 0 1,0 8.8,0 a4.4,4.4 0 1,0 -8.8,0">
+        <aapt:attr name="android:fillColor">
+            <gradient
+                android:type="radial"
+                android:centerX="54.8"
+                android:centerY="14.4"
+                android:gradientRadius="6">
+                <item android:offset="0" android:color="#FFFFE9AE" />
+                <item android:offset="0.45" android:color="#FFFBB03B" />
+                <item android:offset="1" android:color="#FFE07E1B" />
+            </gradient>
+        </aapt:attr>
+    </path>
+    <path
+        android:fillColor="#66FFFFFF"
+        android:pathData="M54.6,13.9 m-1.2,0 a1.2,1.2 0 1,0 2.4,0 a1.2,1.2 0 1,0 -2.4,0" />
+</vector>

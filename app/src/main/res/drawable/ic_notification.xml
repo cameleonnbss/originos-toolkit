@@ -1,0 +1,48 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!--
+  OriginOS Toolkit — notification small icon.
+
+  Status-bar icons are masks, not pictures: the system keeps only the alpha
+  channel and repaints it in the bar's own colour. So this is a silhouette of
+  the gear at 24dp — eight teeth and a bored hub — with no colour of its own and
+  no gloss. Using the launcher foreground here instead (as this app used to)
+  hands the system a 108dp full-colour drawing and lets it decide, which is how
+  status-bar icons end up as grey blobs.
+-->
+<vector xmlns:android="http://schemas.android.com/apk/res/android"
+    android:width="24dp"
+    android:height="24dp"
+    android:viewportWidth="24"
+    android:viewportHeight="24">
+
+    <path
+        android:fillColor="#FFFFFFFF"
+        android:fillType="evenOdd"
+        android:pathData="M12,12 m-6,0 a6,6 0 1,0 12,0 a6,6 0 1,0 -12,0
+                          M12,12 m-2.2,0 a2.2,2.2 0 1,0 4.4,0 a2.2,2.2 0 1,0 -4.4,0" />
+
+    <group android:pivotX="12" android:pivotY="12" android:rotation="22.5">
+        <path android:fillColor="#FFFFFFFF" android:pathData="M17,9.9 L21.2,10.3 L21.2,13.7 L17,14.1 Z" />
+    </group>
+    <group android:pivotX="12" android:pivotY="12" android:rotation="67.5">
+        <path android:fillColor="#FFFFFFFF" android:pathData="M17,9.9 L21.2,10.3 L21.2,13.7 L17,14.1 Z" />
+    </group>
+    <group android:pivotX="12" android:pivotY="12" android:rotation="112.5">
+        <path android:fillColor="#FFFFFFFF" android:pathData="M17,9.9 L21.2,10.3 L21.2,13.7 L17,14.1 Z" />
+    </group>
+    <group android:pivotX="12" android:pivotY="12" android:rotation="157.5">
+        <path android:fillColor="#FFFFFFFF" android:pathData="M17,9.9 L21.2,10.3 L21.2,13.7 L17,14.1 Z" />
+    </group>
+    <group android:pivotX="12" android:pivotY="12" android:rotation="202.5">
+        <path android:fillColor="#FFFFFFFF" android:pathData="M17,9.9 L21.2,10.3 L21.2,13.7 L17,14.1 Z" />
+    </group>
+    <group android:pivotX="12" android:pivotY="12" android:rotation="247.5">
+        <path android:fillColor="#FFFFFFFF" android:pathData="M17,9.9 L21.2,10.3 L21.2,13.7 L17,14.1 Z" />
+    </group>
+    <group android:pivotX="12" android:pivotY="12" android:rotation="292.5">
+        <path android:fillColor="#FFFFFFFF" android:pathData="M17,9.9 L21.2,10.3 L21.2,13.7 L17,14.1 Z" />
+    </group>
+    <group android:pivotX="12" android:pivotY="12" android:rotation="337.5">
+        <path android:fillColor="#FFFFFFFF" android:pathData="M17,9.9 L21.2,10.3 L21.2,13.7 L17,14.1 Z" />
+    </group>
+</vector>

@@ -1,19 +1,23 @@
 package dev.cameleonnbss.originostoolkit.ui.components
 
+import androidx.compose.foundation.BorderStroke
 import androidx.compose.foundation.background
 import androidx.compose.foundation.horizontalScroll
 import androidx.compose.foundation.layout.Arrangement
+import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material3.AlertDialog
 import androidx.compose.material3.Card
 import androidx.compose.material3.CardDefaults
+import androidx.compose.material3.Icon
 import androidx.compose.material3.LinearProgressIndicator
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.OutlinedButton
@@ -23,17 +27,29 @@ import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.res.painterResource
+import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.FontFamily
 import androidx.compose.ui.text.font.FontWeight
+import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.dp
+import dev.cameleonnbss.originostoolkit.R
 import dev.cameleonnbss.originostoolkit.core.TweakResult
 import dev.cameleonnbss.originostoolkit.core.model.Risk
 import dev.cameleonnbss.originostoolkit.core.model.Tweak
 import dev.cameleonnbss.originostoolkit.core.ops.Access
 import dev.cameleonnbss.originostoolkit.ui.PreviewState
+import dev.cameleonnbss.originostoolkit.ui.theme.brandBrush
 import dev.cameleonnbss.originostoolkit.ui.theme.riskColor
 
-/** A titled card. Every screen is built from these so the app looks coherent. */
+/**
+ * A titled card. Every screen is built from these so the app looks coherent.
+ *
+ * Styled as an OriginOS panel: the rounded shape comes from
+ * `MaterialTheme.shapes.medium`, the fill is translucent so the aura shows
+ * through, and the edge is a hairline rather than a shadow — OriginOS surfaces
+ * are flat and outlined, and a drop shadow reads as stock Material instead.
+ */
 @Composable
 fun SectionCard(
     title: String,
@@ -43,7 +59,12 @@ fun SectionCard(
 ) {
     Card(
         modifier = modifier.fillMaxWidth(),
-        colors = CardDefaults.cardColors(containerColor = MaterialTheme.colorScheme.surface),
+        colors = CardDefaults.cardColors(
+            containerColor = MaterialTheme.colorScheme.surfaceContainer,
+            contentColor = MaterialTheme.colorScheme.onSurface,
+        ),
+        elevation = CardDefaults.cardElevation(defaultElevation = 0.dp),
+        border = BorderStroke(1.dp, MaterialTheme.colorScheme.outlineVariant.copy(alpha = 0.6f)),
     ) {
         Column(Modifier.padding(16.dp)) {
             Text(title, style = MaterialTheme.typography.titleMedium, fontWeight = FontWeight.SemiBold)
@@ -146,13 +167,91 @@ fun PillRow(
 @Composable
 fun BusyIndicator(busy: Boolean) {
     if (busy) {
+        // The bar is the one place the brand sweep appears during normal use,
+        // so progress reads as "the toolkit is working" rather than as a
+        // generic Material indeterminate bar.
         LinearProgressIndicator(
             modifier = Modifier
                 .fillMaxWidth()
-                .padding(horizontal = 16.dp)
                 .height(3.dp),
+            color = MaterialTheme.colorScheme.primary,
+            trackColor = Color.Transparent,
         )
     }
+}
+
+/**
+ * The app's own lockup: the ring mark, the wordmark, the tagline, and the
+ * brand sweep as an underline.
+ *
+ * This is the in-app twin of the icon mock-up — the same mark and the same two
+ * lines of type — rendered where it can actually be read, since a launcher icon
+ * is cropped to a 66dp circle and loses anything written at the bottom.
+ */
+@Composable
+fun BrandLockup(modifier: Modifier = Modifier) {
+    Column(modifier.fillMaxWidth()) {
+        Row(verticalAlignment = Alignment.CenterVertically) {
+            Icon(
+                painter = painterResource(R.drawable.ic_logo_ring),
+                contentDescription = null,
+                tint = Color.Unspecified,
+                modifier = Modifier.size(46.dp),
+            )
+            Spacer(Modifier.size(14.dp))
+            Column {
+                Text(
+                    stringResource(R.string.app_name),
+                    style = MaterialTheme.typography.titleLarge,
+                    fontWeight = FontWeight.SemiBold,
+                )
+                Text(
+                    stringResource(R.string.app_tagline),
+                    style = MaterialTheme.typography.bodySmall,
+                    color = MaterialTheme.colorScheme.onSurfaceVariant,
+                )
+            }
+        }
+        Spacer(Modifier.size(14.dp))
+        Box(
+            Modifier
+                .fillMaxWidth()
+                .height(3.dp)
+                .background(brandBrush(), RoundedCornerShape(2.dp)),
+        )
+    }
+}
+
+/**
+ * The dashboard hero: the app lockup on an elevated panel.
+ *
+ * Elevated rather than flat on purpose — this is the one panel on the page that
+ * is about the app itself, so it is allowed to sit above the rest.
+ */
+@Composable
+fun HeroCard(modifier: Modifier = Modifier) {
+    Card(
+        modifier = modifier.fillMaxWidth(),
+        colors = CardDefaults.cardColors(
+            containerColor = MaterialTheme.colorScheme.surfaceContainerHigh,
+            contentColor = MaterialTheme.colorScheme.onSurface,
+        ),
+        elevation = CardDefaults.cardElevation(defaultElevation = 0.dp),
+        border = BorderStroke(1.dp, MaterialTheme.colorScheme.outlineVariant.copy(alpha = 0.6f)),
+    ) {
+        BrandLockup(Modifier.padding(18.dp))
+    }
+}
+
+/** The brand mark on its own, for toolbars and empty states. */
+@Composable
+fun BrandMark(size: Dp = 30.dp, modifier: Modifier = Modifier) {
+    Icon(
+        painter = painterResource(R.drawable.ic_logo_ring),
+        contentDescription = null,
+        tint = Color.Unspecified,
+        modifier = modifier.size(size),
+    )
 }
 
 @Composable

@@ -70,6 +70,15 @@ class Prefs(context: Context) {
         get() = prefs.getString(KEY_WATCHER_MIN, null)
         set(value) = prefs.edit().putString(KEY_WATCHER_MIN, value).apply()
 
+    /**
+     * BCP-47 tag of the interface language, or "" to follow Android's own
+     * setting. Applied in `MainActivity.attachBaseContext`, so a change only
+     * takes effect after the activity is recreated.
+     */
+    var languageTag: String
+        get() = prefs.getString(KEY_LANGUAGE, AppLanguage.SYSTEM).orEmpty()
+        set(value) = prefs.edit().putString(KEY_LANGUAGE, value).apply()
+
     /** Friendly label for a stored refresh rate; 0 means "leave it alone". */
     fun describeDefaultRate(): String =
         if (defaultRefreshRate <= 0) "system default" else "$defaultRefreshRate Hz"
@@ -85,5 +94,6 @@ class Prefs(context: Context) {
         const val KEY_PER_APP = "per_app_rates"
         const val KEY_WATCHER_PEAK = "watcher_original_peak"
         const val KEY_WATCHER_MIN = "watcher_original_min"
+        const val KEY_LANGUAGE = "interface_language"
     }
 }

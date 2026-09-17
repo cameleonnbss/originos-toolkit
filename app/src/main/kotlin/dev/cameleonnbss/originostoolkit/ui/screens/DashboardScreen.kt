@@ -25,6 +25,7 @@ import dev.cameleonnbss.originostoolkit.core.ops.Access
 import dev.cameleonnbss.originostoolkit.ui.ToolkitUiState
 import dev.cameleonnbss.originostoolkit.ui.ToolkitViewModel
 import dev.cameleonnbss.originostoolkit.ui.components.EmptyHint
+import dev.cameleonnbss.originostoolkit.ui.components.HeroCard
 import dev.cameleonnbss.originostoolkit.ui.components.KeyValueRow
 import dev.cameleonnbss.originostoolkit.ui.components.SectionCard
 
@@ -45,6 +46,10 @@ fun DashboardScreen(
         verticalArrangement = Arrangement.spacedBy(14.dp),
     ) {
         val snapshot = state.snapshot
+
+        // The lockup from the icon mock-up, where the words can actually be read:
+        // a launcher icon is cropped to its 66dp safe circle and would lose them.
+        HeroCard()
 
         SectionCard(title = "Device") {
             if (snapshot == null) {

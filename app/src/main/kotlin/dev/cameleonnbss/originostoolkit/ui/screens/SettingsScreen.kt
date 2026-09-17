@@ -22,19 +22,26 @@ import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.platform.LocalContext
+import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.dp
 import dev.cameleonnbss.originostoolkit.BuildConfig
+import dev.cameleonnbss.originostoolkit.R
+import dev.cameleonnbss.originostoolkit.core.AppLanguage
+import dev.cameleonnbss.originostoolkit.core.Prefs
 import dev.cameleonnbss.originostoolkit.ui.ToolkitUiState
 import dev.cameleonnbss.originostoolkit.ui.ToolkitViewModel
 import dev.cameleonnbss.originostoolkit.ui.components.ConfirmDialog
 import dev.cameleonnbss.originostoolkit.ui.components.EmptyHint
 import dev.cameleonnbss.originostoolkit.ui.components.KeyValueRow
+import dev.cameleonnbss.originostoolkit.ui.components.PillRow
 import dev.cameleonnbss.originostoolkit.ui.components.SectionCard
 
 @Composable
 fun SettingsScreen(
     state: ToolkitUiState,
     viewModel: ToolkitViewModel,
+    prefs: Prefs,
     onOpenUrl: (String) -> Unit,
     onRequestOverlayAccess: () -> Unit,
     onRequestUsageAccess: () -> Unit,
@@ -42,6 +49,11 @@ fun SettingsScreen(
 ) {
     var confirmPanic by remember { mutableStateOf(false) }
     var confirmRevertAll by remember { mutableStateOf(false) }
+
+    // The chosen language is not part of the UI state, because a change restarts
+    // the activity: holding it in the view model would only ever be read once.
+    val context = LocalContext.current
+    var language by remember { mutableStateOf(prefs.languageTag) }
 
     Column(
         Modifier
@@ -64,6 +76,24 @@ fun SettingsScreen(
                 label = "Usage access (which app is in front)",
                 granted = permissions.usage,
                 onGrant = onRequestUsageAccess,
+            )
+        }
+
+        SectionCard(
+            title = stringResource(R.string.settings_language_title),
+            subtitle = stringResource(R.string.settings_language_summary),
+        ) {
+            PillRow(
+                options = AppLanguage.CHOICES,
+                selected = language.ifBlank { null },
+                onSelect = { tag ->
+                    val next = tag ?: AppLanguage.SYSTEM
+                    if (next != language) {
+                        language = next
+                        AppLanguage.apply(context, prefs, next)
+                    }
+                },
+                allLabel = stringResource(R.string.settings_language_system),
             )
         }
 

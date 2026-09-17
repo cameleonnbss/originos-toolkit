@@ -1,0 +1,8 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!-- Dark counterpart of values/colors.xml. The window background is the only
+     thing that matters here: it is what the user sees between the launcher
+     animation and the first Compose frame. -->
+<resources>
+    <color name="surface">#07090C</color>
+    <color name="accent">#5B9DFF</color>
+</resources>

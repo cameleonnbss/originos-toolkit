@@ -1,0 +1,57 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!--
+  OriginOS Toolkit — adaptive-icon background.
+
+  The tile is the light half of the OriginOS 6 pair: a warm-white surface that
+  cools towards the edges, with two very faint glows (mint in the middle, amber
+  low down) that keep a flat fill from looking dead. Alphas are 0.122 and 0.102,
+  i.e. #1F and #1A; the transparent stops repeat the RGB so the glow fades to
+  nothing instead of fading to black.
+-->
+<vector xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:aapt="http://schemas.android.com/aapt"
+    android:width="108dp"
+    android:height="108dp"
+    android:viewportWidth="108"
+    android:viewportHeight="108">
+
+    <path android:pathData="M0,0 L108,0 L108,108 L0,108 Z">
+        <aapt:attr name="android:fillColor">
+            <gradient
+                android:type="radial"
+                android:centerX="54"
+                android:centerY="54"
+                android:gradientRadius="52">
+                <item android:offset="0" android:color="#FFFFFFFF" />
+                <item android:offset="0.55" android:color="#FFFBFEFC" />
+                <item android:offset="1" android:color="#FFDCEBE5" />
+            </gradient>
+        </aapt:attr>
+    </path>
+
+    <path android:pathData="M0,0 L108,0 L108,108 L0,108 Z">
+        <aapt:attr name="android:fillColor">
+            <gradient
+                android:type="radial"
+                android:centerX="54"
+                android:centerY="54"
+                android:gradientRadius="34">
+                <item android:offset="0" android:color="#1FB6E3D2" />
+                <item android:offset="1" android:color="#00B6E3D2" />
+            </gradient>
+        </aapt:attr>
+    </path>
+
+    <path android:pathData="M0,0 L108,0 L108,108 L0,108 Z">
+        <aapt:attr name="android:fillColor">
+            <gradient
+                android:type="radial"
+                android:centerX="54"
+                android:centerY="88"
+                android:gradientRadius="40">
+                <item android:offset="0" android:color="#1AFFCF9E" />
+                <item android:offset="1" android:color="#00FFCF9E" />
+            </gradient>
+        </aapt:attr>
+    </path>
+</vector>

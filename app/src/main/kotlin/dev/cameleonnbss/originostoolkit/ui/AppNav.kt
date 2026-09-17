@@ -20,15 +20,20 @@ import androidx.compose.material3.Icon
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.NavigationBar
 import androidx.compose.material3.NavigationBarItem
+import androidx.compose.material3.NavigationBarItemDefaults
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Text
 import androidx.compose.material3.TopAppBar
+import androidx.compose.material3.TopAppBarDefaults
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.remember
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.vector.ImageVector
 import androidx.compose.ui.platform.LocalContext
+import androidx.compose.ui.text.font.FontWeight
+import androidx.compose.ui.unit.dp
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
@@ -36,6 +41,7 @@ import androidx.navigation.compose.currentBackStackEntryAsState
 import androidx.navigation.compose.rememberNavController
 import dev.cameleonnbss.originostoolkit.core.AppContainer
 import dev.cameleonnbss.originostoolkit.core.SpecialAccess
+import dev.cameleonnbss.originostoolkit.ui.components.BrandMark
 import dev.cameleonnbss.originostoolkit.ui.components.BusyIndicator
 import dev.cameleonnbss.originostoolkit.ui.components.CommandOutputDialog
 import dev.cameleonnbss.originostoolkit.ui.components.MessageDialog
@@ -76,7 +82,20 @@ fun AppNav(viewModel: ToolkitViewModel, container: AppContainer) {
     val overlayAccess: () -> Unit = { context.startActivity(SpecialAccess.overlaySettingsIntent(context)) }
     val usageAccess: () -> Unit = { context.startActivity(SpecialAccess.usageAccessIntent()) }
 
+    // OriginOS header: the page name on the left, the product mark on the right,
+    // exactly how the system's own apps title themselves. Both bars are
+    // transparent-ish so the aura behind the page stays continuous.
+    val hairline = MaterialTheme.colorScheme.outlineVariant.copy(alpha = 0.6f)
+    val itemColors = NavigationBarItemDefaults.colors(
+        selectedIconColor = MaterialTheme.colorScheme.onPrimaryContainer,
+        selectedTextColor = MaterialTheme.colorScheme.primary,
+        indicatorColor = MaterialTheme.colorScheme.primaryContainer,
+        unselectedIconColor = MaterialTheme.colorScheme.onSurfaceVariant,
+        unselectedTextColor = MaterialTheme.colorScheme.onSurfaceVariant,
+    )
+
     Scaffold(
+        containerColor = Color.Transparent,
         topBar = {
             Column {
                 TopAppBar(
@@ -84,40 +103,52 @@ fun AppNav(viewModel: ToolkitViewModel, container: AppContainer) {
                         Text(
                             DESTINATIONS.firstOrNull { it.route == currentRoute }?.label
                                 ?: "Discover",
+                            style = MaterialTheme.typography.titleLarge,
+                            fontWeight = FontWeight.SemiBold,
                         )
                     },
+                    actions = { BrandMark(size = 30.dp, modifier = Modifier.padding(end = 16.dp)) },
+                    colors = TopAppBarDefaults.topAppBarColors(
+                        containerColor = Color.Transparent,
+                        titleContentColor = MaterialTheme.colorScheme.onBackground,
+                    ),
                 )
-                HorizontalDivider()
+                HorizontalDivider(color = hairline)
                 BusyIndicator(state.busy)
             }
         },
         bottomBar = {
-            NavigationBar {
-                DESTINATIONS.forEach { destination ->
-                    NavigationBarItem(
-                        selected = currentRoute == destination.route,
-                        onClick = {
-                            if (currentRoute != destination.route) {
-                                navController.navigate(destination.route) {
-                                    popUpTo("dashboard") { inclusive = false }
-                                    launchSingleTop = true
+            Column {
+                HorizontalDivider(color = hairline)
+                NavigationBar(containerColor = MaterialTheme.colorScheme.surfaceContainer) {
+                    DESTINATIONS.forEach { destination ->
+                        NavigationBarItem(
+                            selected = currentRoute == destination.route,
+                            colors = itemColors,
+                            onClick = {
+                                if (currentRoute != destination.route) {
+                                    navController.navigate(destination.route) {
+                                        popUpTo("dashboard") { inclusive = false }
+                                        launchSingleTop = true
+                                    }
                                 }
+                            },
+                            icon = { Icon(destination.icon, contentDescription = destination.label) },
+                            label = { Text(destination.label, style = MaterialTheme.typography.labelSmall) },
+                        )
+                    }
+                    NavigationBarItem(
+                        selected = currentRoute == "awesome",
+                        colors = itemColors,
+                        onClick = {
+                            if (currentRoute != "awesome") {
+                                navController.navigate("awesome") { launchSingleTop = true }
                             }
                         },
-                        icon = { Icon(destination.icon, contentDescription = destination.label) },
-                        label = { Text(destination.label, style = MaterialTheme.typography.labelSmall) },
+                        icon = { Icon(Icons.Filled.Explore, contentDescription = "Discover") },
+                        label = { Text("Find", style = MaterialTheme.typography.labelSmall) },
                     )
                 }
-                NavigationBarItem(
-                    selected = currentRoute == "awesome",
-                    onClick = {
-                        if (currentRoute != "awesome") {
-                            navController.navigate("awesome") { launchSingleTop = true }
-                        }
-                    },
-                    icon = { Icon(Icons.Filled.Explore, contentDescription = "Discover") },
-                    label = { Text("Find", style = MaterialTheme.typography.labelSmall) },
-                )
             }
         },
     ) { padding ->
@@ -154,6 +185,7 @@ fun AppNav(viewModel: ToolkitViewModel, container: AppContainer) {
                 SettingsScreen(
                     state = state,
                     viewModel = viewModel,
+                    prefs = container.prefs,
                     onOpenUrl = openUrl,
                     onRequestOverlayAccess = overlayAccess,
                     onRequestUsageAccess = usageAccess,

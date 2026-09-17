@@ -47,7 +47,7 @@ object Notifications {
         title: String,
         text: String,
     ): Notification = NotificationCompat.Builder(context, channel)
-        .setSmallIcon(R.drawable.ic_launcher_foreground)
+        .setSmallIcon(R.drawable.ic_notification)
         .setContentTitle(title)
         .setContentText(text)
         .setOngoing(true)
